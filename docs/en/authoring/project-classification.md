@@ -31,7 +31,7 @@ Classify by owned risk, not by language, framework, company, or UI style.
 | Claude Code-like local snapshot | `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-sdk-api`, `agent-skills-plugins`; mark release/CI claims as unknown if metadata is absent |
 | OpenClaw-like gateway and QA Lab | `multi-channel-agent-gateway`, `agent-tool-mcp-gateway`, `agent-ui-tui-desktop`, `agent-skills-plugins`, `agent-distribution-release`, `agent-evals-quality` |
 | Hermes-like Python agent | `agent-runtime-cli`, `background-agent-scheduler`, `agent-tool-mcp-gateway`, `multi-channel-agent-gateway`, `agent-ui-tui-desktop`, `agent-distribution-release` |
-| Lime-like desktop GUI | `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-runtime-cli`, `agent-skills-plugins`, `agent-distribution-release` |
+| Desktop GUI with native bridge | `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-runtime-cli`, `agent-skills-plugins`, `agent-distribution-release` |
 | Standards/documentation site with schemas and examples | `agent-distribution-release`, optionally `agent-sdk-api` if schemas/CLI are consumed |
 
 ## Classification roles

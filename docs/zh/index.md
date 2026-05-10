@@ -15,6 +15,7 @@ Agent QC 定义 Agent 项目如何分类、测试、留证、判定和报告。
 - [规范](./specification)
 - [快速开始](./authoring/quickstart)
 - [最佳实践](./authoring/best-practices)
+- [测试手段与组合](./authoring/test-techniques-and-compositions)
 - [项目分类](./authoring/project-classification)
 - [门禁矩阵](./authoring/gate-matrix)
 - [交互表面测试](./authoring/interaction-surface-testing)
@@ -24,4 +25,4 @@ Agent QC 定义 Agent 项目如何分类、测试、留证、判定和报告。
 
 ## 这版指导补强了什么
 
-Agent QC 不是 Lime 专用标准。Lime 只是一个桌面 GUI 案例。当前指导还参考了 Agent UI、Agent Knowledge、Codex、Claude Code 本地快照、OpenClaw、Hermes Agent、Playwright、Vitest、pytest 和 Agent Skills 的文档风格。
+Agent QC 是标准协议，不是单一产品检查表。当前指导参考了 Agent UI、Agent Knowledge、Codex、Claude Code 本地快照、OpenClaw、Hermes Agent、Playwright、Vitest、pytest 和 Agent Skills 的文档风格。最新 authoring 指导补充了快照、冒烟、黑盒、白盒、灰盒、runtime、UI、skills 和高级组合配方。

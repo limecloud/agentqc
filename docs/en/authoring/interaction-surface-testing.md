@@ -117,7 +117,7 @@ Required checks:
 Project signals:
 
 - OpenClaw separates unit/integration, e2e, live, UI, TUI, channel, extension, contract, performance, Docker, and QA Lab lanes. Its `ui` package uses browser-playwright-style coverage, while `extensions/qa-lab` includes scenario catalogs, web runtime, browser runtime, suite summary JSON, and report tests.
-- Lime has React/Vite component tests for workspace, provider settings, skills, browser runtime panels, MCP tools, resources, settings, artifacts, and chat shell; product GUI proof still requires GUI smoke or Playwright evidence.
+- Desktop/WebView agents often combine component tests for workspace, settings, skills, browser panels, tools, resources, artifacts, and chat shells; product GUI proof still requires shell smoke or Playwright/browser evidence.
 - Hermes has a Vite/React `web` dashboard package and backend browser/tool tests around browser supervisor, CDP, Camofox, SSRF, and web providers.
 
 Common anti-patterns:
@@ -142,7 +142,7 @@ Required checks:
 
 Project signals:
 
-- Lime makes this boundary explicit: GUI deliverability is not proven by `lint`, `typecheck`, or unit tests alone. Its desktop pass combines `verify:local`, `test:contracts`, `verify:gui-smoke`, `bridge:health`, workspace readiness, browser-runtime smoke, and Playwright continuation for real flows.
+- Mature desktop agents make this boundary explicit: GUI deliverability is not proven by `lint`, `typecheck`, or unit tests alone. A strong desktop pass combines local verification, command contracts, GUI smoke, bridge health, workspace readiness, browser-runtime smoke, and Playwright/browser evidence for real flows.
 - OpenClaw desktop/launcher-style release paths use install smoke, Docker smoke, platform lanes, control UI tests, and release checks rather than a single visual test.
 
 Common anti-patterns:
@@ -166,7 +166,7 @@ Required checks:
 Project signals:
 
 - Hermes has browser supervisor, browser hardening, local SSRF, CDP override, browser console, Camofox state, and web provider contract tests.
-- Lime has browser runtime and site adapter smokes, plus Playwright MCP continuation guidance for user-visible flows.
+- Browser-runtime products should keep site-adapter smokes plus Playwright/browser continuation evidence for user-visible flows.
 - OpenClaw QA Lab contains browser runtime and web runtime tests for scenario execution and report surfaces.
 
 Common anti-patterns:
@@ -232,7 +232,7 @@ Common anti-patterns:
 | TUI runtime like Claude Code snapshot | `tui`, `cli-stream` for stream adapters | remote permission contract, reconnect/cancel, SDK stream |
 | Multi-channel gateway like OpenClaw | `channel-ui`, `webui`, `cli-stream` | channel contracts, live provider, Docker/install, secret redaction |
 | Background agent like Hermes | `cli-stream`, `tui`, `browser-automation`, channel UI if gateway-enabled | scheduler stress, checkpoint/recovery, browser safety, Docker smoke |
-| Desktop GUI like Lime | `desktop-gui`, `webui` for WebView panels, `browser-automation` if browser runtime exists | bridge contract, native command registration, workspace readiness, Playwright trace |
+| Desktop GUI with native bridge | `desktop-gui`, `webui` for WebView panels, `browser-automation` if browser runtime exists | bridge contract, native command registration, workspace readiness, Playwright trace |
 | Eval suite / QA lab | `eval-ui`, `webui` if dashboard exists | semantic eval, reviewer loop, baseline diff, export schema |
 
 ## Waiver rules

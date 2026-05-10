@@ -1,9 +1,9 @@
 ---
-title: Specification
+title: v0.5.0 specification
 description: Agent QC v0.5.0 portable draft specification.
 ---
 
-# Specification
+# v0.5.0 specification
 
 Agent QC v0.5.0 is a portable draft standard for evidence-driven quality control of Agent projects.
 
@@ -29,16 +29,16 @@ The latest standard is split by use:
 
 | Page | Purpose |
 | --- | --- |
-| [Quickstart](./authoring/quickstart) | fastest path to a QC plan |
-| [Best practices](./authoring/best-practices) | authoring rules and anti-patterns |
-| [Test techniques and compositions](./authoring/test-techniques-and-compositions) | snapshots, smoke tests, black-box, white-box, runtime/UI/skills testing, and advanced evidence braids |
-| [Project classification](./authoring/project-classification) | profile taxonomy and mixed-profile rules |
-| [Gate matrix](./authoring/gate-matrix) | profile/surface/risk to gate mapping |
-| [Interaction surface testing](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
-| [Evidence contract](./contracts/evidence-contract) | portable evidence, verdict, waiver fields |
-| [Performance and reliability metrics](./contracts/performance-and-reliability-metrics) | timing, flake, cleanup, scheduler, release metrics |
-| [Flow and taxonomy](./reference/flow-and-taxonomy) | complete lifecycle and taxonomy reference |
-| [Star project testing systems](./reference/star-project-testing-systems) | representative Agent project testing-system case studies |
+| [Quickstart](../../authoring/quickstart) | fastest path to a QC plan |
+| [Best practices](../../authoring/best-practices) | authoring rules and anti-patterns |
+| [Test techniques and compositions](../../authoring/test-techniques-and-compositions) | snapshots, smoke tests, black-box, white-box, runtime/UI/skills testing, and advanced evidence braids |
+| [Project classification](../../authoring/project-classification) | profile taxonomy and mixed-profile rules |
+| [Gate matrix](../../authoring/gate-matrix) | profile/surface/risk to gate mapping |
+| [Interaction surface testing](../../authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
+| [Evidence contract](../../contracts/evidence-contract) | portable evidence, verdict, waiver fields |
+| [Performance and reliability metrics](../../contracts/performance-and-reliability-metrics) | timing, flake, cleanup, scheduler, release metrics |
+| [Flow and taxonomy](../../reference/flow-and-taxonomy) | complete lifecycle and taxonomy reference |
+| [Star project testing systems](../../reference/star-project-testing-systems) | representative Agent project testing-system case studies |
 
 ## Project profiles
 

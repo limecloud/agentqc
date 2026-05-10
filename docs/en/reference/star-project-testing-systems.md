@@ -1,6 +1,6 @@
 ---
 title: Star project testing systems
-description: Detailed testing-system case studies for Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+description: Detailed testing-system case studies for representative Agent projects.
 ---
 
 # Star project testing systems
@@ -17,7 +17,7 @@ This reference explains how several strong Agent projects organize testing. Agen
 
 ## Agent UI and Agent Skills lessons applied here
 
-This page now treats Agent UI as a primary reference for surface testing, not just Lime as an example. The reusable lessons are:
+This page treats Agent UI as a primary reference for surface testing. The reusable lessons are:
 
 - UI/TUI/WebUI/desktop states must be runtime-backed projections, not independent truth.
 - Final answer text must stay separate from reasoning, tool progress, approvals, artifacts, evidence, diagnostics, and team events.
@@ -47,7 +47,6 @@ Official framework docs are used as examples of evidence shape, not as mandatory
 | Claude Code local snapshot | visible SDK stream adapters and commands | visible Ink surface and command views | not enough metadata to claim | no | remote bridge/control surfaces | no | no | not enough metadata to claim |
 | OpenClaw | strong gateway/CLI/router tests | dedicated `tui` command and TUI lanes | strong control UI and QA Lab web runtime | platform release paths, mac/mobile scripts | QA Lab browser runtime, Docker/browser lanes | strong channel contracts, QR, Android/iOS, live transports | strong QA Lab scenarios/reports | strong Docker/install/release checks |
 | Hermes Agent | strong Python CLI/gateway tests | strong `ui-tui` Vitest package | Vite/React dashboard package | no native shell in inspected repo | strong browser supervisor/CDP/Camofox/SSRF tests | strong gateway/channel tests | release notes and web/dashboard surfaces | Docker, uv lock, OSV, package checks |
-| Lime | runtime command and bridge contracts | no primary TUI | WebView/component panels | strong Tauri desktop GUI smoke | browser runtime/site adapter smoke and Playwright continuation | no primary channel gateway | product/evidence reports | app version, Tauri/Rust/package checks |
 
 Agent QC conclusion: a project can be "well tested" in one surface and still under-tested in another. Do not collapse all UI proof into one boolean.
 
@@ -311,49 +310,6 @@ Hermes shows why background agents need their own gate family:
 - credential-shaped environment variables must be blanked or scoped in tests.
 
 Agent QC rule: a background scheduler pass should include deterministic clock/env settings, checkpoint evidence, and cleanup evidence.
-
-## Lime: desktop GUI plus Tauri bridge plus browser runtime
-
-Local source: `/Users/coso/Documents/dev/ai/aiclientproxy/lime`.
-
-### Product shape
-
-Lime is a desktop GUI Agent product:
-
-- Tauri shell with frontend WebView;
-- DevBridge and browser fallback mock layer;
-- workspace and resource manager UI;
-- browser runtime panels and site adapters;
-- skills/capability drafts, MCP panels, provider settings, memory, artifacts, chat shell;
-- Rust command surface and command contract catalog.
-
-### How tests are organized
-
-| Layer | Concrete signals | Agent QC interpretation |
-| --- | --- | --- |
-| Unified local gate | `npm run verify:local`, `verify:local:full` | aggregate local readiness |
-| Contract gate | `test:contracts`, generated runtime clients, command catalog, DevBridge/mocks | `contract-protocol` |
-| GUI smoke | `verify:gui-smoke`, `bridge:health`, workspace-ready smoke, browser-runtime smoke | desktop `ui-interaction` |
-| Component/UI tests | workspace, browser runtime, settings, skills, MCP, resources, artifacts, chat shell `*.test.tsx` | WebView component evidence |
-| Product E2E | product/knowledge E2E and Playwright MCP continuation guidance | user-visible flow evidence |
-| Rust/Tauri | targeted Cargo tests, Rust lint/test scripts | backend command evidence |
-| Version/release | app version consistency checks across package/Tauri/Cargo files | distribution consistency |
-
-### GUI details worth standardizing
-
-Lime's rule is explicit: GUI product readiness is not proven by `lint`, `typecheck`, or unit tests alone.
-
-A Lime-style desktop pass should prove:
-
-- shell starts or is reused through the project entrypoint;
-- DevBridge is healthy before the page is judged;
-- default workspace is prepared;
-- command contracts are synchronized across frontend calls, Rust registrations, governance catalog, DevBridge, and mocks;
-- browser runtime/site adapter panels do not hide bridge failures behind mocks;
-- user-visible changes have stable regression tests or Playwright evidence;
-- console state and screenshot/trace are kept for GUI smoke failures.
-
-Agent QC rule: desktop GUI gates should name shell, bridge, workspace, mock/real backend, screenshot/trace, console state, and OS.
 
 ## Cross-project extraction
 

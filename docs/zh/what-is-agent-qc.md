@@ -19,9 +19,6 @@ Agent QC 为这些风险提供共同语言：
 6. 用明确 verdicts 判断 pass/fail；
 7. 报告 remaining risk、blockers、exhausted attempts、reviews 和 waivers。
 
-## Lime 是 profile，不是标准本体
-
-Lime 仍然是重要案例，因为它是 GUI desktop Agent product。但 Agent QC 覆盖更广：Codex-like runtime CLIs、Claude Code-like TUI runtimes、OpenClaw-like multi-channel gateways、Hermes-like background/browser agents、SDKs、tool servers、skills、plugins、release packages 和 eval suites 都需要 QC。
 
 ## 为什么 Agent 项目需要分类
 
@@ -33,7 +30,7 @@ Rust runtime agent 与 Telegram gateway、TUI、browser automation harness 或 V
 - Claude Code-style TUI runtime：Ink rendering、remote permissions、WebSocket/control streams、SDK adapters、plugin/skill reload visibility。
 - OpenClaw-style gateway：channel contracts、secrets、provider live lanes、QA Lab reports、WebUI/browser evidence、Docker/install smoke。
 - Hermes-style background agent：pytest markers、cron、gateway、browser safety、concurrency stress、Docker smoke、credential isolation。
-- Lime-style desktop GUI：local validation、command contracts、DevBridge readiness、GUI smoke、Playwright product flow。
+- Desktop GUI agent：native bridge contracts、workspace/session readiness、GUI smoke、browser evidence、release checks。
 
 ## Runtime-backed surfaces
 

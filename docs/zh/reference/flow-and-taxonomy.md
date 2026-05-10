@@ -183,7 +183,7 @@ Agent QC 应说明每个事实由谁拥有，而不是让报告拥有一切。
 2. Claude Code-like remote permission request，带 WebSocket/control transcript 和 TUI prompt。
 3. OpenClaw-like channel webhook replay，带 media fixture 和 redacted credential policy。
 4. Hermes-like scheduler restart，带 deterministic time、checkpoint 和 duplicate-work proof。
-5. Lime-like desktop GUI change，带 bridge health、workspace readiness、screenshot 和 command-contract proof。
+5. Desktop GUI native-bridge change，带 bridge health、workspace readiness、screenshot 和 command-contract proof。
 6. Browser automation flow，带 DOM/a11y、screenshot、console/network 和 cleanup evidence。
 7. Release smoke，带 package manifest、clean install 和 platform note。
 8. Semantic eval regression，带 rubric、judge output、baseline delta 和 reviewer note。

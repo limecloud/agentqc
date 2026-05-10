@@ -19,9 +19,6 @@ Agent QC gives these risks a shared vocabulary:
 6. judge pass/fail with explicit verdicts;
 7. report remaining risk, blockers, exhausted attempts, reviews, and waivers.
 
-## Lime is a profile, not the standard
-
-Lime remains an important example because it is a GUI desktop Agent product. But Agent QC is broader: Codex-like runtime CLIs, Claude Code-like TUI runtimes, OpenClaw-like multi-channel gateways, Hermes-like background/browser agents, SDKs, tool servers, skills, plugins, release packages, and eval suites all need QC.
 
 ## Why Agent projects need classification
 
@@ -33,7 +30,7 @@ Examples:
 - Claude Code-style TUI runtime: Ink rendering, remote permissions, WebSocket/control streams, SDK adapters, plugin/skill reload visibility.
 - OpenClaw-style gateway: channel contracts, secrets, provider live lanes, QA Lab reports, WebUI/browser evidence, Docker/install smoke.
 - Hermes-style background agent: pytest markers, cron, gateway, browser safety, concurrency stress, Docker smoke, credential isolation.
-- Lime-style desktop GUI: local validation, command contracts, DevBridge readiness, GUI smoke, Playwright product flow.
+- Desktop GUI agent: native bridge contracts, workspace/session readiness, GUI smoke, browser evidence, release checks.
 
 ## Runtime-backed surfaces
 

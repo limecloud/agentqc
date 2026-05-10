@@ -1,6 +1,6 @@
 ---
 title: Agent project patterns
-description: Case-study testing patterns from Codex, OpenClaw, Claude Code snapshot, Hermes Agent, and Lime.
+description: Case-study testing patterns from Codex, OpenClaw, Claude Code snapshot, Hermes Agent, and other Agent project shapes.
 ---
 
 # Agent project patterns
@@ -66,20 +66,6 @@ Observed testing shape:
 Surface coverage: `cli-stream`, `tui`, `browser-automation`, `channel-ui`, and scheduler evidence.
 
 Agent QC profile mapping: `agent-runtime-cli`, `background-agent-scheduler`, `multi-channel-agent-gateway`, `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-distribution-release`, `agent-skills-plugins`.
-
-## Lime-style desktop GUI agent
-
-Local source: `/Users/coso/Documents/dev/ai/aiclientproxy/lime`.
-
-Observed testing shape:
-
-- Lime treats GUI product readiness as distinct from type/lint/unit pass.
-- Required gates include `verify:local`, `test:contracts`, `verify:gui-smoke`, bridge health checks, workspace-ready smoke, browser-runtime smoke, and Playwright continuation when user-visible behavior changes.
-- Command changes must synchronize frontend calls, Rust handlers, governance catalog, DevBridge, and mocks.
-
-Surface coverage: `desktop-gui`, WebView `webui`, `browser-automation`, and bridge/command transcripts.
-
-Agent QC profile mapping: `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-tool-mcp-gateway`, `agent-skills-plugins`.
 
 ## Cross-case lessons
 

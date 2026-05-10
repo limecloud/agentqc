@@ -1,6 +1,6 @@
 {
   "name": "agentqc-standard",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "description": "Portable Agent QC standard for evidence-driven testing of agent runtimes, tools, gateways, UI, skills, SDKs, and distributions.",
   "homepage": "https://limecloud.github.io/agentqc/",

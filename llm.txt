@@ -14,6 +14,7 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [Specification](https://limecloud.github.io/agentqc/en/specification)
 - [Quickstart](https://limecloud.github.io/agentqc/en/authoring/quickstart)
 - [Best practices](https://limecloud.github.io/agentqc/en/authoring/best-practices)
+- [Test techniques and compositions](https://limecloud.github.io/agentqc/en/authoring/test-techniques-and-compositions)
 - [Project classification](https://limecloud.github.io/agentqc/en/authoring/project-classification)
 - [Gate matrix](https://limecloud.github.io/agentqc/en/authoring/gate-matrix)
 - [Interaction surface testing](https://limecloud.github.io/agentqc/en/authoring/interaction-surface-testing)
@@ -32,7 +33,6 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [Claude Code TUI runtime](https://limecloud.github.io/agentqc/en/examples/claudecode-tui-runtime)
 - [OpenClaw channel gateway](https://limecloud.github.io/agentqc/en/examples/openclaw-channel-gateway)
 - [Hermes background agent](https://limecloud.github.io/agentqc/en/examples/hermes-background-agent)
-- [Lime desktop GUI](https://limecloud.github.io/agentqc/en/examples/lime-desktop-gui)
 - [qcloop batch](https://limecloud.github.io/agentqc/en/examples/qcloop-batch)
 
 ## Reference
@@ -54,11 +54,13 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [Claude Code QC plan](https://limecloud.github.io/agentqc/examples/claudecode-qc-plan.json)
 - [OpenClaw QC plan](https://limecloud.github.io/agentqc/examples/openclaw-qc-plan.json)
 - [Hermes QC plan](https://limecloud.github.io/agentqc/examples/hermes-qc-plan.json)
-- [Lime QC plan](https://limecloud.github.io/agentqc/examples/lime-qc-plan.json)
 - [qcloop job request](https://limecloud.github.io/agentqc/examples/qcloop-job-request.json)
 
 ## Versions
 
+- [v0.5.0 overview](https://limecloud.github.io/agentqc/en/versions/v0.5.0/overview)
+- [v0.5.0 specification](https://limecloud.github.io/agentqc/en/versions/v0.5.0/specification)
+- [v0.5.0 changelog](https://limecloud.github.io/agentqc/en/versions/v0.5.0/changelog)
 - [v0.4.0 overview](https://limecloud.github.io/agentqc/en/versions/v0.4.0/overview)
 - [v0.4.0 specification](https://limecloud.github.io/agentqc/en/versions/v0.4.0/specification)
 - [v0.4.0 changelog](https://limecloud.github.io/agentqc/en/versions/v0.4.0/changelog)

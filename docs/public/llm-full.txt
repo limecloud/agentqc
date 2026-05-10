@@ -26,9 +26,6 @@ Agent QC gives these risks a shared vocabulary:
 6. judge pass/fail with explicit verdicts;
 7. report remaining risk, blockers, exhausted attempts, reviews, and waivers.
 
-## Lime is a profile, not the standard
-
-Lime remains an important example because it is a GUI desktop Agent product. But Agent QC is broader: Codex-like runtime CLIs, Claude Code-like TUI runtimes, OpenClaw-like multi-channel gateways, Hermes-like background/browser agents, SDKs, tool servers, skills, plugins, release packages, and eval suites all need QC.
 
 ## Why Agent projects need classification
 
@@ -40,7 +37,7 @@ Examples:
 - Claude Code-style TUI runtime: Ink rendering, remote permissions, WebSocket/control streams, SDK adapters, plugin/skill reload visibility.
 - OpenClaw-style gateway: channel contracts, secrets, provider live lanes, QA Lab reports, WebUI/browser evidence, Docker/install smoke.
 - Hermes-style background agent: pytest markers, cron, gateway, browser safety, concurrency stress, Docker smoke, credential isolation.
-- Lime-style desktop GUI: local validation, command contracts, DevBridge readiness, GUI smoke, Playwright product flow.
+- Desktop GUI agent: native bridge contracts, workspace/session readiness, GUI smoke, browser evidence, release checks.
 
 ## Runtime-backed surfaces
 
@@ -61,14 +58,13 @@ Evidence can be a test report, command log, CI URL, qcloop attempt, verifier rou
 A model's final prose is never enough by itself.
 
 
-
 # Specification
 
 Source: https://limecloud.github.io/agentqc/en/specification
 
 # Specification
 
-Agent QC v0.4.0 is a portable draft standard for evidence-driven quality control of Agent projects.
+Agent QC v0.5.0 is a portable draft standard for evidence-driven quality control of Agent projects.
 
 An Agent project can be a runtime CLI, SDK, tool server, MCP/ACP gateway, multi-channel bot, GUI/TUI/desktop client, skills or plugin ecosystem, background scheduler, distribution package, or evaluation suite. Agent QC does not assume one product shape. It starts by classifying the project profile and then selects gates that match its risk.
 
@@ -81,7 +77,7 @@ Agent QC standardizes:
 3. Gate taxonomy from static checks to live provider and release smoke.
 4. Evidence-backed pass/fail semantics.
 5. qcloop-compatible batch QC for repeated independent cases.
-6. Case-study mapping for projects such as Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+6. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
 
@@ -94,13 +90,14 @@ The latest standard is split by use:
 | --- | --- |
 | [Quickstart](./authoring/quickstart) | fastest path to a QC plan |
 | [Best practices](./authoring/best-practices) | authoring rules and anti-patterns |
+| [Test techniques and compositions](./authoring/test-techniques-and-compositions) | snapshots, smoke tests, black-box, white-box, runtime/UI/skills testing, and advanced evidence braids |
 | [Project classification](./authoring/project-classification) | profile taxonomy and mixed-profile rules |
 | [Gate matrix](./authoring/gate-matrix) | profile/surface/risk to gate mapping |
 | [Interaction surface testing](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
 | [Evidence contract](./contracts/evidence-contract) | portable evidence, verdict, waiver fields |
 | [Performance and reliability metrics](./contracts/performance-and-reliability-metrics) | timing, flake, cleanup, scheduler, release metrics |
 | [Flow and taxonomy](./reference/flow-and-taxonomy) | complete lifecycle and taxonomy reference |
-| [Star project testing systems](./reference/star-project-testing-systems) | Codex, Claude Code, OpenClaw, Hermes, and Lime case studies |
+| [Star project testing systems](./reference/star-project-testing-systems) | representative Agent project testing-system case studies |
 
 ## Project profiles
 
@@ -150,6 +147,8 @@ A `ui-interaction` gate SHOULD name one of these surfaces. A pass without surfac
 
 ## Gate families
 
+Gate families define the quality boundary. They are implemented with concrete techniques such as static checks, white-box unit tests, property/fuzz tests, golden transcripts, snapshots, contract tests, fake integrations, black-box smoke, runtime E2E, surface E2E, replay/regression, stress/chaos, security/adversarial tests, semantic evals, and release install smoke.
+
 | Family | Purpose | Evidence examples |
 | --- | --- | --- |
 | `static` | format, lint, type, dependency and policy hygiene | command logs, SARIF, lockfile check output |
@@ -194,14 +193,13 @@ A `qc_case` can become a qcloop `item_value`. qcloop `attempt` maps to `qc_run`;
 Use qcloop when cases are repeated, independent, and verifier-friendly. Do not use qcloop to replace required project gates or to hide live-provider risk.
 
 
-
 # Quickstart
 
 Source: https://limecloud.github.io/agentqc/en/authoring/quickstart
 
 # Quickstart
 
-Use this flow when an agent, maintainer, CI job, or qcloop run needs to test an Agent project. The flow is portable: Lime is only one possible case study.
+Use this flow when an agent, maintainer, CI job, or qcloop run needs to test an Agent project. The flow is portable across runtime, UI, gateway, scheduler, skill, eval, and release product shapes.
 
 ## 1. Define the QC scope
 
@@ -213,7 +211,7 @@ Examples:
 - "A Claude Code-like TUI remote-permission change."
 - "An OpenClaw-like channel gateway auth/media change."
 - "A Hermes-like scheduler restart fix."
-- "A Lime-like desktop GUI bridge change."
+- "A desktop GUI native-bridge change."
 
 The scope decides which claims the report may make. Do not let a broad report imply untested surfaces.
 
@@ -365,16 +363,15 @@ A report is not complete when it says only "tests passed" or "the agent checked 
 ```
 
 
-
 # Best Practices
 
 Source: https://limecloud.github.io/agentqc/en/authoring/best-practices
 
 # Best practices
 
-Use this page as the authoring checklist for Agent QC plans. It adapts the runtime-first style of Agent UI, the progressive-disclosure style of Agent Skills, and testing patterns observed in Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+Use this page as the authoring checklist for Agent QC plans. It adapts the runtime-first style of Agent UI, the progressive-disclosure style of Agent Skills, and testing patterns observed across runtime CLIs, TUI agents, multi-channel gateways, background/browser agents, desktop clients, and eval systems.
 
-Agent QC is a standard, not a Lime-only checklist. Lime is one desktop GUI case study.
+Agent QC is a standard protocol, not a single-product checklist.
 
 ## Start from owned risk
 
@@ -461,7 +458,7 @@ Use explicit statuses instead of guessing:
 - `needs-review` when evidence exists but the judgment is semantic, safety-sensitive, or disputed;
 - `waived` only when an accountable owner accepts a gap with reason and expiry.
 
-Do not show `passed` because a UI looked healthy if bridge/runtime evidence is missing. This is the Lime GUI lesson and it applies to all Agent UI/TUI/WebUI projects.
+Do not show `passed` because a UI looked healthy if bridge/runtime evidence is missing. This applies to all Agent UI/TUI/WebUI projects.
 
 ## Prefer behavior-level scenarios
 
@@ -511,7 +508,7 @@ Traceability levels:
 | Level | Use |
 | --- | --- |
 | Public specification | Agent Skills, Playwright, Vitest, pytest, protocol docs |
-| Local case study | Codex, Claude Code local snapshot, OpenClaw, Hermes, Lime |
+| Local case study | Codex, Claude Code local snapshot, OpenClaw, Hermes, desktop GUI and release examples |
 | Project-specific rule | a concrete product's scripts, CI, workflow, or AGENTS file |
 | Evidence artifact | command output, trace, screenshot, transcript, report |
 
@@ -545,7 +542,7 @@ Before publishing a QC plan or report, verify:
 
 | Question | Required answer |
 | --- | --- |
-| Is Lime only a case study? | Yes; profiles apply to all Agent project types. |
+| Is this standard tied to one product? | No; profiles apply to all Agent project types. |
 | Are project profiles declared? | One or more profiles are named. |
 | Are touched surfaces named? | User-visible cases include `qc_case.surface`. |
 | Are gates separated? | Deterministic, runtime, surface, live, release, and eval lanes are distinct. |
@@ -554,6 +551,313 @@ Before publishing a QC plan or report, verify:
 | Are waivers accountable? | Waiver owner, reason, scope, and expiry are present. |
 | Can qcloop repeat it? | Repeated cases have stable item values and verifier rubrics. |
 
+
+# Test Techniques And Compositions
+
+Source: https://limecloud.github.io/agentqc/en/authoring/test-techniques-and-compositions
+
+# Test techniques and compositions
+
+Agent QC gate families describe **why** a boundary must be checked. Test techniques describe **how** evidence is produced. Strong Agent QC plans combine techniques instead of relying on one broad command.
+
+Use this page when a plan says only "run tests" or "do UI smoke" and you need a richer, inspectable strategy for Agent runtime, Agent UI, skills/plugins, browser automation, channel gateways, or release packages.
+
+## Evidence braid rule
+
+A high-confidence Agent test usually braids five strands:
+
+```text
+white-box invariant -> protocol/contract -> black-box run -> surface artifact -> cleanup/review
+```
+
+Not every case needs all five, but every pass must state which strands are present and which claims remain unproven.
+
+## Technique taxonomy
+
+| Technique | What it proves | Required evidence | What it does not prove alone |
+| --- | --- | --- | --- |
+| Static/policy check | Formatting, types, import boundaries, generated drift, forbidden APIs | command log, SARIF or lint report, tool version | runtime behavior or UX |
+| White-box unit test | Reducers, parsers, serializers, permission decisions, state machines | test report, fixture ids, assertion diffs | packaged app or user-visible behavior |
+| Property/fuzz/metamorphic test | Invariants over large or generated input sets | seed, corpus, minimized failure, invariant text | exact user flow |
+| Golden transcript | Stable CLI/runtime/protocol/event output shape | transcript file, update diff, dynamic-field normalization | visual layout or live provider quality |
+| Snapshot test | Stable rendered output or serialized object | snapshot diff, viewport/device, update review | correctness of the source runtime fact |
+| Contract/protocol test | Schema, tool declarations, SDK/API, manifest, transport behavior | schema diff, fake server transcript, generated artifact check | actual live provider behavior |
+| Fake integration | Adapter/runtime behavior against a controlled local service | fake server log, request/response refs, fixture version | real provider drift |
+| Black-box smoke | Minimal delivered behavior through public entrypoint | command/browser/app/channel log, exit status, screenshot when visible | deep edge cases |
+| Runtime E2E | Agent loop, tools, permissions, resume, cleanup | runtime transcript, state snapshot, side-effect proof | UI projection unless linked |
+| Surface E2E | User/operator can see and control the behavior | screenshot/trace/terminal frame, key/click/message sequence | underlying runtime truth unless linked |
+| Replay/regression | Past failure remains fixed | replay fixture, old bug id, expected failure mode | new unknown failures |
+| Stress/concurrency/chaos | Race, lease, retry, cancellation, long-running resilience | worker timeline, seed/config, duration, cleanup | semantic answer quality |
+| Security/adversarial | Permission, prompt injection, path, SSRF, secret, policy boundaries | attack fixture, denial transcript, side-effect check | happy path usability |
+| Semantic eval | Output quality, grounding, tool choice, policy adherence | dataset, rubric, model/judge, baseline delta | deterministic code correctness |
+| Release/install smoke | Shipped artifact can install and run outside the source tree | package manifest, clean install, Docker/OS log, version output | source tree test coverage |
+
+## Black-box, white-box, and gray-box
+
+| Mode | Agent QC use | Best targets | Evidence pattern |
+| --- | --- | --- | --- |
+| White-box | Prove internal invariants before a user flow exists | event reducers, permission policy, tool args sanitizer, stream parser, scheduler lease | unit/property report plus fixture ids |
+| Black-box | Prove delivered behavior through public entrypoint | CLI command, SDK call, TUI flow, WebUI route, desktop shell, webhook, package install | command or interaction transcript plus exit/status and artifacts |
+| Gray-box | Combine public behavior with internal instrumentation | runtime UI, browser agent, channel gateway, background scheduler | black-box run plus protocol/runtime transcript and state snapshot |
+
+Agent projects need gray-box testing more often than ordinary apps because the visible output can be plausible while the runtime state is wrong.
+
+## Snapshot standards
+
+Snapshots are useful only when they are scoped and reviewable.
+
+| Snapshot kind | Use it for | Must include |
+| --- | --- | --- |
+| Text/golden transcript | CLI output, JSONL/NDJSON stream, model event normalization | stable fixture, exit status, dynamic id redaction |
+| Terminal snapshot | TUI frame, approval overlay, footer/status row, composer | terminal size, key sequence, ANSI/Unicode policy |
+| DOM/ARIA snapshot | WebUI accessibility tree, browser-mode component state | route, viewport/device, locator or role assertion |
+| Screenshot/video | GUI/desktop/browser/channel report surface | action sequence, OS/browser/device, console/network note |
+| Protocol/schema snapshot | generated schema, SDK wire contract, MCP/tool declaration | generator command, diff, compatibility note |
+| Runtime state snapshot | session/thread/turn/tool/artifact/scheduler state | correlation ids, timestamp policy, cleanup note |
+| Package manifest snapshot | tarball/image/install contents | version, platform, file allow/deny policy |
+
+Snapshot rules:
+
+- Normalize timestamps, random ids, temp paths, and provider-specific text before snapshotting.
+- Review snapshot updates as product changes, not as mechanical noise.
+- Pair UI snapshots with runtime/protocol transcripts when the claim is more than visual layout.
+- Pair protocol snapshots with fake integration when the claim is more than schema shape.
+- Keep one focused snapshot per behavior; avoid giant snapshots that hide meaningful diffs.
+
+Codex-style TUI testing shows the value of terminal snapshots for approval overlays, footer modes, picker widths, request forms, narrow terminal heights, and diff/code blocks. Hermes-style TUI testing adds terminal mechanics such as OSC52, virtual history, Unicode, streaming markdown, queue state, and session lifecycle. Claude Code-style local source inspection shows that Ink TUI, remote permission, WebSocket control, and SDK stream adapters need snapshot plus control transcript, not snapshot alone.
+
+## Smoke test ladder
+
+Smoke tests are fast confidence checks. They do not replace runtime, contract, or surface evidence.
+
+| Smoke level | Purpose | Examples | Exit rule |
+| --- | --- | --- | --- |
+| Import/build smoke | Prove package imports or builds | `cargo test -p crate`, `vitest run`, `python -m package --help` | fail fast on syntax/link/import break |
+| Runtime smoke | Prove the agent loop starts with fake/local provider | `agent exec "hello"`, fake tool call, MCP list tools | transcript shows terminal status and cleanup |
+| Surface smoke | Prove visible shell can open and reflect runtime state | TUI first frame, WebUI route, desktop bridge health, channel webhook replay | surface artifact plus runtime backing |
+| Release smoke | Prove artifact works outside source tree | clean install, Docker start, package help/version | install log and manifest match release |
+| Canary/live smoke | Prove real provider/channel still works | opt-in provider call, live channel ping, model profile probe | redacted transcript, budget, credential scope |
+
+Use smoke for broad detection and then use targeted tests for diagnosis.
+
+## Testing Agent runtime
+
+Runtime tests should treat the agent as a state machine, not as a text generator.
+
+Minimum runtime invariants:
+
+| Runtime area | Required cases | Evidence |
+| --- | --- | --- |
+| Turn lifecycle | accepted, queued, running, completed, failed, cancelled | event transcript, terminal status, exit code |
+| Stream shape | partial text, reasoning/tool events, final text, terminal marker | JSONL/SSE fixture, parser report, golden transcript |
+| Tool execution | declaration, argument validation, progress, result, error | tool id correlation, fake tool transcript, side-effect check |
+| Permission/HITL | allow, deny, edit/input, timeout, cancel, reconnect | approval request/response transcript, surface frame |
+| Files/processes | cwd, sandbox, patch/write, subprocess tree, cleanup | command log, path fixture, orphan-process proof |
+| Resume/persistence | old session, crash/restart, checkpoint, artifact refs | state snapshot, replay transcript, cleanup note |
+| Scheduler/parallelism | lease, retry, fanout/fanin, duplicate-work prevention | deterministic clock, worker timeline, stress/chaos result |
+| Credential/provider scope | fake by default, live opt-in, redaction, budget | env scope, redacted request/response, waiver if missing |
+
+Runtime anti-patterns:
+
+- asserting only final assistant text;
+- hiding provider calls inside default unit tests;
+- testing tool declaration but not invocation and failure;
+- testing success but not deny/cancel/abort/resume;
+- omitting cleanup proof for subprocesses, browsers, workers, or temp state.
+
+## Testing Agent UI
+
+Agent UI tests must prove that visible surfaces are runtime-backed projections.
+
+| UI area | What to test | Strong evidence |
+| --- | --- | --- |
+| Composer/input | submit, queued input, steer-current, attachments, paste, slash commands | key/click sequence, runtime input id, snapshot |
+| Status | first status before text, retrying, blocked, failed, done | runtime event order, UI frame, timing metric |
+| Tool cards | safe arg summary, progress, result, error, offload refs | tool id correlation, screenshot/terminal snapshot, transcript |
+| Approval/HITL | pending, allow, deny, edit, timeout, cancellation | action request/response transcript, keyboard/a11y proof |
+| Artifacts | create, diff, preview, export, failed save | artifact id/path, UI snapshot, export log |
+| Evidence/replay | trace links, report export, old-session hydration | evidence ids, report screenshot, hydration log |
+| Team/background | queued worker, running worker, failed/retried worker, handoff | delegation graph, task card snapshot, worker transcript |
+| Empty/stale states | missing facts, bridge unavailable, reconnecting, blocked | safe fallback frame, console/network log, runtime state ref |
+
+Surface-specific upgrades:
+
+- TUI: multi-viewport, ANSI/Unicode width, Ctrl-C vs Esc semantics, resize, clipboard/OSC52 if supported.
+- WebUI: browser trace, DOM/ARIA snapshot, console/network, reload/resume, keyboard/a11y.
+- Desktop GUI: app shell start, bridge health, workspace readiness, native command contract, OS note.
+- Browser automation: screenshot plus DOM/a11y, console/network, unsafe navigation/SSRF fixtures, orphan cleanup.
+- Channel/mobile: webhook replay, media fixture, auth proof, redacted transcript, device/emulator logs.
+
+## Testing skills and plugins
+
+Agent Skills-style systems need their own lifecycle tests. The standard lesson is progressive disclosure: a skill is a small package with metadata, instructions, optional scripts/assets, and evaluation evidence. Testing should follow that shape.
+
+| Skill/plugin phase | Tests | Evidence |
+| --- | --- | --- |
+| Manifest/frontmatter | required fields, name/description, when-to-use, paths/hooks if supported | schema report, parse failure fixtures |
+| Discovery/loading | user/project/bundled precedence, symlink canonicalization, duplicate names, disabled settings | loader transcript, fixture directory tree |
+| Context budget | frontmatter-only routing, lazy loading, token/size limits | token estimate, selected skill list, rejection evidence |
+| Scripts/assets | script existence, executable bit, relative path resolution, clean temp dir, no raw secrets | dry-run log, sandbox/env scope, asset manifest |
+| Trust boundary | local vs managed vs remote/MCP skill policy, path traversal, hook restrictions | policy test, denial transcript, audit note |
+| Runtime effect | skill changes allowed tools/prompts only through owning API | runtime event, tool declaration diff, UI status |
+| Evaluation | clean-context task, assertion grading, transcript, human feedback loop | eval rubric, attempt transcripts, verifier output |
+| Packaging/release | package contents, install fixture, marketplace/registry metadata | manifest snapshot, install smoke, version check |
+
+Claude Code local source exposes useful loader concerns: `SKILL.md` directory format, frontmatter parsing, hooks validation, path frontmatter, symlink canonicalization, token estimation, duplicate detection, and remote MCP skills as untrusted. Agent QC generalizes those as skill/plugin gates; it does not require Claude Code's exact implementation.
+
+## Advanced composition recipes
+
+### Runtime + UI evidence braid
+
+Use when a runtime fact is visible in TUI/WebUI/desktop GUI.
+
+```text
+contract-protocol
+  -> fake runtime transcript
+  -> black-box user action
+  -> surface snapshot/trace
+  -> state snapshot + cleanup
+```
+
+Example claims: approval overlay, tool card progress, bridge health, queued worker state.
+
+### TUI approval braid
+
+```text
+white-box permission resolver
+  -> protocol action_request fixture
+  -> pseudo-terminal key sequence
+  -> terminal snapshots for pending/allow/deny/cancel
+  -> side-effect denial check
+  -> subprocess cleanup
+```
+
+Add multi-viewport, Unicode/ANSI, Ctrl-C/Esc, and reconnect variants when the TUI is core product surface.
+
+### Provider adapter ladder
+
+```text
+normalizer unit tests
+  -> contract/schema snapshot
+  -> fake provider replay
+  -> runtime E2E with fake provider
+  -> opt-in live canary
+  -> semantic eval and reviewer note
+```
+
+Use this for LLM providers, browser providers, search providers, channel providers, or gateway backends.
+
+### Browser agent safety braid
+
+```text
+URL/path policy unit tests
+  -> SSRF/file/credential attack fixtures
+  -> Playwright/browser trace with DOM+a11y snapshot
+  -> console/network log inspection
+  -> orphan browser/tab cleanup proof
+```
+
+A screenshot-only pass is insufficient for browser automation.
+
+### Channel gateway braid
+
+```text
+auth verifier unit test
+  -> webhook replay before body parsing
+  -> media fixture and redaction check
+  -> fake channel send transcript
+  -> optional live channel canary
+  -> report redaction review
+```
+
+Use separate gates for channel contract, media handling, live transport, and semantic model quality.
+
+### Scheduler/recovery braid
+
+```text
+deterministic clock unit test
+  -> lease/checkpoint fake integration
+  -> crash/restart replay
+  -> concurrency stress or chaos kill
+  -> duplicate-work oracle
+  -> cleanup and ownership report
+```
+
+This is mandatory for background agents, multi-agent workers, and long-running jobs.
+
+### Skill/plugin lifecycle braid
+
+```text
+manifest schema
+  -> discovery/precedence fixture
+  -> script/asset dry run in clean temp dir
+  -> trust boundary denial tests
+  -> clean-context skill eval
+  -> package/install smoke
+```
+
+Use assertion grading and transcripts for skill quality, not only a lint pass.
+
+### Release confidence braid
+
+```text
+source tests
+  -> generated/lock drift check
+  -> package manifest snapshot
+  -> clean install smoke
+  -> first-run runtime smoke
+  -> OS/Docker matrix
+  -> live canary if advertised
+```
+
+A release claim is about the artifact, not only the repository.
+
+## Technique selection matrix
+
+| Claim | Minimum techniques | Stronger composition |
+| --- | --- | --- |
+| Runtime command works | black-box command smoke, exit status | contract, fake provider, stream golden, cleanup |
+| Permission boundary works | white-box policy, runtime denial transcript | TUI/WebUI approval surface, side-effect oracle, reconnect/cancel |
+| TUI is correct | terminal snapshot | runtime transcript, multi-viewport, Unicode/ANSI, interrupt |
+| WebUI is correct | component/browser assertion | Playwright trace, DOM/ARIA, console/network, reload/resume |
+| Desktop GUI is usable | shell start smoke | bridge health, workspace readiness, native contract, screenshot/trace |
+| Browser agent is safe | screenshot + DOM | SSRF/navigation fixture, console/network, cleanup/orphan proof |
+| Channel gateway works | contract fixture | webhook replay, media fixture, auth proof, live opt-in canary |
+| Skill/plugin works | manifest parse | loader precedence, script dry run, trust boundary, clean-context eval |
+| Scheduler is reliable | deterministic unit | restart/reclaim, stress, chaos kill, duplicate-work proof |
+| Model quality improved | eval rubric | baseline delta, judge output, failure examples, human review |
+| Package is releasable | build output | manifest snapshot, clean install, Docker/OS smoke, supply-chain check |
+
+## QC case fields for techniques
+
+Add these fields to the case body or report extension when the project needs richer composition:
+
+```json
+{
+  "techniques": ["white-box-unit", "contract-protocol", "black-box-smoke", "surface-snapshot", "cleanup-proof"],
+  "box_mode": "gray-box",
+  "snapshot_policy": "normalize dynamic ids; update only after reviewer approval",
+  "smoke_level": "runtime|surface|release|live-canary",
+  "runtime_backing": "fake-provider|real-runtime|live-provider|mock-bridge",
+  "negative_cases": ["deny", "cancel", "malformed-stream", "restart"],
+  "composition_rationale": "why this braid proves the claim"
+}
+```
+
+These fields are intentionally advisory. Agent QC standardizes the evidence and verdict semantics; projects decide how to encode technique metadata in their local schema.
+
+## Anti-patterns
+
+| Anti-pattern | Correct replacement |
+| --- | --- |
+| One broad `test` command as proof for every profile | profile-specific gates plus explicit evidence refs |
+| Snapshot update with no review note | snapshot diff review and behavior rationale |
+| Smoke test marketed as full E2E | label as smoke and list remaining risks |
+| White-box unit test used as UI proof | add surface artifact and runtime link |
+| Black-box final text used as runtime proof | add structured event transcript and state snapshot |
+| Live provider call hidden in unit tests | explicit live lane, budget, redaction, opt-in flag |
+| Browser screenshot without DOM/console/network/cleanup | browser evidence bundle |
+| Skill manifest lint only | loader, script, trust, clean-context eval, package smoke |
 
 
 # Project Classification
@@ -588,7 +892,7 @@ Classify by owned risk, not by language, framework, company, or UI style.
 | Claude Code-like local snapshot | `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-sdk-api`, `agent-skills-plugins`; mark release/CI claims as unknown if metadata is absent |
 | OpenClaw-like gateway and QA Lab | `multi-channel-agent-gateway`, `agent-tool-mcp-gateway`, `agent-ui-tui-desktop`, `agent-skills-plugins`, `agent-distribution-release`, `agent-evals-quality` |
 | Hermes-like Python agent | `agent-runtime-cli`, `background-agent-scheduler`, `agent-tool-mcp-gateway`, `multi-channel-agent-gateway`, `agent-ui-tui-desktop`, `agent-distribution-release` |
-| Lime-like desktop GUI | `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-runtime-cli`, `agent-skills-plugins`, `agent-distribution-release` |
+| Desktop GUI with native bridge | `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-runtime-cli`, `agent-skills-plugins`, `agent-distribution-release` |
 | Standards/documentation site with schemas and examples | `agent-distribution-release`, optionally `agent-sdk-api` if schemas/CLI are consumed |
 
 ## Classification roles
@@ -649,7 +953,6 @@ Classification is not:
 - a reason to ignore project-specific AGENTS/CONTRIBUTING rules.
 
 Classification only selects the risks and evidence lanes that must be proven.
-
 
 
 # Gate Matrix
@@ -739,7 +1042,7 @@ Escalate gates when the change touches:
 | Rust/Codex-like | `cargo nextest`, targeted crate tests, Bazel test/build, schema fixture writers, fake model server, ratatui snapshots |
 | JS/OpenClaw-like | Vitest projects, changed-test router, contract configs, live configs, Docker smoke, QA Lab report lanes |
 | Python/Hermes-like | pytest markers, xdist, integration exclusion by default, credential blanking, e2e directory, ruff/ty |
-| GUI/Lime-like | local verify, command contracts, DevBridge health, GUI smoke, Playwright continuation, Tauri/Rust tests |
+| Desktop GUI / native bridge | local verify, command contracts, bridge health, GUI smoke, Playwright continuation, native backend tests |
 
 ## Anti-patterns
 
@@ -751,7 +1054,6 @@ Escalate gates when the change touches:
 | Live provider in default unit lane | flaky and unsafe by default |
 | Release build without install smoke | package may be unusable |
 | Waiver with no owner/expiry | unbounded risk |
-
 
 
 # Interaction Surface Testing
@@ -872,7 +1174,7 @@ Required checks:
 Project signals:
 
 - OpenClaw separates unit/integration, e2e, live, UI, TUI, channel, extension, contract, performance, Docker, and QA Lab lanes. Its `ui` package uses browser-playwright-style coverage, while `extensions/qa-lab` includes scenario catalogs, web runtime, browser runtime, suite summary JSON, and report tests.
-- Lime has React/Vite component tests for workspace, provider settings, skills, browser runtime panels, MCP tools, resources, settings, artifacts, and chat shell; product GUI proof still requires GUI smoke or Playwright evidence.
+- Desktop/WebView agents often combine component tests for workspace, settings, skills, browser panels, tools, resources, artifacts, and chat shells; product GUI proof still requires shell smoke or Playwright/browser evidence.
 - Hermes has a Vite/React `web` dashboard package and backend browser/tool tests around browser supervisor, CDP, Camofox, SSRF, and web providers.
 
 Common anti-patterns:
@@ -897,7 +1199,7 @@ Required checks:
 
 Project signals:
 
-- Lime makes this boundary explicit: GUI deliverability is not proven by `lint`, `typecheck`, or unit tests alone. Its desktop pass combines `verify:local`, `test:contracts`, `verify:gui-smoke`, `bridge:health`, workspace readiness, browser-runtime smoke, and Playwright continuation for real flows.
+- Mature desktop agents make this boundary explicit: GUI deliverability is not proven by `lint`, `typecheck`, or unit tests alone. A strong desktop pass combines local verification, command contracts, GUI smoke, bridge health, workspace readiness, browser-runtime smoke, and Playwright/browser evidence for real flows.
 - OpenClaw desktop/launcher-style release paths use install smoke, Docker smoke, platform lanes, control UI tests, and release checks rather than a single visual test.
 
 Common anti-patterns:
@@ -921,7 +1223,7 @@ Required checks:
 Project signals:
 
 - Hermes has browser supervisor, browser hardening, local SSRF, CDP override, browser console, Camofox state, and web provider contract tests.
-- Lime has browser runtime and site adapter smokes, plus Playwright MCP continuation guidance for user-visible flows.
+- Browser-runtime products should keep site-adapter smokes plus Playwright/browser continuation evidence for user-visible flows.
 - OpenClaw QA Lab contains browser runtime and web runtime tests for scenario execution and report surfaces.
 
 Common anti-patterns:
@@ -987,7 +1289,7 @@ Common anti-patterns:
 | TUI runtime like Claude Code snapshot | `tui`, `cli-stream` for stream adapters | remote permission contract, reconnect/cancel, SDK stream |
 | Multi-channel gateway like OpenClaw | `channel-ui`, `webui`, `cli-stream` | channel contracts, live provider, Docker/install, secret redaction |
 | Background agent like Hermes | `cli-stream`, `tui`, `browser-automation`, channel UI if gateway-enabled | scheduler stress, checkpoint/recovery, browser safety, Docker smoke |
-| Desktop GUI like Lime | `desktop-gui`, `webui` for WebView panels, `browser-automation` if browser runtime exists | bridge contract, native command registration, workspace readiness, Playwright trace |
+| Desktop GUI with native bridge | `desktop-gui`, `webui` for WebView panels, `browser-automation` if browser runtime exists | bridge contract, native command registration, workspace readiness, Playwright trace |
 | Eval suite / QA lab | `eval-ui`, `webui` if dashboard exists | semantic eval, reviewer loop, baseline diff, export schema |
 
 ## Waiver rules
@@ -1020,7 +1322,6 @@ Agent UI contributes a reusable projection checklist. For every Agent QC `ui-int
 | Team workbench | coordinator, worker, remote, background, handoff, and review states are not flattened into one assistant. |
 
 This checklist is not a visual design requirement. It is a fact-ownership requirement.
-
 
 
 # Qcloop Integration
@@ -1080,7 +1381,6 @@ Verifier output SHOULD be strict JSON:
 | `failed` | Worker or repair execution failed. |
 | `exhausted` | Budget or `max_qc_rounds` reached without proof. |
 | `pending` / `running` | Plan is incomplete. |
-
 
 
 # Evidence Driven Verdicts
@@ -1226,7 +1526,6 @@ Before finalizing a report:
 - every waiver has owner and expiry;
 - every blocked/exhausted item has next action;
 - remaining risk is written in plain language.
-
 
 
 # Acceptance Scenarios
@@ -1491,9 +1790,8 @@ Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 | Claude Code-like TUI runtime | scenarios 5, 6, 11, 16, 21 |
 | OpenClaw-like channel/WebUI gateway | scenarios 7, 9, 10, 17, 18, 19 |
 | Hermes-like background/browser agent | scenarios 9, 14, 15, 18, 19 |
-| Lime-like desktop GUI | scenarios 7, 8, 9, 12, 21 |
+| Desktop GUI / native bridge | scenarios 7, 8, 9, 12, 21 |
 | Eval/QA lab | scenarios 17, 20, 21 |
-
 
 
 # Evidence Contract
@@ -1596,7 +1894,6 @@ A report is ready to publish when:
 - live-provider evidence is redacted and budgeted;
 - surface evidence links visible behavior to runtime or protocol facts;
 - remaining risk and next action are explicit.
-
 
 
 # Performance And Reliability Metrics
@@ -1708,7 +2005,6 @@ When a performance or reliability gate fails, preserve:
 - whether the failure blocks release, needs review, or can be waived.
 
 
-
 # Agent Project Patterns
 
 Source: https://limecloud.github.io/agentqc/en/reference/agent-project-patterns
@@ -1777,20 +2073,6 @@ Surface coverage: `cli-stream`, `tui`, `browser-automation`, `channel-ui`, and s
 
 Agent QC profile mapping: `agent-runtime-cli`, `background-agent-scheduler`, `multi-channel-agent-gateway`, `agent-ui-tui-desktop`, `agent-tool-mcp-gateway`, `agent-distribution-release`, `agent-skills-plugins`.
 
-## Lime-style desktop GUI agent
-
-Local source: `/Users/coso/Documents/dev/ai/aiclientproxy/lime`.
-
-Observed testing shape:
-
-- Lime treats GUI product readiness as distinct from type/lint/unit pass.
-- Required gates include `verify:local`, `test:contracts`, `verify:gui-smoke`, bridge health checks, workspace-ready smoke, browser-runtime smoke, and Playwright continuation when user-visible behavior changes.
-- Command changes must synchronize frontend calls, Rust handlers, governance catalog, DevBridge, and mocks.
-
-Surface coverage: `desktop-gui`, WebView `webui`, `browser-automation`, and bridge/command transcripts.
-
-Agent QC profile mapping: `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-tool-mcp-gateway`, `agent-skills-plugins`.
-
 ## Cross-case lessons
 
 1. Use project profiles before gates.
@@ -1799,7 +2081,6 @@ Agent QC profile mapping: `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-to
 4. Preserve protocol transcripts and UI traces as evidence.
 5. Use qcloop for repeated cases, not as a substitute for framework-native gates.
 6. Normalize environment for agent tests: credentials, time, locale, working directory, concurrency, and sandbox.
-
 
 
 # Flow And Taxonomy
@@ -1986,11 +2267,10 @@ A project can claim Agent QC compatibility only if these cases are representable
 2. Claude Code-like remote permission request with WebSocket/control transcript and TUI prompt.
 3. OpenClaw-like channel webhook replay with media fixture and redacted credential policy.
 4. Hermes-like scheduler restart with deterministic time, checkpoint, and duplicate-work proof.
-5. Lime-like desktop GUI change with bridge health, workspace readiness, screenshot, and command-contract proof.
+5. Desktop GUI native-bridge change with bridge health, workspace readiness, screenshot, and command-contract proof.
 6. Browser automation flow with DOM/a11y, screenshot, console/network, and cleanup evidence.
 7. Release smoke with package manifest, clean install, and platform note.
 8. Semantic eval regression with rubric, judge output, baseline delta, and reviewer note.
-
 
 
 # Star Project Testing Systems
@@ -2011,7 +2291,7 @@ This reference explains how several strong Agent projects organize testing. Agen
 
 ## Agent UI and Agent Skills lessons applied here
 
-This page now treats Agent UI as a primary reference for surface testing, not just Lime as an example. The reusable lessons are:
+This page treats Agent UI as a primary reference for surface testing. The reusable lessons are:
 
 - UI/TUI/WebUI/desktop states must be runtime-backed projections, not independent truth.
 - Final answer text must stay separate from reasoning, tool progress, approvals, artifacts, evidence, diagnostics, and team events.
@@ -2041,7 +2321,6 @@ Official framework docs are used as examples of evidence shape, not as mandatory
 | Claude Code local snapshot | visible SDK stream adapters and commands | visible Ink surface and command views | not enough metadata to claim | no | remote bridge/control surfaces | no | no | not enough metadata to claim |
 | OpenClaw | strong gateway/CLI/router tests | dedicated `tui` command and TUI lanes | strong control UI and QA Lab web runtime | platform release paths, mac/mobile scripts | QA Lab browser runtime, Docker/browser lanes | strong channel contracts, QR, Android/iOS, live transports | strong QA Lab scenarios/reports | strong Docker/install/release checks |
 | Hermes Agent | strong Python CLI/gateway tests | strong `ui-tui` Vitest package | Vite/React dashboard package | no native shell in inspected repo | strong browser supervisor/CDP/Camofox/SSRF tests | strong gateway/channel tests | release notes and web/dashboard surfaces | Docker, uv lock, OSV, package checks |
-| Lime | runtime command and bridge contracts | no primary TUI | WebView/component panels | strong Tauri desktop GUI smoke | browser runtime/site adapter smoke and Playwright continuation | no primary channel gateway | product/evidence reports | app version, Tauri/Rust/package checks |
 
 Agent QC conclusion: a project can be "well tested" in one surface and still under-tested in another. Do not collapse all UI proof into one boolean.
 
@@ -2306,49 +2585,6 @@ Hermes shows why background agents need their own gate family:
 
 Agent QC rule: a background scheduler pass should include deterministic clock/env settings, checkpoint evidence, and cleanup evidence.
 
-## Lime: desktop GUI plus Tauri bridge plus browser runtime
-
-Local source: `/Users/coso/Documents/dev/ai/aiclientproxy/lime`.
-
-### Product shape
-
-Lime is a desktop GUI Agent product:
-
-- Tauri shell with frontend WebView;
-- DevBridge and browser fallback mock layer;
-- workspace and resource manager UI;
-- browser runtime panels and site adapters;
-- skills/capability drafts, MCP panels, provider settings, memory, artifacts, chat shell;
-- Rust command surface and command contract catalog.
-
-### How tests are organized
-
-| Layer | Concrete signals | Agent QC interpretation |
-| --- | --- | --- |
-| Unified local gate | `npm run verify:local`, `verify:local:full` | aggregate local readiness |
-| Contract gate | `test:contracts`, generated runtime clients, command catalog, DevBridge/mocks | `contract-protocol` |
-| GUI smoke | `verify:gui-smoke`, `bridge:health`, workspace-ready smoke, browser-runtime smoke | desktop `ui-interaction` |
-| Component/UI tests | workspace, browser runtime, settings, skills, MCP, resources, artifacts, chat shell `*.test.tsx` | WebView component evidence |
-| Product E2E | product/knowledge E2E and Playwright MCP continuation guidance | user-visible flow evidence |
-| Rust/Tauri | targeted Cargo tests, Rust lint/test scripts | backend command evidence |
-| Version/release | app version consistency checks across package/Tauri/Cargo files | distribution consistency |
-
-### GUI details worth standardizing
-
-Lime's rule is explicit: GUI product readiness is not proven by `lint`, `typecheck`, or unit tests alone.
-
-A Lime-style desktop pass should prove:
-
-- shell starts or is reused through the project entrypoint;
-- DevBridge is healthy before the page is judged;
-- default workspace is prepared;
-- command contracts are synchronized across frontend calls, Rust registrations, governance catalog, DevBridge, and mocks;
-- browser runtime/site adapter panels do not hide bridge failures behind mocks;
-- user-visible changes have stable regression tests or Playwright evidence;
-- console state and screenshot/trace are kept for GUI smoke failures.
-
-Agent QC rule: desktop GUI gates should name shell, bridge, workspace, mock/real backend, screenshot/trace, console state, and OS.
-
 ## Cross-project extraction
 
 Agent QC generalizes these projects into ten reusable rules:
@@ -2380,7 +2616,6 @@ Agent QC generalizes these projects into ten reusable rules:
 | Release | build succeeds | package manifest, install smoke, Docker/platform matrix, lock/security check |
 
 
-
 # Source Index
 
 Source: https://limecloud.github.io/agentqc/en/reference/source-index
@@ -2404,7 +2639,7 @@ Use source ids in design notes or changelogs:
 | Source id | Source | Evidence used | Agent QC requirements informed |
 | --- | --- | --- | --- |
 | `SRC-AGENTUI-BEST-PRACTICES` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/best-practices.md` | runtime-owned facts, event classes, stable ids, fallback states, controlled writes, old-session design, latency metrics | Agent QC requires surface evidence to link visible frames to runtime/protocol facts and avoid UI-owned verdicts. |
-| `SRC-AGENTUI-ACCEPTANCE` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/acceptance-scenarios.md` | send/status, tool, HITL, queue/steer, artifact, evidence, old-session, team/parallel/remote/background scenarios | Agent QC acceptance scenarios expanded beyond Lime GUI to runtime, TUI, WebUI, team, remote, and eval flows. |
+| `SRC-AGENTUI-ACCEPTANCE` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/acceptance-scenarios.md` | send/status, tool, HITL, queue/steer, artifact, evidence, old-session, team/parallel/remote/background scenarios | Agent QC acceptance scenarios cover runtime, TUI, WebUI, team, remote, and eval flows. |
 | `SRC-AGENTUI-FLOW` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/reference/flow-and-taxonomy.md` | lifecycle, event envelope, fact owners, scopes, phases, surfaces, controls, team taxonomy | Agent QC flow/taxonomy mirrors explicit dimensions and fact-owner separation. |
 | `SRC-AGENTUI-CONTRACTS` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/contracts/*.md` | backend coordination, runtime event projection, performance metrics | Agent QC adds evidence, performance, and reliability contracts for UI/TUI/desktop/browser gates. |
 | `SRC-AGENTKNOWLEDGE-SPEC` | `/Users/coso/Documents/dev/ai/limecloud/agentknowledge/docs/en/specification.md` | directory-as-standard, progressive disclosure, source maps, compile/eval evidence, knowledge-as-data boundary | Agent QC keeps Knowledge as requirements/context input, not proof, and preserves source traceability. |
@@ -2417,7 +2652,6 @@ Use source ids in design notes or changelogs:
 | `SRC-CLAUDECODE-LOCAL` | `/Users/coso/Documents/dev/js/claudecode` | Partial local source snapshot for Ink TUI, remote bridge, WebSocket control, permission flow, SDK stream adapter, commands, task/team surfaces; not enough metadata for CI/release claims. |
 | `SRC-OPENCLAW-LOCAL` | `/Users/coso/Documents/dev/js/openclaw` | Multi-channel gateway, Vitest lane routing, UI browser-mode tests, QA Lab, live provider opt-in, Docker/install smoke, plugin/secret/channel contracts, mobile/platform scripts. |
 | `SRC-HERMES-LOCAL` | `/Users/coso/Documents/dev/python/hermes-agent` | Python pytest, markers, xdist, integration/e2e separation, credential blanking, cron/scheduler, browser safety, gateway/channel tests, TUI Vitest, Docker/uv/OSV. |
-| `SRC-LIME-LOCAL` | `/Users/coso/Documents/dev/ai/aiclientproxy/lime` | Desktop GUI, Tauri bridge, command contracts, DevBridge health, GUI smoke, Playwright continuation, version consistency, current/compat governance. |
 
 ## External public sources
 
@@ -2436,17 +2670,16 @@ Use source ids in design notes or changelogs:
 
 | Requirement area | Primary sources |
 | --- | --- |
-| Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-LIME-LOCAL` |
+| Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Expanded acceptance scenarios | `SRC-AGENTUI-ACCEPTANCE`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | TUI evidence | `SRC-CODEX-LOCAL`, `SRC-CLAUDECODE-LOCAL`, `SRC-HERMES-LOCAL` |
-| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Python suite routing | `SRC-PYTEST-MARKERS`, `SRC-HERMES-LOCAL` |
 | Live provider separation | `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Scheduler/background gates | `SRC-HERMES-LOCAL`, `SRC-AGENTUI-ACCEPTANCE` |
-| Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Progressive documentation style | `SRC-AGENTSKILLS-SPEC`, `SRC-AGENTKNOWLEDGE-SPEC`, `SRC-AGENTUI-BEST-PRACTICES` |
 | qcloop/eval evidence loop | `SRC-AGENTSKILLS-EVAL`, `SRC-OPENCLAW-LOCAL` |
-
 
 
 # Agent Ecosystem
@@ -2519,7 +2752,6 @@ QC failure example: the model answer cites a source but the source map is missin
 Agent QC standardizes the evidence shape and verdict semantics that let these systems interoperate.
 
 
-
 # Glossary
 
 Source: https://limecloud.github.io/agentqc/en/reference/glossary
@@ -2540,7 +2772,6 @@ Source: https://limecloud.github.io/agentqc/en/reference/glossary
 | Live provider | Real external model, API, channel, or network dependency. |
 | Semantic eval | Test that judges model/task output against a rubric or baseline. |
 | Remaining risk | What current evidence still does not prove. |
-
 
 
 # Codex Runtime Cli
@@ -2708,7 +2939,6 @@ Public QC plan JSON:
   "evidence_policy": "Every pass must link to command, fixture, transcript, snapshot, schema diff, package manifest, or CI evidence. TUI proof must include both terminal snapshots and runtime transcripts."
 }
 ```
-
 
 
 # Claudecode Tui Runtime
@@ -2880,7 +3110,6 @@ Public QC plan JSON:
   "evidence_policy": "Because the local snapshot has no package or workflow metadata, do not claim upstream CI coverage; require interface-level evidence only."
 }
 ```
-
 
 
 # Openclaw Channel Gateway
@@ -3056,7 +3285,6 @@ Public QC plan JSON:
 ```
 
 
-
 # Hermes Background Agent
 
 Source: https://limecloud.github.io/agentqc/en/examples/hermes-background-agent
@@ -3227,174 +3455,6 @@ Public QC plan JSON:
   "evidence_policy": "Credential env vars must be blanked or scoped in test evidence. Scheduler, browser, TUI, and channel proofs must keep separate evidence refs."
 }
 ```
-
-
-
-# Lime Desktop Gui
-
-Source: https://limecloud.github.io/agentqc/en/examples/lime-desktop-gui
-
-# Lime desktop GUI example
-
-Profiles:
-
-- `agent-ui-tui-desktop`
-- `agent-tool-mcp-gateway`
-- `agent-runtime-cli`
-- `agent-skills-plugins`
-
-Typical gates:
-
-- static/local: `npm run verify:local` and targeted package/Rust checks.
-- contract/protocol: command contracts across frontend calls, Rust registrations, catalog, DevBridge, and mocks.
-- desktop-gui: shell start/reuse, DevBridge health, workspace readiness, screenshot/trace, console state.
-- webui: component/browser tests for WebView panels such as settings, skills, resources, MCP, artifacts, chat shell.
-- browser-automation: browser runtime/site adapter smoke and Playwright continuation for real product flows.
-
-Public QC plan JSON:
-
-```json
-{
-  "schema_version": "0.4.0",
-  "id": "lime-desktop-gui-bridge-qc",
-  "target_project": "lime",
-  "project_profiles": [
-    "agent-ui-tui-desktop",
-    "agent-tool-mcp-gateway",
-    "agent-runtime-cli",
-    "agent-skills-plugins"
-  ],
-  "risk_level": "high",
-  "risk_domains": [
-    "desktop-shell",
-    "bridge",
-    "workspace",
-    "browser-runtime",
-    "command-contract"
-  ],
-  "required_gates": [
-    "static",
-    "contract-protocol",
-    "runtime-e2e",
-    "ui-interaction"
-  ],
-  "cases": [
-    {
-      "id": "workspace-ready",
-      "name": "Workspace becomes ready in desktop GUI",
-      "project_profile": "agent-ui-tui-desktop",
-      "target": "Lime desktop GUI",
-      "steps": [
-        "Run GUI smoke through the supported app entrypoint",
-        "Inspect bridge readiness and workspace state",
-        "Capture screenshot or trace plus console state"
-      ],
-      "expected": [
-        "Bridge is ready before the UI is judged",
-        "Default workspace is prepared",
-        "No mock fallback hides a bridge failure"
-      ],
-      "risk": "UI reports readiness without runtime support",
-      "required_gates": [
-        "contract-protocol",
-        "ui-interaction"
-      ],
-      "required_evidence": [
-        "command_log",
-        "gui_smoke_summary",
-        "screenshot_or_trace"
-      ],
-      "status": "planned",
-      "surface": "desktop-gui"
-    },
-    {
-      "id": "tauri-command-contract-synchronized",
-      "name": "Tauri command contract is synchronized",
-      "project_profile": "agent-tool-mcp-gateway",
-      "target": "frontend/Rust/catalog/mock command boundary",
-      "steps": [
-        "Run command contract tests",
-        "Compare frontend invocations, Rust registrations, catalog, DevBridge, and mocks",
-        "Inspect generated runtime clients or catalog output"
-      ],
-      "expected": [
-        "Every user-visible command exists in all required sides",
-        "Mocks do not define commands missing from real bridge",
-        "Contract report identifies any drift"
-      ],
-      "risk": "GUI calls a command that only exists in mock or catalog",
-      "required_gates": [
-        "contract-protocol"
-      ],
-      "required_evidence": [
-        "contract_test_report",
-        "command_catalog_diff",
-        "mock_bridge_diff"
-      ],
-      "status": "planned",
-      "surface": "cli-stream"
-    },
-    {
-      "id": "browser-runtime-site-adapter-smoke",
-      "name": "Browser runtime site adapter smoke",
-      "project_profile": "agent-ui-tui-desktop",
-      "target": "browser runtime panel and site adapter",
-      "steps": [
-        "Run browser-runtime smoke or Playwright continuation",
-        "Open the runtime panel and execute a site-adapter fixture",
-        "Capture screenshot, DOM/a11y snapshot, console/network log, and bridge event"
-      ],
-      "expected": [
-        "Panel shows real adapter state and not stale mock data",
-        "Console/network log has no unwaived error",
-        "Bridge event matches the visible runtime state"
-      ],
-      "risk": "browser runtime panel hides adapter or bridge failure",
-      "required_gates": [
-        "ui-interaction",
-        "runtime-e2e"
-      ],
-      "required_evidence": [
-        "browser_trace",
-        "dom_or_a11y_snapshot",
-        "bridge_event_log"
-      ],
-      "status": "planned",
-      "surface": "browser-automation"
-    },
-    {
-      "id": "provider-settings-webview-regression",
-      "name": "Provider settings WebView regression",
-      "project_profile": "agent-ui-tui-desktop",
-      "target": "provider settings panel",
-      "steps": [
-        "Run focused component or browser test for provider settings",
-        "Exercise empty, saved, invalid, and permission-denied states",
-        "Capture console output and stable regression report"
-      ],
-      "expected": [
-        "Settings state matches persisted/runtime config",
-        "Invalid or denied state is visible to the user",
-        "No console error is hidden by optimistic UI"
-      ],
-      "risk": "settings UI shows saved state that runtime rejects",
-      "required_gates": [
-        "unit",
-        "ui-interaction"
-      ],
-      "required_evidence": [
-        "component_test_report",
-        "console_log",
-        "state_fixture"
-      ],
-      "status": "planned",
-      "surface": "webui"
-    }
-  ],
-  "evidence_policy": "GUI pass requires smoke or interaction evidence, not only static checks. Bridge-backed UI proof must name whether it used real backend, fake provider, or mock bridge."
-}
-```
-
 
 
 # Qcloop Batch

@@ -261,5 +261,5 @@ Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 | Claude Code-like TUI runtime | scenarios 5, 6, 11, 16, 21 |
 | OpenClaw-like channel/WebUI gateway | scenarios 7, 9, 10, 17, 18, 19 |
 | Hermes-like background/browser agent | scenarios 9, 14, 15, 18, 19 |
-| Lime-like desktop GUI | scenarios 7, 8, 9, 12, 21 |
+| Desktop GUI / native bridge | scenarios 7, 8, 9, 12, 21 |
 | Eval/QA lab | scenarios 17, 20, 21 |

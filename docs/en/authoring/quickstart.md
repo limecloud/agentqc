@@ -5,7 +5,7 @@ description: Create an Agent QC plan for any Agent project.
 
 # Quickstart
 
-Use this flow when an agent, maintainer, CI job, or qcloop run needs to test an Agent project. The flow is portable: Lime is only one possible case study.
+Use this flow when an agent, maintainer, CI job, or qcloop run needs to test an Agent project. The flow is portable across runtime, UI, gateway, scheduler, skill, eval, and release product shapes.
 
 ## 1. Define the QC scope
 
@@ -17,7 +17,7 @@ Examples:
 - "A Claude Code-like TUI remote-permission change."
 - "An OpenClaw-like channel gateway auth/media change."
 - "A Hermes-like scheduler restart fix."
-- "A Lime-like desktop GUI bridge change."
+- "A desktop GUI native-bridge change."
 
 The scope decides which claims the report may make. Do not let a broad report imply untested surfaces.
 

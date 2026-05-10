@@ -1,21 +1,21 @@
 ---
 title: Specification
-description: Agent QC v0.1.0 draft specification for Lime.
+description: Agent QC v0.1.0 product-focused draft specification.
 ---
 
 # Specification
 
-Agent QC v0.1.0 is a Lime-focused draft standard for evidence-driven testing plans, gates, qcloop batches, verdicts, and reports.
+Agent QC v0.1.0 is a product-focused draft standard for evidence-driven testing plans, gates, qcloop batches, verdicts, and reports.
 
-It standardizes the quality-control facts an agent should create when testing Lime. It does not own Lime code, qcloop execution, evidence storage, UI projection, or human review policy.
+It standardizes the quality-control facts an agent should create when testing an Agent product. It does not own product code, qcloop execution, evidence storage, UI projection, or human review policy.
 
 ## Scope
 
 Agent QC standardizes:
 
-1. A test plan format for Lime changes.
+1. A test plan format for product changes.
 2. Behavior-level test cases that can run directly or through qcloop.
-3. A gate matrix for Lime change types.
+3. A gate matrix for product change types.
 4. Evidence-backed verdicts.
 5. Final reports that separate passed, failed, exhausted, skipped, and blocked states.
 
@@ -25,7 +25,7 @@ Agent QC does not standardize model prompts, CLI execution internals, browser au
 
 | Object | Purpose |
 | --- | --- |
-| `qc_plan` | A test plan for one Lime change, route, or release risk. |
+| `qc_plan` | A test plan for one product change, route, or release risk. |
 | `qc_case` | One behavior-level item with steps, expected result, risk, and required evidence. |
 | `qc_gate` | A validation boundary such as `verify:local`, `test:contracts`, `verify:gui-smoke`, Playwright, qcloop, or manual review. |
 | `qc_run` | One execution attempt, including executor, command, environment, result, and output refs. |
@@ -35,7 +35,7 @@ Agent QC does not standardize model prompts, CLI execution internals, browser au
 
 ## Change types
 
-Standard Lime `change_type` values:
+Standard `change_type` values:
 
 - `frontend`
 - `user-visible-ui`
@@ -102,7 +102,7 @@ A `qc_case` can become one qcloop `item_value`. For complex cases, serialize the
 ```json
 {
   "name": "workspace-default-ready",
-  "target": "Lime default workspace",
+  "target": "Default workspace",
   "steps": ["Run GUI smoke", "Inspect DevBridge readiness"],
   "expected": ["DevBridge is ready", "Default workspace is available"],
   "required_evidence": ["command_log", "gui_smoke_summary"]

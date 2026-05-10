@@ -5,7 +5,7 @@ description: 为任意 Agent 项目创建 Agent QC 计划。
 
 # 快速开始
 
-当 agent、维护者、CI job 或 qcloop run 需要测试 Agent 项目时，使用这个流程。流程是可移植的：Lime 只是其中一个案例。
+当 agent、维护者、CI job 或 qcloop run 需要测试 Agent 项目时，使用这个流程。流程可移植到 runtime、UI、gateway、scheduler、skill、eval 和 release 等项目形态。
 
 ## 1. 定义 QC 范围
 
@@ -17,7 +17,7 @@ description: 为任意 Agent 项目创建 Agent QC 计划。
 - "Claude Code-like TUI remote-permission 改动。"
 - "OpenClaw-like channel gateway auth/media 改动。"
 - "Hermes-like scheduler restart 修复。"
-- "Lime-like desktop GUI bridge 改动。"
+- "desktop GUI native-bridge 改动。"
 
 范围决定报告可以宣称什么。不要让宽泛报告暗示未测试的表面已经通过。
 

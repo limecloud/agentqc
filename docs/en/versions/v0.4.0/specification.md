@@ -18,7 +18,7 @@ Agent QC standardizes:
 3. Gate taxonomy from static checks to live provider and release smoke.
 4. Evidence-backed pass/fail semantics.
 5. qcloop-compatible batch QC for repeated independent cases.
-6. Case-study mapping for projects such as Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+6. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
 
@@ -37,7 +37,7 @@ The latest standard is split by use:
 | [Evidence contract](../../contracts/evidence-contract) | portable evidence, verdict, waiver fields |
 | [Performance and reliability metrics](../../contracts/performance-and-reliability-metrics) | timing, flake, cleanup, scheduler, release metrics |
 | [Flow and taxonomy](../../reference/flow-and-taxonomy) | complete lifecycle and taxonomy reference |
-| [Star project testing systems](../../reference/star-project-testing-systems) | Codex, Claude Code, OpenClaw, Hermes, and Lime case studies |
+| [Star project testing systems](../../reference/star-project-testing-systems) | representative Agent project testing-system case studies |
 
 ## Project profiles
 

@@ -10,6 +10,6 @@ Agent QC v0.3.0 expands v0.2.0 from a classification skeleton into a practical t
 Key additions:
 
 - detailed GUI/TUI/WebUI/desktop/browser/channel interaction surface testing guidance;
-- deeper case studies for Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime;
+- deeper case studies for representative runtime, TUI, gateway, scheduler, UI, release, and eval projects;
 - Claude Code-style TUI/runtime example;
 - stronger evidence requirements for surface-specific `ui-interaction` gates.

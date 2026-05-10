@@ -183,7 +183,7 @@ A project can claim Agent QC compatibility only if these cases are representable
 2. Claude Code-like remote permission request with WebSocket/control transcript and TUI prompt.
 3. OpenClaw-like channel webhook replay with media fixture and redacted credential policy.
 4. Hermes-like scheduler restart with deterministic time, checkpoint, and duplicate-work proof.
-5. Lime-like desktop GUI change with bridge health, workspace readiness, screenshot, and command-contract proof.
+5. Desktop GUI native-bridge change with bridge health, workspace readiness, screenshot, and command-contract proof.
 6. Browser automation flow with DOM/a11y, screenshot, console/network, and cleanup evidence.
 7. Release smoke with package manifest, clean install, and platform note.
 8. Semantic eval regression with rubric, judge output, baseline delta, and reviewer note.

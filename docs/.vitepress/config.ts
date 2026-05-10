@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 const base = process.env.VITEPRESS_BASE || '/'
-const versions = ['0.4.0', '0.3.0', '0.2.0', '0.1.0']
+const versions = ['0.5.0', '0.4.0', '0.3.0', '0.2.0', '0.1.0']
 
 const enVersionItems = versions.flatMap((version) => [
   { text: `v${version} overview`, link: `/en/versions/v${version}/overview` },
@@ -19,6 +19,7 @@ const enNav = [
   { text: 'Guide', link: '/en/what-is-agent-qc' },
   { text: 'Specification', link: '/en/specification' },
   { text: 'Best Practices', link: '/en/authoring/best-practices' },
+  { text: 'Techniques', link: '/en/authoring/test-techniques-and-compositions' },
   { text: 'Examples', link: '/en/examples/codex-runtime-cli' },
   { text: 'Surfaces', link: '/en/authoring/interaction-surface-testing' },
   { text: 'Ecosystem', link: '/en/reference/agent-ecosystem' },
@@ -29,6 +30,7 @@ const zhNav = [
   { text: '指南', link: '/zh/what-is-agent-qc' },
   { text: '规范', link: '/zh/specification' },
   { text: '最佳实践', link: '/zh/authoring/best-practices' },
+  { text: '测试手段', link: '/zh/authoring/test-techniques-and-compositions' },
   { text: '示例', link: '/zh/examples/codex-runtime-cli' },
   { text: '交互表面', link: '/zh/authoring/interaction-surface-testing' },
   { text: '生态', link: '/zh/reference/agent-ecosystem' },
@@ -44,6 +46,7 @@ const enSidebar = [
   { text: 'For QC authors', items: [
     { text: 'Quickstart', link: '/en/authoring/quickstart' },
     { text: 'Best practices', link: '/en/authoring/best-practices' },
+    { text: 'Test techniques and compositions', link: '/en/authoring/test-techniques-and-compositions' },
     { text: 'Project classification', link: '/en/authoring/project-classification' },
     { text: 'Gate matrix', link: '/en/authoring/gate-matrix' },
     { text: 'Interaction surface testing', link: '/en/authoring/interaction-surface-testing' },
@@ -68,7 +71,6 @@ const enSidebar = [
     { text: 'Claude Code TUI runtime', link: '/en/examples/claudecode-tui-runtime' },
     { text: 'OpenClaw channel gateway', link: '/en/examples/openclaw-channel-gateway' },
     { text: 'Hermes background agent', link: '/en/examples/hermes-background-agent' },
-    { text: 'Lime desktop GUI', link: '/en/examples/lime-desktop-gui' },
     { text: 'qcloop batch', link: '/en/examples/qcloop-batch' }
   ] },
   { text: 'Versions', items: enVersionItems }
@@ -83,6 +85,7 @@ const zhSidebar = [
   { text: 'QC 作者', items: [
     { text: '快速开始', link: '/zh/authoring/quickstart' },
     { text: '最佳实践', link: '/zh/authoring/best-practices' },
+    { text: '测试手段与组合', link: '/zh/authoring/test-techniques-and-compositions' },
     { text: '项目分类', link: '/zh/authoring/project-classification' },
     { text: '门禁矩阵', link: '/zh/authoring/gate-matrix' },
     { text: '交互表面测试', link: '/zh/authoring/interaction-surface-testing' },
@@ -107,7 +110,6 @@ const zhSidebar = [
     { text: 'Claude Code TUI runtime', link: '/zh/examples/claudecode-tui-runtime' },
     { text: 'OpenClaw channel gateway', link: '/zh/examples/openclaw-channel-gateway' },
     { text: 'Hermes background agent', link: '/zh/examples/hermes-background-agent' },
-    { text: 'Lime desktop GUI', link: '/zh/examples/lime-desktop-gui' },
     { text: 'qcloop 批次', link: '/zh/examples/qcloop-batch' }
   ] },
   { text: '版本', items: zhVersionItems }

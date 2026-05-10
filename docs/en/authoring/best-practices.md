@@ -5,9 +5,9 @@ description: Practical authoring rules for Agent QC plans, gates, evidence, and 
 
 # Best practices
 
-Use this page as the authoring checklist for Agent QC plans. It adapts the runtime-first style of Agent UI, the progressive-disclosure style of Agent Skills, and testing patterns observed in Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+Use this page as the authoring checklist for Agent QC plans. It adapts the runtime-first style of Agent UI, the progressive-disclosure style of Agent Skills, and testing patterns observed across runtime CLIs, TUI agents, multi-channel gateways, background/browser agents, desktop clients, and eval systems.
 
-Agent QC is a standard, not a Lime-only checklist. Lime is one desktop GUI case study.
+Agent QC is a standard protocol, not a single-product checklist.
 
 ## Start from owned risk
 
@@ -94,7 +94,7 @@ Use explicit statuses instead of guessing:
 - `needs-review` when evidence exists but the judgment is semantic, safety-sensitive, or disputed;
 - `waived` only when an accountable owner accepts a gap with reason and expiry.
 
-Do not show `passed` because a UI looked healthy if bridge/runtime evidence is missing. This is the Lime GUI lesson and it applies to all Agent UI/TUI/WebUI projects.
+Do not show `passed` because a UI looked healthy if bridge/runtime evidence is missing. This applies to all Agent UI/TUI/WebUI projects.
 
 ## Prefer behavior-level scenarios
 
@@ -144,7 +144,7 @@ Traceability levels:
 | Level | Use |
 | --- | --- |
 | Public specification | Agent Skills, Playwright, Vitest, pytest, protocol docs |
-| Local case study | Codex, Claude Code local snapshot, OpenClaw, Hermes, Lime |
+| Local case study | Codex, Claude Code local snapshot, OpenClaw, Hermes, desktop GUI and release examples |
 | Project-specific rule | a concrete product's scripts, CI, workflow, or AGENTS file |
 | Evidence artifact | command output, trace, screenshot, transcript, report |
 
@@ -178,7 +178,7 @@ Before publishing a QC plan or report, verify:
 
 | Question | Required answer |
 | --- | --- |
-| Is Lime only a case study? | Yes; profiles apply to all Agent project types. |
+| Is this standard tied to one product? | No; profiles apply to all Agent project types. |
 | Are project profiles declared? | One or more profiles are named. |
 | Are touched surfaces named? | User-visible cases include `qc_case.surface`. |
 | Are gates separated? | Deterministic, runtime, surface, live, release, and eval lanes are distinct. |

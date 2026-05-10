@@ -18,7 +18,7 @@ Agent QC standardizes:
 3. Gate taxonomy from static checks to live provider and release smoke.
 4. Evidence-backed pass/fail semantics.
 5. qcloop-compatible batch QC for repeated independent cases.
-6. Case-study mapping for projects such as Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
+6. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, release, and eval projects.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
 

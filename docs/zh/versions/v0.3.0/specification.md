@@ -18,7 +18,7 @@ Agent QC 标准化以下内容：
 3. 从静态检查到 live provider 和 release smoke 的 gate taxonomy。
 4. 有证据支撑的 pass/fail 语义。
 5. 面向重复独立 case 的 qcloop-compatible batch QC。
-6. Codex、Claude Code 本地快照、OpenClaw、Hermes Agent、Lime 等项目的案例映射。
+6. 代表性 runtime、TUI、gateway、scheduler、UI、release 和 eval 项目的案例映射。
 
 Agent QC 不标准化单一编程语言、CI vendor、测试框架、浏览器驱动、模型协议、存储后端或 UI 皮肤。
 

@@ -22,7 +22,7 @@ Use source ids in design notes or changelogs:
 | Source id | Source | Evidence used | Agent QC requirements informed |
 | --- | --- | --- | --- |
 | `SRC-AGENTUI-BEST-PRACTICES` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/best-practices.md` | runtime-owned facts, event classes, stable ids, fallback states, controlled writes, old-session design, latency metrics | Agent QC requires surface evidence to link visible frames to runtime/protocol facts and avoid UI-owned verdicts. |
-| `SRC-AGENTUI-ACCEPTANCE` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/acceptance-scenarios.md` | send/status, tool, HITL, queue/steer, artifact, evidence, old-session, team/parallel/remote/background scenarios | Agent QC acceptance scenarios expanded beyond Lime GUI to runtime, TUI, WebUI, team, remote, and eval flows. |
+| `SRC-AGENTUI-ACCEPTANCE` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/acceptance-scenarios.md` | send/status, tool, HITL, queue/steer, artifact, evidence, old-session, team/parallel/remote/background scenarios | Agent QC acceptance scenarios cover runtime, TUI, WebUI, team, remote, and eval flows. |
 | `SRC-AGENTUI-FLOW` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/reference/flow-and-taxonomy.md` | lifecycle, event envelope, fact owners, scopes, phases, surfaces, controls, team taxonomy | Agent QC flow/taxonomy mirrors explicit dimensions and fact-owner separation. |
 | `SRC-AGENTUI-CONTRACTS` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/contracts/*.md` | backend coordination, runtime event projection, performance metrics | Agent QC adds evidence, performance, and reliability contracts for UI/TUI/desktop/browser gates. |
 | `SRC-AGENTKNOWLEDGE-SPEC` | `/Users/coso/Documents/dev/ai/limecloud/agentknowledge/docs/en/specification.md` | directory-as-standard, progressive disclosure, source maps, compile/eval evidence, knowledge-as-data boundary | Agent QC keeps Knowledge as requirements/context input, not proof, and preserves source traceability. |
@@ -35,7 +35,6 @@ Use source ids in design notes or changelogs:
 | `SRC-CLAUDECODE-LOCAL` | `/Users/coso/Documents/dev/js/claudecode` | Partial local source snapshot for Ink TUI, remote bridge, WebSocket control, permission flow, SDK stream adapter, commands, task/team surfaces; not enough metadata for CI/release claims. |
 | `SRC-OPENCLAW-LOCAL` | `/Users/coso/Documents/dev/js/openclaw` | Multi-channel gateway, Vitest lane routing, UI browser-mode tests, QA Lab, live provider opt-in, Docker/install smoke, plugin/secret/channel contracts, mobile/platform scripts. |
 | `SRC-HERMES-LOCAL` | `/Users/coso/Documents/dev/python/hermes-agent` | Python pytest, markers, xdist, integration/e2e separation, credential blanking, cron/scheduler, browser safety, gateway/channel tests, TUI Vitest, Docker/uv/OSV. |
-| `SRC-LIME-LOCAL` | `/Users/coso/Documents/dev/ai/aiclientproxy/lime` | Desktop GUI, Tauri bridge, command contracts, DevBridge health, GUI smoke, Playwright continuation, version consistency, current/compat governance. |
 
 ## External public sources
 
@@ -54,13 +53,13 @@ Use source ids in design notes or changelogs:
 
 | Requirement area | Primary sources |
 | --- | --- |
-| Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-LIME-LOCAL` |
+| Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Expanded acceptance scenarios | `SRC-AGENTUI-ACCEPTANCE`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | TUI evidence | `SRC-CODEX-LOCAL`, `SRC-CLAUDECODE-LOCAL`, `SRC-HERMES-LOCAL` |
-| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Python suite routing | `SRC-PYTEST-MARKERS`, `SRC-HERMES-LOCAL` |
 | Live provider separation | `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Scheduler/background gates | `SRC-HERMES-LOCAL`, `SRC-AGENTUI-ACCEPTANCE` |
-| Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Progressive documentation style | `SRC-AGENTSKILLS-SPEC`, `SRC-AGENTKNOWLEDGE-SPEC`, `SRC-AGENTUI-BEST-PRACTICES` |
 | qcloop/eval evidence loop | `SRC-AGENTSKILLS-EVAL`, `SRC-OPENCLAW-LOCAL` |

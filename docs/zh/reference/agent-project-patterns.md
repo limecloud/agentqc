@@ -1,6 +1,6 @@
 ---
 title: Agent 项目测试模式
-description: 来自 Codex、OpenClaw、Claude Code 快照、Hermes Agent 和 Lime 的案例模式。
+description: 来自 Codex、OpenClaw、Claude Code 快照、Hermes Agent 和其他 Agent 项目形态的案例模式。
 ---
 
 # Agent 项目测试模式
@@ -66,20 +66,6 @@ Agent QC profile 映射：`agent-runtime-cli`、`agent-ui-tui-desktop`、`agent-
 Surface 覆盖：`cli-stream`、`tui`、`browser-automation`、`channel-ui` 与 scheduler evidence。
 
 Agent QC profile 映射：`agent-runtime-cli`、`background-agent-scheduler`、`multi-channel-agent-gateway`、`agent-ui-tui-desktop`、`agent-tool-mcp-gateway`、`agent-distribution-release`、`agent-skills-plugins`。
-
-## Lime 风格 desktop GUI agent
-
-本地来源：`/Users/coso/Documents/dev/ai/aiclientproxy/lime`。
-
-观察到的测试形态：
-
-- Lime 把 GUI 产品可交付性与 type/lint/unit 通过分开看待。
-- 必需门禁包括 `verify:local`、`test:contracts`、`verify:gui-smoke`、bridge health、workspace-ready smoke、browser-runtime smoke，用户可见行为变更时继续 Playwright 验证。
-- command 变更必须同步 frontend call、Rust handler、governance catalog、DevBridge 和 mock。
-
-Surface 覆盖：`desktop-gui`、WebView `webui`、`browser-automation` 与 bridge/command transcript。
-
-Agent QC profile 映射：`agent-ui-tui-desktop`、`agent-runtime-cli`、`agent-tool-mcp-gateway`、`agent-skills-plugins`。
 
 ## 跨案例结论
 

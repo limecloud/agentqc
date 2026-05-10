@@ -86,7 +86,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 | Rust/Codex-like | `cargo nextest`、targeted crate tests、Bazel test/build、schema fixture writers、fake model server、ratatui snapshots |
 | JS/OpenClaw-like | Vitest projects、changed-test router、contract configs、live configs、Docker smoke、QA Lab report lanes |
 | Python/Hermes-like | pytest markers、xdist、默认排除 integration、credential blanking、e2e directory、ruff/ty |
-| GUI/Lime-like | local verify、command contracts、DevBridge health、GUI smoke、Playwright continuation、Tauri/Rust tests |
+| Desktop GUI / native bridge | local verify、command contracts、bridge health、GUI smoke、Playwright continuation、native backend tests |
 
 ## Anti-patterns
 

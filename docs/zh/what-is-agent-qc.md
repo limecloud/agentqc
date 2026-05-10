@@ -20,7 +20,7 @@ Agent QC 为这些风险提供统一词汇：
 
 ## Lime 是一个 profile，不是标准本身
 
-Lime 仍然是重要案例，因为它是 GUI 桌面 Agent 产品。但 Agent QC v0.2.0 的范围更广：类似 Codex 的 runtime CLI、类似 OpenClaw 的 multi-channel gateway、类似 Hermes 的 background agent、SDK、tool server、skill、plugin 和 release package 都需要 QC。
+Lime 仍然是重要案例，因为它是 GUI 桌面 Agent 产品。但 Agent QC v0.3.0 的范围更广：类似 Codex 的 runtime CLI、类似 OpenClaw 的 multi-channel gateway、类似 Hermes 的 background agent、SDK、tool server、skill、plugin 和 release package 都需要 QC。
 
 ## 为什么 Agent 项目需要先分类
 
@@ -29,6 +29,7 @@ Rust runtime agent、Telegram gateway、VitePress 标准站点需要的门禁并
 示例：
 
 - Codex 风格 runtime：sandbox、apply-patch、MCP、protocol、CLI e2e、cross-platform release。
+- Claude Code 风格 TUI runtime：Ink rendering、remote permission、WebSocket/control stream、SDK adapter、plugin/skill reload visibility。
 - OpenClaw 风格 gateway：channel contract、secrets、provider live lane、Docker/install smoke、plugin boundary。
 - Hermes 风格 background agent：pytest、cron、gateway、concurrency stress、Docker smoke、credential isolation。
 - Lime 风格 desktop GUI：local validation、command contract、DevBridge readiness、GUI smoke、Playwright product flow。

@@ -1,9 +1,9 @@
 ---
-title: Specification
+title: v0.3.0 specification
 description: Agent QC v0.3.0 portable draft specification.
 ---
 
-# Specification
+# v0.3.0 specification
 
 Agent QC v0.3.0 is a portable draft standard for evidence-driven quality control of Agent projects.
 

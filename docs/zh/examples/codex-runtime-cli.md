@@ -1,6 +1,6 @@
 ---
 title: Codex runtime CLI 示例
-description: Codex 风格 runtime CLI 的 Agent QC profile 映射。
+description: Codex 风格 runtime CLI、TUI、protocol、release stack 的 Agent QC profile 映射。
 ---
 
 # Codex runtime CLI 示例
@@ -10,38 +10,47 @@ Profiles:
 - `agent-runtime-cli`
 - `agent-tool-mcp-gateway`
 - `agent-sdk-api`
+- `agent-ui-tui-desktop`
 - `agent-distribution-release`
 
 典型门禁：
 
-- static：`cargo fmt`、`cargo clippy`、dependency policy。
+- static：`cargo fmt`、`cargo clippy`、dependency/policy check、Bazel parity。
 - unit/runtime：定向 crate test 与 `cargo nextest run --no-fail-fast`。
-- contract/protocol：MCP client/server fixture、SSE fixture、API bridge test。
-- runtime-e2e：CLI exec/apply-patch/resume/sandbox suite。
-- distribution-release：Bazel matrix、SDK build/test、package staging。
+- contract/protocol：MCP fixture、SSE fixture、app-server protocol schema、SDK/API test。
+- ui-interaction：approval overlay、footer/status、diff/history、request-user-input、resume/model picker 的 terminal snapshot。
+- runtime-e2e：CLI exec/apply-patch/resume/sandbox/process cleanup suite。
+- distribution-release：Bazel release matrix、native package contents、npm/package staging。
+
+公开 QC plan JSON：
 
 ```json
 {
-  "schema_version": "0.2.0",
-  "id": "codex-runtime-sandbox-qc",
+  "schema_version": "0.3.0",
+  "id": "codex-runtime-tui-protocol-qc",
   "target_project": "codex",
   "project_profiles": [
     "agent-runtime-cli",
     "agent-tool-mcp-gateway",
     "agent-sdk-api",
+    "agent-ui-tui-desktop",
     "agent-distribution-release"
   ],
   "risk_level": "high",
   "risk_domains": [
     "sandbox",
     "tool-execution",
-    "protocol"
+    "protocol",
+    "tui-rendering",
+    "release-package"
   ],
   "required_gates": [
     "static",
     "unit",
     "contract-protocol",
-    "runtime-e2e"
+    "runtime-e2e",
+    "ui-interaction",
+    "distribution-release"
   ],
   "cases": [
     {
@@ -51,11 +60,11 @@ Profiles:
       "target": "sandbox policy",
       "steps": [
         "Run the sandbox deny fixture",
-        "Capture CLI transcript and exit status"
+        "Capture CLI transcript, structured event sample, and exit status"
       ],
       "expected": [
         "Unsafe action is denied",
-        "Transcript includes controlled error"
+        "Transcript includes a controlled error and no orphan subprocess remains"
       ],
       "risk": "permission bypass",
       "required_gates": [
@@ -64,11 +73,94 @@ Profiles:
       ],
       "required_evidence": [
         "command_log",
-        "cli_transcript"
+        "cli_transcript",
+        "process_cleanup_note"
       ],
-      "status": "planned"
+      "status": "planned",
+      "surface": "cli-stream"
+    },
+    {
+      "id": "approval-overlay-renders-request-id",
+      "name": "Approval overlay renders request id and action",
+      "project_profile": "agent-ui-tui-desktop",
+      "target": "ratatui approval overlay",
+      "steps": [
+        "Trigger an exec or patch approval fixture",
+        "Render the TUI at narrow and standard viewport sizes",
+        "Capture runtime approval event and terminal snapshots"
+      ],
+      "expected": [
+        "Overlay shows command or patch intent, permission reason, and request correlation",
+        "Ctrl-C/Esc footer state is correct while approval is pending",
+        "Allow or deny result is reflected in the runtime transcript"
+      ],
+      "risk": "invisible or stale permission prompt",
+      "required_gates": [
+        "contract-protocol",
+        "ui-interaction"
+      ],
+      "required_evidence": [
+        "terminal_snapshot",
+        "viewport_matrix",
+        "runtime_event_transcript"
+      ],
+      "status": "planned",
+      "surface": "tui"
+    },
+    {
+      "id": "mcp-tool-event-round-trip",
+      "name": "MCP tool event round-trips through protocol and UI",
+      "project_profile": "agent-tool-mcp-gateway",
+      "target": "MCP tool declaration and stream event",
+      "steps": [
+        "Mount MCP client/server fixture",
+        "Run a fake model stream that calls the tool",
+        "Inspect app-server or CLI protocol transcript"
+      ],
+      "expected": [
+        "Tool name, schema, permission boundary, and output shape remain stable",
+        "Runtime event preserves tool call id and structured output"
+      ],
+      "risk": "tool declaration drift or stream event mismatch",
+      "required_gates": [
+        "contract-protocol",
+        "fake-integration"
+      ],
+      "required_evidence": [
+        "schema_diff_or_fixture",
+        "fake_server_log",
+        "stream_transcript"
+      ],
+      "status": "planned",
+      "surface": "cli-stream"
+    },
+    {
+      "id": "release-binary-package-contents",
+      "name": "Release package contains expected platform helpers",
+      "project_profile": "agent-distribution-release",
+      "target": "native CLI package",
+      "steps": [
+        "Build or dry-run the release package",
+        "Inspect native binaries and helper scripts",
+        "Compare package manifest with expected platform matrix"
+      ],
+      "expected": [
+        "Package contains the CLI binary and required platform helpers",
+        "Manifest does not include unexpected generated or secret files"
+      ],
+      "risk": "broken or unsafe distribution artifact",
+      "required_gates": [
+        "distribution-release"
+      ],
+      "required_evidence": [
+        "package_manifest",
+        "build_log",
+        "platform_matrix_note"
+      ],
+      "status": "planned",
+      "surface": "cli-stream"
     }
   ],
-  "evidence_policy": "Every pass must link to command, fixture, transcript, or CI evidence."
+  "evidence_policy": "Every pass must link to command, fixture, transcript, snapshot, schema diff, package manifest, or CI evidence. TUI proof must include both terminal snapshots and runtime transcripts."
 }
 ```

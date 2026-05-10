@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 const base = process.env.VITEPRESS_BASE || '/'
-const versions = ['0.2.0', '0.1.0']
+const versions = ['0.3.0', '0.2.0', '0.1.0']
 
 const enVersionItems = versions.flatMap((version) => [
   { text: `v${version} overview`, link: `/en/versions/v${version}/overview` },
@@ -19,6 +19,7 @@ const enNav = [
   { text: 'Guide', link: '/en/what-is-agent-qc' },
   { text: 'Specification', link: '/en/specification' },
   { text: 'Examples', link: '/en/examples/codex-runtime-cli' },
+  { text: 'Surfaces', link: '/en/authoring/interaction-surface-testing' },
   { text: 'Ecosystem', link: '/en/reference/agent-ecosystem' },
   { text: 'Version', items: [{ text: 'latest', link: '/en/specification' }, ...enVersionItems] }
 ]
@@ -27,6 +28,7 @@ const zhNav = [
   { text: '指南', link: '/zh/what-is-agent-qc' },
   { text: '规范', link: '/zh/specification' },
   { text: '示例', link: '/zh/examples/codex-runtime-cli' },
+  { text: '交互表面', link: '/zh/authoring/interaction-surface-testing' },
   { text: '生态', link: '/zh/reference/agent-ecosystem' },
   { text: '版本', items: [{ text: 'latest', link: '/zh/specification' }, ...zhVersionItems] }
 ]
@@ -41,6 +43,7 @@ const enSidebar = [
     { text: 'Quickstart', link: '/en/authoring/quickstart' },
     { text: 'Project classification', link: '/en/authoring/project-classification' },
     { text: 'Gate matrix', link: '/en/authoring/gate-matrix' },
+    { text: 'Interaction surface testing', link: '/en/authoring/interaction-surface-testing' },
     { text: 'qcloop integration', link: '/en/authoring/qcloop-integration' },
     { text: 'Evidence-driven verdicts', link: '/en/authoring/evidence-driven-verdicts' },
     { text: 'Acceptance scenarios', link: '/en/authoring/acceptance-scenarios' }
@@ -48,11 +51,13 @@ const enSidebar = [
   { text: 'Reference', items: [
     { text: 'Glossary', link: '/en/reference/glossary' },
     { text: 'Agent project patterns', link: '/en/reference/agent-project-patterns' },
+    { text: 'Star project testing systems', link: '/en/reference/star-project-testing-systems' },
     { text: 'Source index', link: '/en/reference/source-index' },
     { text: 'Agent standards ecosystem', link: '/en/reference/agent-ecosystem' }
   ] },
   { text: 'Examples', items: [
     { text: 'Codex runtime CLI', link: '/en/examples/codex-runtime-cli' },
+    { text: 'Claude Code TUI runtime', link: '/en/examples/claudecode-tui-runtime' },
     { text: 'OpenClaw channel gateway', link: '/en/examples/openclaw-channel-gateway' },
     { text: 'Hermes background agent', link: '/en/examples/hermes-background-agent' },
     { text: 'Lime desktop GUI', link: '/en/examples/lime-desktop-gui' },
@@ -71,6 +76,7 @@ const zhSidebar = [
     { text: '快速开始', link: '/zh/authoring/quickstart' },
     { text: '项目分类', link: '/zh/authoring/project-classification' },
     { text: '门禁矩阵', link: '/zh/authoring/gate-matrix' },
+    { text: '交互表面测试', link: '/zh/authoring/interaction-surface-testing' },
     { text: 'qcloop 集成', link: '/zh/authoring/qcloop-integration' },
     { text: '证据驱动判定', link: '/zh/authoring/evidence-driven-verdicts' },
     { text: '验收场景', link: '/zh/authoring/acceptance-scenarios' }
@@ -78,11 +84,13 @@ const zhSidebar = [
   { text: '参考', items: [
     { text: '术语表', link: '/zh/reference/glossary' },
     { text: 'Agent 项目测试模式', link: '/zh/reference/agent-project-patterns' },
+    { text: '明星项目测试体系', link: '/zh/reference/star-project-testing-systems' },
     { text: '来源索引', link: '/zh/reference/source-index' },
     { text: 'Agent 标准生态', link: '/zh/reference/agent-ecosystem' }
   ] },
   { text: '示例', items: [
     { text: 'Codex runtime CLI', link: '/zh/examples/codex-runtime-cli' },
+    { text: 'Claude Code TUI runtime', link: '/zh/examples/claudecode-tui-runtime' },
     { text: 'OpenClaw channel gateway', link: '/zh/examples/openclaw-channel-gateway' },
     { text: 'Hermes background agent', link: '/zh/examples/hermes-background-agent' },
     { text: 'Lime desktop GUI', link: '/zh/examples/lime-desktop-gui' },

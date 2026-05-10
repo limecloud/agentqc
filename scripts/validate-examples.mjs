@@ -20,6 +20,16 @@ const profiles = new Set([
   'agent-evals-quality',
 ])
 
+const surfaces = new Set([
+  'cli-stream',
+  'tui',
+  'webui',
+  'desktop-gui',
+  'browser-automation',
+  'channel-ui',
+  'eval-ui',
+])
+
 const gateFamilies = new Set([
   'static',
   'unit',
@@ -38,6 +48,7 @@ const gateFamilies = new Set([
 const planFiles = [
   'docs/public/examples/agent-qc-plan.json',
   'docs/public/examples/codex-qc-plan.json',
+  'docs/public/examples/claudecode-qc-plan.json',
   'docs/public/examples/openclaw-qc-plan.json',
   'docs/public/examples/hermes-qc-plan.json',
   'docs/public/examples/lime-qc-plan.json',
@@ -52,7 +63,7 @@ const checkGateList = (file, label, gates) => {
 
 for (const file of planFiles) {
   const plan = readJson(file)
-  if (plan.schema_version !== '0.2.0') fail(`${file} must use schema_version 0.2.0`)
+  if (plan.schema_version !== '0.3.0') fail(`${file} must use schema_version 0.3.0`)
   if (!Array.isArray(plan.project_profiles) || plan.project_profiles.length === 0) fail(`${file} requires project_profiles`)
   const planProfiles = new Set(plan.project_profiles)
   for (const profile of planProfiles) if (!profiles.has(profile)) fail(`${file} has unknown profile ${profile}`)
@@ -65,6 +76,7 @@ for (const file of planFiles) {
     if (!Array.isArray(qcCase.steps) || qcCase.steps.length === 0) fail(`${file} ${qcCase.id} requires steps`)
     if (!Array.isArray(qcCase.expected) || qcCase.expected.length === 0) fail(`${file} ${qcCase.id} requires expected`)
     if (!Array.isArray(qcCase.required_evidence) || qcCase.required_evidence.length === 0) fail(`${file} ${qcCase.id} requires required_evidence`)
+    if (qcCase.surface && !surfaces.has(qcCase.surface)) fail(`${file} ${qcCase.id} has unknown surface ${qcCase.surface}`)
     if (qcCase.required_gates) checkGateList(file, qcCase.id, qcCase.required_gates)
   }
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "id": "agent-runtime-permission-qc",
   "target_project": "example-agent-runtime",
   "project_profiles": [
@@ -41,7 +41,8 @@
         "command_log",
         "cli_transcript"
       ],
-      "status": "planned"
+      "status": "planned",
+      "surface": "cli-stream"
     }
   ],
   "evidence_policy": "Every passed gate requires inspectable evidence refs."

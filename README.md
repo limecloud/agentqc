@@ -1,6 +1,6 @@
 # Agent QC
 
-Agent QC is a portable draft standard for evidence-driven testing of Agent projects: runtimes, CLIs, SDKs, tool and MCP gateways, multi-channel agents, desktop or TUI clients, skills/plugins, background schedulers, and distribution packages.
+Agent QC is a portable draft standard for evidence-driven testing of Agent projects: runtimes, CLIs, SDKs, tool and MCP gateways, multi-channel agents, GUI/TUI/desktop/WebUI clients, browser automation, skills/plugins, background schedulers, eval suites, and distribution packages.
 
 Lime is now only one profile and example. The standard is meant to apply to any Agent project where "the agent says it works" is not enough. A passing result must be backed by inspectable evidence: command logs, test reports, traces, screenshots, model/tool transcripts, qcloop verifier rounds, CI URLs, or human review records.
 
@@ -15,14 +15,15 @@ Lime is now only one profile and example. The standard is meant to apply to any 
 | Evidence systems | Durable traces, provenance, review, replay, export. | Evidence refs required by QC verdicts. |
 | Humans / LLM judges | Review of semantics, UX, safety, and output quality. | Rubric shape and verdict contract. |
 
-## What v0.2.0 defines
+## What v0.3.0 defines
 
 - A project classification model for Agent products.
 - A cross-project gate matrix from static checks to live provider tests and release smoke.
+- Interaction surface rules for CLI streams, TUI, WebUI, desktop GUI, browser automation, channel UI, and eval UI.
 - Core objects: `qc_plan`, `qc_case`, `qc_gate`, `qc_run`, `qc_verdict`, `qc_evidence`, and `qc_report`.
 - Evidence-driven verdict rules for pass, fail, blocked, exhausted, waived, and needs-review.
 - qcloop integration for repeated independent QC cases.
-- Case studies from Codex, OpenClaw, Hermes Agent, and Lime.
+- Deep case studies from Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
 - Public JSON schemas and examples.
 
 ## Project profiles
@@ -46,10 +47,12 @@ A real project usually combines several profiles.
 - [Specification](docs/en/specification.md)
 - [Project classification](docs/en/authoring/project-classification.md)
 - [Gate matrix](docs/en/authoring/gate-matrix.md)
+- [Interaction surface testing](docs/en/authoring/interaction-surface-testing.md)
 - [qcloop integration](docs/en/authoring/qcloop-integration.md)
 - [Evidence-driven verdicts](docs/en/authoring/evidence-driven-verdicts.md)
 - [Acceptance scenarios](docs/en/authoring/acceptance-scenarios.md)
 - [Case-study patterns](docs/en/reference/agent-project-patterns.md)
+- [Star project testing systems](docs/en/reference/star-project-testing-systems.md)
 - [中文规范](docs/zh/specification.md)
 
 ## LLM entrypoints

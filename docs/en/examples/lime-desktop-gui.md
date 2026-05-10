@@ -1,30 +1,31 @@
 ---
 title: Lime desktop GUI example
-description: Agent QC profile mapping for a Lime-style desktop GUI agent.
+description: Agent QC profile mapping for a desktop GUI with Tauri bridge, WebView panels, and browser runtime.
 ---
 
 # Lime desktop GUI example
 
-Lime is an example profile, not the standard boundary.
-
 Profiles:
 
 - `agent-ui-tui-desktop`
-- `agent-runtime-cli`
 - `agent-tool-mcp-gateway`
+- `agent-runtime-cli`
 - `agent-skills-plugins`
 
 Typical gates:
 
-- local validation for static/type/unit coverage;
-- command contracts for frontend/Rust/mock/catalog surfaces;
-- GUI smoke for shell, bridge, and workspace readiness;
-- Playwright for user-visible product flows.
+- static/local: `npm run verify:local` and targeted package/Rust checks.
+- contract/protocol: command contracts across frontend calls, Rust registrations, catalog, DevBridge, and mocks.
+- desktop-gui: shell start/reuse, DevBridge health, workspace readiness, screenshot/trace, console state.
+- webui: component/browser tests for WebView panels such as settings, skills, resources, MCP, artifacts, chat shell.
+- browser-automation: browser runtime/site adapter smoke and Playwright continuation for real product flows.
+
+Public QC plan JSON:
 
 ```json
 {
-  "schema_version": "0.2.0",
-  "id": "lime-gui-workspace-readiness",
+  "schema_version": "0.3.0",
+  "id": "lime-desktop-gui-bridge-qc",
   "target_project": "lime",
   "project_profiles": [
     "agent-ui-tui-desktop",
@@ -36,11 +37,14 @@ Typical gates:
   "risk_domains": [
     "desktop-shell",
     "bridge",
-    "workspace"
+    "workspace",
+    "browser-runtime",
+    "command-contract"
   ],
   "required_gates": [
     "static",
     "contract-protocol",
+    "runtime-e2e",
     "ui-interaction"
   ],
   "cases": [
@@ -50,12 +54,14 @@ Typical gates:
       "project_profile": "agent-ui-tui-desktop",
       "target": "Lime desktop GUI",
       "steps": [
-        "Run GUI smoke",
-        "Inspect bridge readiness and workspace state"
+        "Run GUI smoke through the supported app entrypoint",
+        "Inspect bridge readiness and workspace state",
+        "Capture screenshot or trace plus console state"
       ],
       "expected": [
-        "Bridge is ready",
-        "Default workspace is prepared"
+        "Bridge is ready before the UI is judged",
+        "Default workspace is prepared",
+        "No mock fallback hides a bridge failure"
       ],
       "risk": "UI reports readiness without runtime support",
       "required_gates": [
@@ -64,11 +70,96 @@ Typical gates:
       ],
       "required_evidence": [
         "command_log",
-        "gui_smoke_summary"
+        "gui_smoke_summary",
+        "screenshot_or_trace"
       ],
-      "status": "planned"
+      "status": "planned",
+      "surface": "desktop-gui"
+    },
+    {
+      "id": "tauri-command-contract-synchronized",
+      "name": "Tauri command contract is synchronized",
+      "project_profile": "agent-tool-mcp-gateway",
+      "target": "frontend/Rust/catalog/mock command boundary",
+      "steps": [
+        "Run command contract tests",
+        "Compare frontend invocations, Rust registrations, catalog, DevBridge, and mocks",
+        "Inspect generated runtime clients or catalog output"
+      ],
+      "expected": [
+        "Every user-visible command exists in all required sides",
+        "Mocks do not define commands missing from real bridge",
+        "Contract report identifies any drift"
+      ],
+      "risk": "GUI calls a command that only exists in mock or catalog",
+      "required_gates": [
+        "contract-protocol"
+      ],
+      "required_evidence": [
+        "contract_test_report",
+        "command_catalog_diff",
+        "mock_bridge_diff"
+      ],
+      "status": "planned",
+      "surface": "cli-stream"
+    },
+    {
+      "id": "browser-runtime-site-adapter-smoke",
+      "name": "Browser runtime site adapter smoke",
+      "project_profile": "agent-ui-tui-desktop",
+      "target": "browser runtime panel and site adapter",
+      "steps": [
+        "Run browser-runtime smoke or Playwright continuation",
+        "Open the runtime panel and execute a site-adapter fixture",
+        "Capture screenshot, DOM/a11y snapshot, console/network log, and bridge event"
+      ],
+      "expected": [
+        "Panel shows real adapter state and not stale mock data",
+        "Console/network log has no unwaived error",
+        "Bridge event matches the visible runtime state"
+      ],
+      "risk": "browser runtime panel hides adapter or bridge failure",
+      "required_gates": [
+        "ui-interaction",
+        "runtime-e2e"
+      ],
+      "required_evidence": [
+        "browser_trace",
+        "dom_or_a11y_snapshot",
+        "bridge_event_log"
+      ],
+      "status": "planned",
+      "surface": "browser-automation"
+    },
+    {
+      "id": "provider-settings-webview-regression",
+      "name": "Provider settings WebView regression",
+      "project_profile": "agent-ui-tui-desktop",
+      "target": "provider settings panel",
+      "steps": [
+        "Run focused component or browser test for provider settings",
+        "Exercise empty, saved, invalid, and permission-denied states",
+        "Capture console output and stable regression report"
+      ],
+      "expected": [
+        "Settings state matches persisted/runtime config",
+        "Invalid or denied state is visible to the user",
+        "No console error is hidden by optimistic UI"
+      ],
+      "risk": "settings UI shows saved state that runtime rejects",
+      "required_gates": [
+        "unit",
+        "ui-interaction"
+      ],
+      "required_evidence": [
+        "component_test_report",
+        "console_log",
+        "state_fixture"
+      ],
+      "status": "planned",
+      "surface": "webui"
     }
   ],
-  "evidence_policy": "GUI pass requires smoke or interaction evidence, not only static checks."
+  "evidence_policy": "GUI pass requires smoke or interaction evidence, not only static checks. Bridge-backed UI proof must name whether it used real backend, fake provider, or mock bridge."
 }
 ```

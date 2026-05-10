@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.3.0
+
+Agent QC v0.3.0 deepens the standard with concrete testing systems from major Agent projects. It focuses on how runtime, TUI, GUI, WebUI, gateway, background, and release tests should be shaped and evidenced.
+
+### Highlights
+
+- Adds a detailed interaction surface testing guide for CLI streams, TUI, WebUI, desktop GUI, browser automation, mobile/channel adapters, and semantic eval UIs.
+- Expands case studies for Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime with concrete gates, evidence, fixtures, and anti-patterns.
+- Adds a Claude Code-style TUI/runtime QC example and expands public JSON samples for Codex, OpenClaw, Hermes, Lime, and qcloop.
+- Clarifies that TUI/WebUI/GUI/browser/channel/eval tests need surface-specific evidence, not just a generic `ui-interaction` label.
+
+### Scope
+
+This release is the content expansion after v0.2.0. It keeps the core object model stable while adding stronger guidance for how real Agent products test user-facing and runtime surfaces.
+
 ## v0.2.0
 
 Agent QC v0.2.0 corrects the scope of the standard. Lime is now a case study and profile, not the center of the standard.

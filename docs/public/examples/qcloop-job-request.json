@@ -7,6 +7,6 @@
   "execution_mode": "standard",
   "executor_provider": "codex",
   "items": [
-    "{\"id\":\"deny-unsafe-tool-action\",\"name\":\"Deny unsafe tool action\",\"project_profile\":\"agent-runtime-cli\",\"target\":\"sandbox policy\",\"steps\":[\"Run the sandbox deny fixture\",\"Capture CLI transcript and exit status\"],\"expected\":[\"Unsafe action is denied\",\"Transcript includes controlled error\"],\"risk\":\"permission bypass\",\"required_gates\":[\"unit\",\"runtime-e2e\"],\"required_evidence\":[\"command_log\",\"cli_transcript\"],\"status\":\"planned\"}"
+    "{\"id\":\"deny-unsafe-tool-action\",\"name\":\"Deny unsafe tool action\",\"project_profile\":\"agent-runtime-cli\",\"target\":\"sandbox policy\",\"steps\":[\"Run the sandbox deny fixture\",\"Capture CLI transcript and exit status\"],\"expected\":[\"Unsafe action is denied\",\"Transcript includes controlled error\"],\"risk\":\"permission bypass\",\"required_gates\":[\"unit\",\"runtime-e2e\"],\"required_evidence\":[\"command_log\",\"cli_transcript\",\"exit_status\"],\"status\":\"planned\",\"surface\":\"cli-stream\"}"
   ]
 }

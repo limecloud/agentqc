@@ -1,46 +1,56 @@
 ---
 title: Hermes background agent 示例
-description: Hermes 风格 background agent 的 Agent QC profile 映射。
+description: 包含 scheduler、gateway、TUI、browser tools 的 Python background agent 的 Agent QC profile 映射。
 ---
 
 # Hermes background agent 示例
 
 Profiles:
 
+- `agent-runtime-cli`
 - `background-agent-scheduler`
 - `multi-channel-agent-gateway`
 - `agent-ui-tui-desktop`
+- `agent-tool-mcp-gateway`
 - `agent-distribution-release`
 
 典型门禁：
 
-- 通过 canonical runner 运行 Python unit test，并统一环境。
-- 使用 pytest marker 默认排除 integration。
-- 对 lease、queue、checkpoint、subprocess 做 stress-concurrency test。
-- 使用 TUI Vitest test 验证终端行为。
-- 使用 Docker smoke 与 install test 验证 release path。
+- deterministic pytest：`scripts/run_tests.sh` 固定 worker、timezone、locale、hash seed，并清理 credential env。
+- scheduler/concurrency：cron restart、checkpoint、inactivity timeout、duplicate-work prevention。
+- browser-automation：browser supervisor、CDP、Camofox、SSRF、web provider contract、cleanup evidence。
+- TUI：`ui-tui` Vitest 覆盖 terminal parity、viewport、OSC52、streaming markdown、slash parity。
+- channel/gateway：restart/retry/dedup、approval、delivery、media、reconnect、redacted transcript。
+
+公开 QC plan JSON：
 
 ```json
 {
-  "schema_version": "0.2.0",
-  "id": "hermes-cron-recovery-qc",
+  "schema_version": "0.3.0",
+  "id": "hermes-scheduler-tui-browser-qc",
   "target_project": "hermes-agent",
   "project_profiles": [
+    "agent-runtime-cli",
     "background-agent-scheduler",
     "multi-channel-agent-gateway",
     "agent-ui-tui-desktop",
+    "agent-tool-mcp-gateway",
     "agent-distribution-release"
   ],
   "risk_level": "high",
   "risk_domains": [
     "cron",
     "checkpoint",
-    "credential-isolation"
+    "credential-isolation",
+    "browser-safety",
+    "tui-rendering"
   ],
   "required_gates": [
     "unit",
-    "stress-concurrency",
-    "fake-integration"
+    "fake-integration",
+    "runtime-e2e",
+    "ui-interaction",
+    "stress-concurrency"
   ],
   "cases": [
     {
@@ -49,12 +59,14 @@ Profiles:
       "project_profile": "background-agent-scheduler",
       "target": "cron scheduler recovery",
       "steps": [
-        "Run scheduler restart test",
-        "Inspect checkpoint and evidence store"
+        "Run scheduler restart test with deterministic clock/env",
+        "Inspect checkpoint and evidence store",
+        "Verify cleanup of ephemeral agent/session resources"
       ],
       "expected": [
         "No duplicate work item",
-        "Recovered run owns final state"
+        "Recovered run owns final state",
+        "Credential-shaped environment variables are blanked or scoped"
       ],
       "risk": "duplicate or lost background work",
       "required_gates": [
@@ -63,11 +75,97 @@ Profiles:
       ],
       "required_evidence": [
         "pytest_report",
-        "checkpoint_log"
+        "checkpoint_log",
+        "env_scope_note"
       ],
-      "status": "planned"
+      "status": "planned",
+      "surface": "cli-stream"
+    },
+    {
+      "id": "tui-streaming-markdown-parity",
+      "name": "TUI streaming markdown and terminal parity",
+      "project_profile": "agent-ui-tui-desktop",
+      "target": "ui-tui package",
+      "steps": [
+        "Run terminal parity and streaming markdown fixtures",
+        "Capture viewport, virtual history, and OSC52/clipboard assertions",
+        "Compare slash command dispatch with gateway events"
+      ],
+      "expected": [
+        "Streaming markdown renders without corrupting terminal width",
+        "OSC52/clipboard and terminal mode behavior match expectations",
+        "Slash command and gateway events produce consistent visible state"
+      ],
+      "risk": "terminal UI corrupts stream or command state",
+      "required_gates": [
+        "unit",
+        "ui-interaction"
+      ],
+      "required_evidence": [
+        "vitest_report",
+        "terminal_snapshot_or_render_log",
+        "viewport_matrix"
+      ],
+      "status": "planned",
+      "surface": "tui"
+    },
+    {
+      "id": "browser-local-ssrf-denied",
+      "name": "Browser automation denies local SSRF",
+      "project_profile": "agent-tool-mcp-gateway",
+      "target": "browser/web tool safety",
+      "steps": [
+        "Run browser hardening or local SSRF fixture",
+        "Capture browser supervisor state and console/network output",
+        "Assert browser cleanup or orphan reaper result"
+      ],
+      "expected": [
+        "Unsafe local target is denied or safely blocked",
+        "Console/network evidence shows the blocked request",
+        "Browser session cleanup is recorded"
+      ],
+      "risk": "browser tool can access forbidden local resources",
+      "required_gates": [
+        "fake-integration",
+        "runtime-e2e"
+      ],
+      "required_evidence": [
+        "browser_trace",
+        "console_network_log",
+        "cleanup_log"
+      ],
+      "status": "planned",
+      "surface": "browser-automation"
+    },
+    {
+      "id": "gateway-restart-deduplicates-delivery",
+      "name": "Gateway restart deduplicates channel delivery",
+      "project_profile": "multi-channel-agent-gateway",
+      "target": "gateway restart/retry path",
+      "steps": [
+        "Replay a channel delivery fixture across restart",
+        "Inspect message ids, retry state, and redacted transcript",
+        "Verify final user-visible message count"
+      ],
+      "expected": [
+        "Message is not delivered twice",
+        "Retry/restart state is auditable",
+        "Transcript redacts credentials and user-sensitive ids"
+      ],
+      "risk": "duplicate or leaked channel messages after restart",
+      "required_gates": [
+        "fake-integration",
+        "runtime-e2e"
+      ],
+      "required_evidence": [
+        "channel_transcript",
+        "restart_log",
+        "dedup_state_snapshot"
+      ],
+      "status": "planned",
+      "surface": "channel-ui"
     }
   ],
-  "evidence_policy": "Credential env vars must be blanked or scoped in test evidence."
+  "evidence_policy": "Credential env vars must be blanked or scoped in test evidence. Scheduler, browser, TUI, and channel proofs must keep separate evidence refs."
 }
 ```

@@ -1,9 +1,9 @@
 ---
-title: 规范
+title: v0.3.0 规范
 description: Agent QC v0.3.0 通用草案规范。
 ---
 
-# 规范
+# v0.3.0 规范
 
 Agent QC v0.3.0 是面向 Agent 项目的通用草案标准，用于证据驱动的质量控制。
 

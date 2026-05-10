@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.0 - 2026-05-10
+
+- Expanded project case studies for Codex, Claude Code snapshot, OpenClaw, Hermes Agent, and Lime.
+- Added interaction surface testing guidance for GUI, TUI, WebUI, desktop, browser automation, and mobile/channel flows.
+- Added a Claude Code-style TUI/runtime example and expanded public QC plan samples for Codex, OpenClaw, Hermes, Lime, and qcloop.
+- Documented concrete evidence expectations per interaction surface instead of only listing coarse gate families.
+
 ## v0.2.0 - 2026-05-10
 
 - Repositioned Agent QC from a Lime-only standard to a portable Agent-project QC standard.

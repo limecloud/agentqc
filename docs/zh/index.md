@@ -15,3 +15,5 @@ Agent QC 定义 Agent 项目如何分类、测试、留证、判定和报告。
 - [规范](./specification)
 - [项目分类](./authoring/project-classification)
 - [门禁矩阵](./authoring/gate-matrix)
+- [交互表面测试](./authoring/interaction-surface-testing)
+- [明星项目测试体系](./reference/star-project-testing-systems)

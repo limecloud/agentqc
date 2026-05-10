@@ -15,3 +15,5 @@ Use it for runtime CLIs, SDKs, tool gateways, channel agents, UI/TUI/desktop cli
 - [Specification](./specification)
 - [Project classification](./authoring/project-classification)
 - [Gate matrix](./authoring/gate-matrix)
+- [Interaction surface testing](./authoring/interaction-surface-testing)
+- [Star project testing systems](./reference/star-project-testing-systems)

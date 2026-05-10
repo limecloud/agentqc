@@ -5,7 +5,7 @@
   "type": "object",
   "required": [
     "id",
-    "name",
+    "project_profile",
     "target",
     "steps",
     "expected",
@@ -17,8 +17,20 @@
       "minLength": 1
     },
     "name": {
-      "type": "string",
-      "minLength": 1
+      "type": "string"
+    },
+    "project_profile": {
+      "enum": [
+        "agent-runtime-cli",
+        "agent-sdk-api",
+        "agent-tool-mcp-gateway",
+        "multi-channel-agent-gateway",
+        "agent-ui-tui-desktop",
+        "agent-skills-plugins",
+        "background-agent-scheduler",
+        "agent-distribution-release",
+        "agent-evals-quality"
+      ]
     },
     "target": {
       "type": "string",
@@ -43,6 +55,31 @@
     "risk": {
       "type": "string"
     },
+    "risk_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_gates": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "static",
+          "unit",
+          "property-fuzz",
+          "contract-protocol",
+          "fake-integration",
+          "runtime-e2e",
+          "ui-interaction",
+          "live-provider",
+          "stress-concurrency",
+          "distribution-release",
+          "semantic-eval",
+          "review"
+        ]
+      }
+    },
     "required_evidence": {
       "type": "array",
       "items": {
@@ -59,6 +96,7 @@
         "failed",
         "blocked",
         "exhausted",
+        "waived",
         "skipped",
         "needs-review"
       ]

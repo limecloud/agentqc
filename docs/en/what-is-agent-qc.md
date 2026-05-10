@@ -1,42 +1,40 @@
 ---
 title: What is Agent QC?
-description: Conceptual entry point for Lime evidence-driven quality control.
+description: Conceptual entry point for Agent project quality control.
 ---
 
 # What is Agent QC?
 
-Agent QC is a Lime-focused standard for turning agent testing into evidence-driven quality control.
+Agent QC is a portable standard for proving that Agent projects work.
 
-It exists because Lime is not a library-only project. Lime is a GUI desktop product with Tauri commands, bridge boundaries, workspace state, browser-mode mocks, runtime metadata, and user-visible flows. A result that only says "lint passed" or "the agent checked it" is not enough.
+Agent software has failure modes that ordinary app testing often misses: tool calls can drift from declarations, permission gates can be bypassed, model streams can produce malformed events, background tasks can get stuck, live providers can silently change behavior, and UI surfaces can make runtime facts look successful when they are not.
 
-Agent QC answers four questions:
+Agent QC gives these risks a shared vocabulary:
 
-1. What kind of Lime change is being tested?
-2. Which gates must run for that risk?
-3. What behavior-level cases prove the product path?
-4. Which evidence makes a pass/fail verdict trustworthy?
+1. classify the Agent project profile;
+2. choose gates that match the profile and risk;
+3. write behavior-level cases;
+4. collect inspectable evidence;
+5. judge pass/fail with explicit verdicts;
+6. report remaining risk and waivers.
 
-## Relationship to qcloop
+## Lime is a profile, not the standard
 
-qcloop executes batches. Agent QC defines what should be batched, how each item should be judged, and when the aggregate result is enough for Lime.
+Lime remains an important example because it is a GUI desktop Agent product. But Agent QC v0.2.0 is broader: Codex-like runtime CLIs, OpenClaw-like multi-channel gateways, Hermes-like background agents, SDKs, tool servers, skills, plugins, and release packages all need QC.
 
-```text
-Agent QC plan -> qcloop job/items -> worker attempts -> verifier rounds -> evidence-backed report
-```
+## Why Agent projects need classification
 
-qcloop is the execution loop. Agent QC is the testing standard.
+A Rust runtime agent does not need the same gates as a Telegram gateway or a VitePress standards site. Agent QC therefore classifies first, then chooses gates.
 
-## Relationship to Lime quality workflow
+Examples:
 
-Agent QC preserves Lime's existing gate rules:
+- Codex-style runtime: sandbox, apply-patch, MCP, protocol, CLI e2e, cross-platform release.
+- OpenClaw-style gateway: channel contracts, secrets, provider live lanes, Docker/install smoke, plugin boundaries.
+- Hermes-style background agent: pytest, cron, gateway, concurrency stress, Docker smoke, credential isolation.
+- Lime-style desktop GUI: local validation, command contracts, DevBridge readiness, GUI smoke, Playwright product flow.
 
-- `npm run verify:local` for ordinary local validation.
-- `npm run test:contracts` for command, bridge, mock, and manifest boundaries.
-- `npm run verify:gui-smoke` for GUI shell, DevBridge, Workspace, and main product path risk.
-- Playwright or manual product checks when behavior must be observed.
+## What counts as evidence
 
-Agent QC does not replace those commands. It records when each command is required and what evidence is needed.
+Evidence can be a test report, command log, CI URL, qcloop attempt, verifier round, Playwright trace, screenshot, model/tool transcript, package manifest, Docker smoke output, or human review record.
 
-## Non-goals
-
-Agent QC does not define a generic testing framework, a visual UI, a model protocol, or a qcloop replacement. v0.1.0 is intentionally scoped to Lime.
+A model's final prose is never enough by itself.

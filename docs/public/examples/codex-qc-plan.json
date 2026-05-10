@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.2.0",
+  "id": "codex-runtime-sandbox-qc",
+  "target_project": "codex",
+  "project_profiles": [
+    "agent-runtime-cli",
+    "agent-tool-mcp-gateway",
+    "agent-sdk-api",
+    "agent-distribution-release"
+  ],
+  "risk_level": "high",
+  "risk_domains": [
+    "sandbox",
+    "tool-execution",
+    "protocol"
+  ],
+  "required_gates": [
+    "static",
+    "unit",
+    "contract-protocol",
+    "runtime-e2e"
+  ],
+  "cases": [
+    {
+      "id": "deny-unsafe-tool-action",
+      "name": "Deny unsafe tool action",
+      "project_profile": "agent-runtime-cli",
+      "target": "sandbox policy",
+      "steps": [
+        "Run the sandbox deny fixture",
+        "Capture CLI transcript and exit status"
+      ],
+      "expected": [
+        "Unsafe action is denied",
+        "Transcript includes controlled error"
+      ],
+      "risk": "permission bypass",
+      "required_gates": [
+        "unit",
+        "runtime-e2e"
+      ],
+      "required_evidence": [
+        "command_log",
+        "cli_transcript"
+      ],
+      "status": "planned"
+    }
+  ],
+  "evidence_policy": "Every pass must link to command, fixture, transcript, or CI evidence."
+}

@@ -1,9 +1,11 @@
 ---
 title: Lime quality source index
-description: Traceable sources used by Agent QC.
+description: Legacy v0.1.0 Lime case source index.
 ---
 
 # Lime quality source index
+
+This page is a legacy v0.1.0 Lime case index. For the generic v0.2.0 source index, see [Source index](./source-index).
 
 Agent QC v0.1.0 is grounded in these local sources.
 
@@ -17,4 +19,4 @@ Agent QC v0.1.0 is grounded in these local sources.
 | `https://agentskills.io/specification.md` | Directory/Markdown/frontmatter/progressive disclosure style inspiration. |
 | `https://agentskills.io/skill-creation/evaluating-skills.md` | Eval-driven iteration, with/without baseline, assertions, and grading workspace pattern. |
 
-When a future Lime rule changes, update this index and the gate matrix together.
+When a future Lime rule changes, update this case index and the Lime profile page together.

@@ -1,69 +1,48 @@
 ---
 title: Quickstart
-description: Create a Lime Agent QC plan.
+description: Create an Agent QC plan for any Agent project.
 ---
 
 # Quickstart
 
-Use this flow when an agent needs to test a Lime change.
+Use this flow when an agent needs to test an Agent project.
 
-## 1. Classify the change
+## 1. Classify the project
 
-Pick the closest `change_type`:
+Pick one or more project profiles:
 
-- Ordinary frontend code: `frontend`
-- User-visible UI: `user-visible-ui`
-- GUI shell, Workspace, DevBridge, or main path: `gui-shell-workspace`
-- Tauri command, bridge, catalog, or mock: `tauri-command-bridge-mock`
-- Rust module: `rust-module`
-- Config, version, or dependency: `config-version-dependency`
+- `agent-runtime-cli`
+- `agent-sdk-api`
+- `agent-tool-mcp-gateway`
+- `multi-channel-agent-gateway`
+- `agent-ui-tui-desktop`
+- `agent-skills-plugins`
+- `background-agent-scheduler`
+- `agent-distribution-release`
+- `agent-evals-quality`
 
-If several apply, use the highest-risk gate combination.
+## 2. Identify touched surfaces
 
-## 2. Select required gates
+Examples: tool execution, sandbox, transport, channel adapter, secrets, scheduler, UI, package, live provider, eval benchmark.
 
-Use the [Lime gate matrix](./lime-gate-matrix). Do not invent parallel gates when Lime already has a repository script.
+## 3. Select gates
 
-## 3. Write behavior-level cases
+Use the [gate matrix](./gate-matrix). Combine gates when profiles overlap.
 
-A good `qc_case` states:
+## 4. Write evidence-first cases
 
-- target behavior
-- exact steps or command
-- expected result
-- required evidence
-- failure classification
+Each `qc_case` should state:
 
-Avoid cases like "check the UI" or "make sure it works".
+- the behavior to prove;
+- exact steps or commands;
+- expected result;
+- required evidence;
+- what counts as fail, blocked, exhausted, or waived.
 
-## 4. Decide direct vs qcloop execution
+## 5. Use qcloop when repetition matters
 
-Run small deterministic gates directly. Use qcloop when cases are repetitive, independent, and benefit from worker/verifier/repair tracking.
+Use qcloop for independent repeated cases: multiple files, multiple channels, multiple providers, multiple commands, multiple prompts, or multiple package profiles.
 
-## 5. Produce a verdict
+## 6. Report the result
 
-Every `passed` verdict needs evidence refs. Every `failed`, `blocked`, or `exhausted` verdict needs a concrete next action.
-
-## Minimal plan
-
-```json
-{
-  "schema_version": "0.1.0",
-  "id": "lime-gui-smoke-plan",
-  "target_project": "lime",
-  "change_type": "gui-shell-workspace",
-  "risk_level": "high",
-  "required_gates": ["lime.verify-local", "lime.verify-gui-smoke"],
-  "cases": [
-    {
-      "id": "workspace-ready",
-      "name": "Default workspace is ready",
-      "target": "Lime GUI shell",
-      "steps": ["Run npm run verify:gui-smoke"],
-      "expected": ["DevBridge reports ready", "Default workspace can be prepared"],
-      "required_evidence": ["command_log", "gui_smoke_summary"]
-    }
-  ],
-  "evidence_policy": "passed verdicts require inspectable evidence refs"
-}
-```
+A report is only complete when required gates have evidence-backed verdicts and remaining risks are named.

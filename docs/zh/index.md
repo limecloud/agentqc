@@ -1,17 +1,17 @@
 ---
 title: Agent QC
-description: Lime 专属证据驱动质检标准概览。
+description: Agent 项目的证据驱动质量控制。
 ---
 
 # Agent QC
 
-Agent QC 定义 Lime 测试工作如何变成有计划、有证据、可批量、可评审的质量控制。
+Agent QC 定义 Agent 项目如何分类、测试、留证、判定和报告。
 
-当 Agent 需要测试 Lime、创建 qcloop 批次、判断必跑门禁，或用证据汇报质量结论时，使用 Agent QC。
+适用对象包括运行时 CLI、SDK、工具网关、频道 Agent、GUI/TUI/桌面客户端、Skills/插件、后台调度器、发行包和评测套件。
 
 ## 从这里开始
 
 - [什么是 Agent QC](./what-is-agent-qc)
 - [规范](./specification)
-- [Lime 门禁矩阵](./authoring/lime-gate-matrix)
-- [qcloop 集成](./authoring/qcloop-integration)
+- [项目分类](./authoring/project-classification)
+- [门禁矩阵](./authoring/gate-matrix)

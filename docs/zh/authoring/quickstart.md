@@ -1,45 +1,48 @@
 ---
 title: 快速开始
-description: 为一次 Lime 改动创建 Agent QC 测试计划。
+description: 为任意 Agent 项目创建 Agent QC 计划。
 ---
 
 # 快速开始
 
-当 Agent 需要测试 Lime 改动时，按下面流程走。
+当 Agent 需要测试一个 Agent 项目时，使用这个流程。
 
-## 1. 先分类改动
+## 1. 分类项目
 
-选择最接近的 `change_type`：
+选择一个或多个项目类型：
 
-- 普通前端代码：`frontend`
-- 用户可见 UI：`user-visible-ui`
-- GUI 壳、Workspace、DevBridge 或主路径：`gui-shell-workspace`
-- Tauri 命令、Bridge、catalog 或 mock：`tauri-command-bridge-mock`
-- Rust 模块：`rust-module`
-- 配置、版本或依赖：`config-version-dependency`
+- `agent-runtime-cli`
+- `agent-sdk-api`
+- `agent-tool-mcp-gateway`
+- `multi-channel-agent-gateway`
+- `agent-ui-tui-desktop`
+- `agent-skills-plugins`
+- `background-agent-scheduler`
+- `agent-distribution-release`
+- `agent-evals-quality`
 
-如果多个类型都命中，按最高风险组合门禁，不要只跑最轻的一层。
+## 2. 识别变更面
 
-## 2. 选择必需门禁
+常见变更面包括 tool execution、sandbox、transport、channel adapter、secrets、scheduler、UI、package、live provider、eval benchmark。
 
-使用 [Lime 门禁矩阵](./lime-gate-matrix)。仓库已有统一脚本时，不要发明平级临时门禁。
+## 3. 选择门禁
 
-## 3. 写行为级测试项
+参考[门禁矩阵](./gate-matrix)。多个项目类型重叠时，需要组合门禁。
 
-好的 `qc_case` 应说明：
+## 4. 编写证据优先的 case
 
-- 目标行为
-- 精确步骤或命令
-- 期望结果
-- 所需证据
-- 失败分类
+每个 `qc_case` 应说明：
 
-不要写“检查 UI”或“确认能用”这类不可判定测试项。
+- 要证明的行为；
+- 精确步骤或命令；
+- 期望结果；
+- 必需证据；
+- 什么算 failed、blocked、exhausted 或 waived。
 
-## 4. 决定直接执行还是 qcloop
+## 5. 重复验证时使用 qcloop
 
-小而确定的门禁可以直接执行。重复、独立、需要 worker/verifier/repair 记录的测试项使用 qcloop。
+当多个文件、多个频道、多个 provider、多个命令、多个 prompt 或多个 package profile 可以独立判断时，使用 qcloop 批量执行。
 
-## 5. 产出判定
+## 6. 汇总报告
 
-每个 `passed` 判定都需要证据引用。每个 `failed`、`blocked` 或 `exhausted` 判定都需要具体下一步。
+只有必需门禁都有证据驱动的 verdict，并且剩余风险被明确列出时，报告才算完整。

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.0 - 2026-05-10
+
+- Repositioned Agent QC from a Lime-only standard to a portable Agent-project QC standard.
+- Added project profiles for runtimes, SDKs, tool gateways, channel gateways, UI/TUI/desktop clients, skills/plugins, schedulers, distributions, and evals.
+- Added a generic cross-project gate matrix and kept Lime as a profile/example instead of the core scope.
+- Added case-study patterns from local Codex, OpenClaw, Hermes Agent, and Lime repositories.
+- Expanded schemas and examples for generic Agent QC plans and qcloop jobs.
+
 ## v0.1.0 - 2026-05-10
 
 - Initial Lime-focused Agent QC draft standard.

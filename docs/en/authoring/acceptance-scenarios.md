@@ -1,61 +1,50 @@
 ---
 title: Acceptance scenarios
-description: Behavior-level validation scenarios for Lime Agent QC.
+description: Behavior-level Agent QC scenarios.
 ---
 
 # Acceptance scenarios
 
-Agent QC scenarios validate behavior and evidence, not file presence.
+Agent QC validates behavior and evidence, not repository shape alone.
 
-## 1. Ordinary frontend change
+## 1. Runtime CLI permission boundary
 
-1. Classify change as `frontend`.
-2. Run `npm run verify:local`.
-3. Record command output evidence.
-4. Report pass only if the command passes and no higher-risk boundary was touched.
+A runtime blocks an unsafe tool action, returns a controlled error, and records the decision in a transcript or log.
 
-Passing condition: local validation evidence supports the change and no GUI or bridge gate is required.
+Passing condition: the denied action is visible and no unauthorized side effect occurs.
 
-## 2. User-visible UI change
+## 2. Tool or MCP transport recovery
 
-1. Classify change as `user-visible-ui`.
-2. Run `npm run verify:local`.
-3. Add or run a stable UI assertion when an existing test surface exists.
-4. Record evidence for user-visible expected state.
+A stdio/http tool server disconnects, reconnects, or returns an error.
 
-Passing condition: UI behavior is asserted, not just typechecked.
+Passing condition: the runtime surfaces failure/recovery without corrupting tool state.
 
-## 3. GUI shell or Workspace change
+## 3. Channel gateway auth and media
 
-1. Classify change as `gui-shell-workspace`.
-2. Run `npm run verify:local`.
-3. Run `npm run verify:gui-smoke`.
-4. Record DevBridge and workspace readiness evidence.
+A channel adapter receives a webhook or message with media and auth context.
 
-Passing condition: GUI main path is proven usable.
+Passing condition: the gateway verifies identity, applies secret policy, stores media safely, and emits a traceable response.
 
-## 4. Tauri command / Bridge / mock change
+## 4. UI/TUI streaming turn
 
-1. Classify change as `tauri-command-bridge-mock`.
-2. Check command surfaces as a group.
-3. Run `npm run test:contracts` and `npm run verify:local`.
-4. Record failing command ids when contracts fail.
+A user sends a prompt, status appears before final text, tool progress stays separate from answer text, and interruption remains available.
 
-Passing condition: frontend calls, Rust registration, catalog, and mocks stay synchronized.
+Passing condition: UI projection does not invent runtime success.
 
-## 5. qcloop batch regression
+## 5. Background scheduler recovery
 
-1. Convert each behavior into one independent `qc_case`.
-2. Create a qcloop job with strict verifier JSON.
-3. Start the job and poll until no item is pending or running.
-4. Summarize `success`, `failed`, and `exhausted` separately.
+A scheduled agent job is interrupted or restarted.
 
-Passing condition: every required item has verifier-backed evidence.
+Passing condition: leases/checkpoints prevent duplicate or lost work and evidence shows final ownership.
 
-## 6. Manual or LLM judge review
+## 6. Distribution install smoke
 
-1. Define a rubric before review.
-2. Provide the reviewer with outputs and evidence refs.
-3. Record verdict, reviewer identity or judge configuration, and remaining risk.
+A released package or Docker image installs in a clean environment.
 
-Passing condition: review decision is explicit and traceable.
+Passing condition: version, help command, minimal runtime start, and package contents match expectations.
+
+## 7. Semantic eval regression
+
+A prompt suite is run against current and baseline behavior.
+
+Passing condition: rubric assertions improve or stay within accepted threshold, with judge outputs preserved.

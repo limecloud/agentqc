@@ -1,10 +1,10 @@
 {
-  "pass": true,
-  "status": "passed",
-  "severity": "none",
-  "feedback": "GUI smoke evidence shows DevBridge ready and default workspace prepared.",
+  "pass": false,
+  "status": "failed",
+  "severity": "high",
+  "feedback": "The transcript shows the unsafe write succeeded outside the workspace.",
   "evidence_refs": [
-    "qcloop://jobs/job-123/items/gui-smoke-default-workspace/attempts/1"
+    "qcloop://jobs/job-123/items/deny-unsafe-tool-action/attempts/1"
   ],
-  "remaining_risk": "No full manual exploratory GUI review was performed."
+  "remaining_risk": "Sandbox policy may not be enforced for this path."
 }

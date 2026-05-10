@@ -1,65 +1,41 @@
 ---
 title: Evidence-driven verdicts
-description: How Agent QC decides pass, fail, blocked, and exhausted.
+description: How Agent QC decides pass, fail, blocked, exhausted, waived, and needs-review.
 ---
 
 # Evidence-driven verdicts
 
-Agent QC treats a verdict as a claim about observed evidence. An agent sentence like "I checked it" is not a verdict.
+A verdict is a claim about observed evidence. The model's final prose is not enough.
 
-## Required fields
+## Verdict statuses
 
-A `qc_verdict` includes:
+| Status | Meaning |
+| --- | --- |
+| `passed` | Evidence proves all required expectations. |
+| `failed` | Evidence disproves an expectation or a gate exits non-zero. |
+| `blocked` | Environment, credentials, dependency, or missing fixture prevents judgment. |
+| `exhausted` | Attempts or budget were consumed without proof. |
+| `waived` | A responsible actor accepted a known gap with a reason and expiry. |
+| `needs-review` | Evidence exists but semantic or safety review is still required. |
 
-- `pass`: boolean for qcloop compatibility;
-- `status`: `passed`, `failed`, `blocked`, `exhausted`, or `needs-review`;
-- `severity`: `none`, `low`, `medium`, `high`, or `critical`;
-- `feedback`: specific explanation;
-- `evidence_refs`: inspectable refs;
-- `remaining_risk`: what is still not proven.
+## Good evidence
 
-## Pass rule
+Good evidence is inspectable and scoped:
 
-A pass requires:
+- command log or CI job URL;
+- JUnit/HTML/coverage report;
+- protocol transcript or mock server request log;
+- Playwright trace, screenshot, or video;
+- qcloop attempt and qc round refs;
+- package manifest, tarball listing, Docker smoke output;
+- model output plus rubric and judge verdict;
+- human review note with reviewer and scope.
 
-1. every expected behavior is covered;
-2. evidence refs are present;
-3. no required gate is still running, blocked, or exhausted;
-4. failure logs are either absent or explained.
+## Bad evidence
 
-## Fail rule
+Bad evidence is unverifiable:
 
-A fail should identify the smallest actionable issue. Examples:
-
-- a command exited non-zero;
-- GUI smoke did not reach DevBridge readiness;
-- verifier saw no evidence for an expected behavior;
-- Playwright observed the wrong user-visible state.
-
-## Blocked vs exhausted
-
-Use `blocked` when the environment prevents judgment, such as qcloop not running or credentials missing.
-
-Use `exhausted` when the loop ran but did not reach a pass within rounds or token budget.
-
-## Evidence examples
-
-```json
-[
-  {
-    "kind": "command_log",
-    "ref": "runs/2026-05-10/verify-local.log",
-    "summary": "npm run verify:local exited 0."
-  },
-  {
-    "kind": "qcloop_qc_round",
-    "ref": "qcloop://jobs/abc/items/workspace-ready/qc/1",
-    "summary": "Verifier passed; evidence included GUI smoke output."
-  },
-  {
-    "kind": "playwright_screenshot",
-    "ref": "runs/2026-05-10/workspace-ready.png",
-    "summary": "Default workspace rendered with ready state."
-  }
-]
-```
+- "looks good";
+- "the tests passed" without a command or CI ref;
+- hidden local state with no path or transcript;
+- live provider claim with no redacted request/response or budget note.

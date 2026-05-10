@@ -1,9 +1,11 @@
 ---
 title: Lime 质量事实源索引
-description: Agent QC 使用的可追踪来源。
+description: v0.1.0 Lime 案例来源索引。
 ---
 
 # Lime 质量事实源索引
+
+本页是 v0.1.0 Lime 案例索引。通用 v0.2.0 来源请看[来源索引](./source-index)。
 
 Agent QC v0.1.0 基于以下本地来源：
 
@@ -17,4 +19,4 @@ Agent QC v0.1.0 基于以下本地来源：
 | `https://agentskills.io/specification.md` | 目录、Markdown、frontmatter、渐进加载风格参考。 |
 | `https://agentskills.io/skill-creation/evaluating-skills.md` | eval-driven iteration、baseline、assertions、grading workspace 模式参考。 |
 
-未来 Lime 规则变化时，必须同时更新本索引和门禁矩阵。
+未来 Lime 规则变化时，必须同时更新本案例索引和 Lime profile 页面。

@@ -1,8 +1,8 @@
 {
   "name": "agentqc-standard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Lime-focused Agent QC standard for evidence-driven testing plans, gates, qcloop batches, and verdicts.",
+  "description": "Portable Agent QC standard for evidence-driven testing of agent runtimes, tools, gateways, UI, skills, SDKs, and distributions.",
   "homepage": "https://limecloud.github.io/agentqc/",
   "repository": {
     "type": "git",
@@ -13,9 +13,11 @@
     "agent",
     "qc",
     "testing",
-    "lime",
+    "evaluation",
     "llm",
-    "standard"
+    "standard",
+    "evidence",
+    "qcloop"
   ],
   "engines": {
     "node": ">=18.20.0"

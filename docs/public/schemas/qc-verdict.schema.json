@@ -5,6 +5,7 @@
   "type": "object",
   "required": [
     "pass",
+    "status",
     "feedback",
     "evidence_refs"
   ],
@@ -18,6 +19,7 @@
         "failed",
         "blocked",
         "exhausted",
+        "waived",
         "needs-review"
       ]
     },
@@ -37,12 +39,14 @@
     "evidence_refs": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       }
     },
     "remaining_risk": {
       "type": "string"
+    },
+    "waiver": {
+      "type": "object"
     }
   },
   "additionalProperties": true

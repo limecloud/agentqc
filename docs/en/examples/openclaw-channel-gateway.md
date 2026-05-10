@@ -1,0 +1,74 @@
+---
+title: OpenClaw channel gateway example
+description: Agent QC profile mapping for an OpenClaw-style multi-channel gateway.
+---
+
+# OpenClaw channel gateway example
+
+Profiles:
+
+- `multi-channel-agent-gateway`
+- `agent-tool-mcp-gateway`
+- `agent-skills-plugins`
+- `agent-distribution-release`
+
+Typical gates:
+
+- static: lint, typecheck, import boundaries, generated baselines.
+- unit/contract: channel contracts, secret refs, provider surfaces, media policies.
+- fake-integration: webhook/gateway adapters with fake provider responses.
+- live-provider: opt-in model/channel/provider lanes.
+- distribution-release: Docker and install smoke.
+
+```json
+{
+  "schema_version": "0.2.0",
+  "id": "openclaw-channel-contract-qc",
+  "target_project": "openclaw",
+  "project_profiles": [
+    "multi-channel-agent-gateway",
+    "agent-tool-mcp-gateway",
+    "agent-skills-plugins",
+    "agent-distribution-release"
+  ],
+  "risk_level": "high",
+  "risk_domains": [
+    "channel-auth",
+    "secrets",
+    "media-routing"
+  ],
+  "required_gates": [
+    "static",
+    "contract-protocol",
+    "fake-integration",
+    "distribution-release"
+  ],
+  "cases": [
+    {
+      "id": "telegram-secret-ref-isolation",
+      "name": "Telegram secret ref isolation",
+      "project_profile": "multi-channel-agent-gateway",
+      "target": "channel secret runtime",
+      "steps": [
+        "Run channel contract tests",
+        "Inspect redacted secret ref transcript"
+      ],
+      "expected": [
+        "Secrets are referenced, not leaked",
+        "Inactive channels cannot use active credentials"
+      ],
+      "risk": "credential leakage",
+      "required_gates": [
+        "contract-protocol",
+        "fake-integration"
+      ],
+      "required_evidence": [
+        "test_report",
+        "redacted_transcript"
+      ],
+      "status": "planned"
+    }
+  ],
+  "evidence_policy": "Live provider gates must be explicitly opted in and redacted."
+}
+```

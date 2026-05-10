@@ -1,26 +1,43 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "id": "lime-gui-workspace-readiness",
   "target_project": "lime",
-  "change_type": "gui-shell-workspace",
+  "project_profiles": [
+    "agent-ui-tui-desktop",
+    "agent-tool-mcp-gateway",
+    "agent-runtime-cli",
+    "agent-skills-plugins"
+  ],
   "risk_level": "high",
+  "risk_domains": [
+    "desktop-shell",
+    "bridge",
+    "workspace"
+  ],
   "required_gates": [
-    "lime.verify-local",
-    "lime.verify-gui-smoke"
+    "static",
+    "contract-protocol",
+    "ui-interaction"
   ],
   "cases": [
     {
-      "id": "gui-smoke-default-workspace",
-      "name": "Default workspace reaches ready state",
+      "id": "workspace-ready",
+      "name": "Workspace becomes ready in desktop GUI",
+      "project_profile": "agent-ui-tui-desktop",
       "target": "Lime desktop GUI",
       "steps": [
-        "Run npm run verify:gui-smoke"
+        "Run GUI smoke",
+        "Inspect bridge readiness and workspace state"
       ],
       "expected": [
-        "DevBridge health check passes",
+        "Bridge is ready",
         "Default workspace is prepared"
       ],
-      "risk": "GUI shell can compile but product path cannot open",
+      "risk": "UI reports readiness without runtime support",
+      "required_gates": [
+        "contract-protocol",
+        "ui-interaction"
+      ],
       "required_evidence": [
         "command_log",
         "gui_smoke_summary"
@@ -28,5 +45,5 @@
       "status": "planned"
     }
   ],
-  "evidence_policy": "Every passed gate requires inspectable command or GUI smoke evidence."
+  "evidence_policy": "GUI pass requires smoke or interaction evidence, not only static checks."
 }

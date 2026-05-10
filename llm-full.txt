@@ -2,9 +2,7 @@
 
 Source root: https://limecloud.github.io/agentqc
 
-Agent QC is a Lime-focused standard for evidence-driven testing plans, quality gates, qcloop batches, verdicts, and reports.
-
-This file concatenates the current English documentation most useful for model context. Each section includes its source URL.
+Agent QC is a portable standard for evidence-driven quality control of Agent projects.
 
 
 
@@ -14,41 +12,39 @@ Source: https://limecloud.github.io/agentqc/en/what-is-agent-qc
 
 # What is Agent QC?
 
-Agent QC is a Lime-focused standard for turning agent testing into evidence-driven quality control.
+Agent QC is a portable standard for proving that Agent projects work.
 
-It exists because Lime is not a library-only project. Lime is a GUI desktop product with Tauri commands, bridge boundaries, workspace state, browser-mode mocks, runtime metadata, and user-visible flows. A result that only says "lint passed" or "the agent checked it" is not enough.
+Agent software has failure modes that ordinary app testing often misses: tool calls can drift from declarations, permission gates can be bypassed, model streams can produce malformed events, background tasks can get stuck, live providers can silently change behavior, and UI surfaces can make runtime facts look successful when they are not.
 
-Agent QC answers four questions:
+Agent QC gives these risks a shared vocabulary:
 
-1. What kind of Lime change is being tested?
-2. Which gates must run for that risk?
-3. What behavior-level cases prove the product path?
-4. Which evidence makes a pass/fail verdict trustworthy?
+1. classify the Agent project profile;
+2. choose gates that match the profile and risk;
+3. write behavior-level cases;
+4. collect inspectable evidence;
+5. judge pass/fail with explicit verdicts;
+6. report remaining risk and waivers.
 
-## Relationship to qcloop
+## Lime is a profile, not the standard
 
-qcloop executes batches. Agent QC defines what should be batched, how each item should be judged, and when the aggregate result is enough for Lime.
+Lime remains an important example because it is a GUI desktop Agent product. But Agent QC v0.2.0 is broader: Codex-like runtime CLIs, OpenClaw-like multi-channel gateways, Hermes-like background agents, SDKs, tool servers, skills, plugins, and release packages all need QC.
 
-```text
-Agent QC plan -> qcloop job/items -> worker attempts -> verifier rounds -> evidence-backed report
-```
+## Why Agent projects need classification
 
-qcloop is the execution loop. Agent QC is the testing standard.
+A Rust runtime agent does not need the same gates as a Telegram gateway or a VitePress standards site. Agent QC therefore classifies first, then chooses gates.
 
-## Relationship to Lime quality workflow
+Examples:
 
-Agent QC preserves Lime's existing gate rules:
+- Codex-style runtime: sandbox, apply-patch, MCP, protocol, CLI e2e, cross-platform release.
+- OpenClaw-style gateway: channel contracts, secrets, provider live lanes, Docker/install smoke, plugin boundaries.
+- Hermes-style background agent: pytest, cron, gateway, concurrency stress, Docker smoke, credential isolation.
+- Lime-style desktop GUI: local validation, command contracts, DevBridge readiness, GUI smoke, Playwright product flow.
 
-- `npm run verify:local` for ordinary local validation.
-- `npm run test:contracts` for command, bridge, mock, and manifest boundaries.
-- `npm run verify:gui-smoke` for GUI shell, DevBridge, Workspace, and main product path risk.
-- Playwright or manual product checks when behavior must be observed.
+## What counts as evidence
 
-Agent QC does not replace those commands. It records when each command is required and what evidence is needed.
+Evidence can be a test report, command log, CI URL, qcloop attempt, verifier round, Playwright trace, screenshot, model/tool transcript, package manifest, Docker smoke output, or human review record.
 
-## Non-goals
-
-Agent QC does not define a generic testing framework, a visual UI, a model protocol, or a qcloop replacement. v0.1.0 is intentionally scoped to Lime.
+A model's final prose is never enough by itself.
 
 
 
@@ -58,115 +54,97 @@ Source: https://limecloud.github.io/agentqc/en/specification
 
 # Specification
 
-Agent QC v0.1.0 is a Lime-focused draft standard for evidence-driven testing plans, gates, qcloop batches, verdicts, and reports.
+Agent QC v0.2.0 is a portable draft standard for evidence-driven quality control of Agent projects.
 
-It standardizes the quality-control facts an agent should create when testing Lime. It does not own Lime code, qcloop execution, evidence storage, UI projection, or human review policy.
+An Agent project can be a runtime CLI, SDK, tool server, MCP/ACP gateway, multi-channel bot, GUI/TUI/desktop client, skills or plugin ecosystem, background scheduler, distribution package, or evaluation suite. Agent QC does not assume one product shape. It starts by classifying the project profile and then selects gates that match its risk.
 
 ## Scope
 
 Agent QC standardizes:
 
-1. A test plan format for Lime changes.
-2. Behavior-level test cases that can run directly or through qcloop.
-3. A gate matrix for Lime change types.
-4. Evidence-backed verdicts.
-5. Final reports that separate passed, failed, exhausted, skipped, and blocked states.
+1. Project profiles for Agent systems.
+2. Test plan, case, gate, run, evidence, verdict, and report objects.
+3. Gate taxonomy from static checks to live provider and release smoke.
+4. Evidence-backed pass/fail semantics.
+5. qcloop-compatible batch QC for repeated independent cases.
+6. Case-study mapping for projects such as Codex, OpenClaw, Hermes Agent, and Lime.
 
-Agent QC does not standardize model prompts, CLI execution internals, browser automation APIs, storage engines, or visual presentation.
+Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
+
+## Project profiles
+
+A `qc_plan.project_profiles` array declares which project shapes apply.
+
+| Profile | Typical risks | Example gates |
+| --- | --- | --- |
+| `agent-runtime-cli` | tool execution, sandboxing, permission, streams, resume, subprocess cleanup | unit, protocol, fake model server, CLI e2e, sandbox tests |
+| `agent-sdk-api` | public API compatibility, generated contracts, fake server behavior, async cancellation | signature tests, generated contract diff, fake server integration |
+| `agent-tool-mcp-gateway` | tool declaration drift, stdio/http transport, recovery, resource access, audit refs | protocol conformance, mock server, transport recovery, contract tests |
+| `multi-channel-agent-gateway` | channel adapters, auth, secrets, webhook verification, provider drift, media routing | channel contract tests, secret isolation, live opt-in, docker smoke |
+| `agent-ui-tui-desktop` | rendering, terminal/browser state, user controls, screenshots, accessibility, bridge readiness | UI unit, snapshot, Playwright, terminal fixtures, GUI smoke |
+| `agent-skills-plugins` | manifest shape, loader, package boundary, trust, marketplace or registry drift | schema, discovery, package export, fixture install, security scan |
+| `background-agent-scheduler` | cron, queues, leases, retries, concurrency, idempotency, stuck-loop recovery | deterministic scheduler tests, race tests, stress tests, checkpoint/reclaim |
+| `agent-distribution-release` | install, package contents, Docker, cross-platform, lockfiles, supply-chain | install smoke, package dry run, Docker smoke, OS matrix, lock checks |
+| `agent-evals-quality` | model behavior regressions, prompt drift, rubric quality, answer grounding | eval suite, baseline comparison, LLM/human judge, qcloop batch |
+
+A project MAY combine profiles. For example OpenClaw combines channel gateway, tool gateway, distribution, live provider, and plugin profiles.
 
 ## Core objects
 
 | Object | Purpose |
 | --- | --- |
-| `qc_plan` | A test plan for one Lime change, route, or release risk. |
-| `qc_case` | One behavior-level item with steps, expected result, risk, and required evidence. |
-| `qc_gate` | A validation boundary such as `verify:local`, `test:contracts`, `verify:gui-smoke`, Playwright, qcloop, or manual review. |
-| `qc_run` | One execution attempt, including executor, command, environment, result, and output refs. |
-| `qc_verdict` | A pass/fail/blocked/exhausted judgment backed by evidence refs. |
-| `qc_evidence` | A durable or inspectable reference to logs, screenshots, traces, qcloop attempts, qc rounds, reports, or review notes. |
-| `qc_report` | The aggregate result for a plan, including remaining risk and next action. |
+| `qc_plan` | A test plan for one change, release, investigation, or regression sweep. |
+| `qc_case` | One behavior-level item with steps, expected result, required gates, and evidence. |
+| `qc_gate` | A validation boundary such as static, unit, contract, integration, e2e, live, stress, release, or review. |
+| `qc_run` | One execution attempt with command, executor, environment, output refs, duration, and result. |
+| `qc_evidence` | A reference to logs, reports, traces, screenshots, fixtures, qcloop attempts, CI runs, or review notes. |
+| `qc_verdict` | A judgment over evidence: passed, failed, blocked, exhausted, waived, or needs-review. |
+| `qc_report` | The aggregate result, remaining risk, waivers, and next action. |
 
-## Change types
+## Gate families
 
-Standard Lime `change_type` values:
-
-- `frontend`
-- `user-visible-ui`
-- `gui-shell-workspace`
-- `tauri-command-bridge-mock`
-- `rust-module`
-- `config-version-dependency`
-- `documentation-only`
-- `large-regression-batch`
-- `release-readiness`
-
-A plan may use `custom:<name>` for local extensions, but custom values must still map to gates.
-
-## Gate ids
-
-Standard `qc_gate.id` values:
-
-| Gate | Evidence expectation |
-| --- | --- |
-| `lime.verify-local` | Command output from `npm run verify:local`. |
-| `lime.verify-local-full` | Command output from `npm run verify:local:full`. |
-| `lime.test-contracts` | Command output from `npm run test:contracts`. |
-| `lime.verify-gui-smoke` | GUI smoke output proving shell, DevBridge, and workspace readiness. |
-| `lime.verify-app-version` | Version consistency output from `npm run verify:app-version`. |
-| `lime.rust-targeted-test` | Cargo test output for affected crate or module. |
-| `lime.playwright-product-flow` | Browser interaction evidence, screenshots, traces, or transcript. |
-| `qcloop.batch` | qcloop job id plus item, attempt, qc round, and status refs. |
-| `review.manual` | Human review notes with reviewer, scope, decision, and evidence refs. |
-| `review.llm-judge` | LLM judge verdict with rubric and input/output refs. |
+| Family | Purpose | Evidence examples |
+| --- | --- | --- |
+| `static` | format, lint, type, dependency and policy hygiene | command logs, SARIF, lockfile check output |
+| `unit` | deterministic local behavior | test report, coverage, fixture output |
+| `property-fuzz` | invariants and generated input | seed, corpus, failing case artifact |
+| `contract-protocol` | schemas, APIs, generated clients, command/tool surfaces | contract report, schema diff, mock transcript |
+| `fake-integration` | integration against fake servers or local adapters | fake server log, request/response transcript |
+| `runtime-e2e` | real CLI/runtime/task flow without external provider risk | CLI transcript, process cleanup evidence, state snapshot |
+| `ui-interaction` | GUI/TUI/browser/terminal behavior | screenshot, trace, video, accessibility report |
+| `live-provider` | opt-in real provider or network path | redacted transcript, credentials-scope note, cost/budget |
+| `stress-concurrency` | races, leases, retries, long-running loops | stress report, worker timeline, seed, benchmark |
+| `distribution-release` | install, package, Docker, cross-platform release readiness | tarball manifest, Docker smoke, OS matrix, release check |
+| `semantic-eval` | model output quality, grounding, policy, user intent | eval result, rubric, judge output, baseline delta |
+| `review` | human or LLM review | reviewer decision, rubric, evidence refs |
 
 ## Status values
 
 `qc_case.status`, `qc_gate.status`, and `qc_report.status` use:
 
-- `planned`: not executed yet.
-- `running`: execution started.
-- `passed`: evidence proves the expected behavior.
-- `failed`: evidence disproves the expected behavior.
-- `blocked`: a missing dependency or environment issue prevents judgment.
-- `exhausted`: retries or token budget were consumed without passing.
-- `skipped`: explicitly out of scope with reason.
-- `needs-review`: evidence exists but needs human or stronger judge review.
+- `planned`
+- `running`
+- `passed`
+- `failed`
+- `blocked`
+- `exhausted`
+- `waived`
+- `skipped`
+- `needs-review`
+
+A waived gate MUST include `waiver.reason`, `waiver.approver`, and `waiver.expires` when the project has a waiver process.
 
 ## Evidence rules
 
-A `passed` verdict MUST include at least one `evidence_ref`. For GUI, bridge, or qcloop gates, a self-reported assistant message is not enough.
+A `passed` verdict MUST include evidence. A `failed` verdict MUST include the smallest actionable failure. A `blocked` verdict MUST identify the missing environment fact. An `exhausted` verdict MUST preserve attempts and verifier feedback.
 
-Evidence refs SHOULD be stable enough for a reviewer to inspect:
-
-```json
-{
-  "kind": "qcloop_qc_round",
-  "ref": "qcloop://jobs/job-123/items/item-9/qc/2",
-  "summary": "Verifier passed after repair and linked GUI smoke output."
-}
-```
-
-For sensitive logs, evidence may be redacted, but the verdict must state what was redacted and why.
+Self-report is not evidence. The sentence "the agent checked it" is only valid when it links to command output, test report, transcript, trace, screenshot, or review record.
 
 ## qcloop mapping
 
-A `qc_case` can become one qcloop `item_value`. For complex cases, serialize the case as JSON:
+A `qc_case` can become a qcloop `item_value`. qcloop `attempt` maps to `qc_run`; qcloop `qc_round` maps to `qc_verdict`; qcloop `exhausted` maps to Agent QC `exhausted`, not generic failure.
 
-```json
-{
-  "name": "workspace-default-ready",
-  "target": "Lime default workspace",
-  "steps": ["Run GUI smoke", "Inspect DevBridge readiness"],
-  "expected": ["DevBridge is ready", "Default workspace is available"],
-  "required_evidence": ["command_log", "gui_smoke_summary"]
-}
-```
-
-qcloop `attempt` records map to `qc_run`. qcloop `qc_round` records map to `qc_verdict`. qcloop `exhausted` maps to Agent QC `exhausted`, not `failed`, because it means the loop could not prove a pass within limits.
-
-## Report rule
-
-A plan report can say "deliverable" only when every required gate is `passed` or explicitly `skipped` with an accepted reason. Optional failures must still be listed as remaining risk.
+Use qcloop when cases are repeated, independent, and verifier-friendly. Do not use qcloop to replace required project gates or to hide live-provider risk.
 
 
 
@@ -176,107 +154,122 @@ Source: https://limecloud.github.io/agentqc/en/authoring/quickstart
 
 # Quickstart
 
-Use this flow when an agent needs to test a Lime change.
+Use this flow when an agent needs to test an Agent project.
 
-## 1. Classify the change
+## 1. Classify the project
 
-Pick the closest `change_type`:
+Pick one or more project profiles:
 
-- Ordinary frontend code: `frontend`
-- User-visible UI: `user-visible-ui`
-- GUI shell, Workspace, DevBridge, or main path: `gui-shell-workspace`
-- Tauri command, bridge, catalog, or mock: `tauri-command-bridge-mock`
-- Rust module: `rust-module`
-- Config, version, or dependency: `config-version-dependency`
+- `agent-runtime-cli`
+- `agent-sdk-api`
+- `agent-tool-mcp-gateway`
+- `multi-channel-agent-gateway`
+- `agent-ui-tui-desktop`
+- `agent-skills-plugins`
+- `background-agent-scheduler`
+- `agent-distribution-release`
+- `agent-evals-quality`
 
-If several apply, use the highest-risk gate combination.
+## 2. Identify touched surfaces
 
-## 2. Select required gates
+Examples: tool execution, sandbox, transport, channel adapter, secrets, scheduler, UI, package, live provider, eval benchmark.
 
-Use the [Lime gate matrix](./lime-gate-matrix). Do not invent parallel gates when Lime already has a repository script.
+## 3. Select gates
 
-## 3. Write behavior-level cases
+Use the [gate matrix](./gate-matrix). Combine gates when profiles overlap.
 
-A good `qc_case` states:
+## 4. Write evidence-first cases
 
-- target behavior
-- exact steps or command
-- expected result
-- required evidence
-- failure classification
+Each `qc_case` should state:
 
-Avoid cases like "check the UI" or "make sure it works".
+- the behavior to prove;
+- exact steps or commands;
+- expected result;
+- required evidence;
+- what counts as fail, blocked, exhausted, or waived.
 
-## 4. Decide direct vs qcloop execution
+## 5. Use qcloop when repetition matters
 
-Run small deterministic gates directly. Use qcloop when cases are repetitive, independent, and benefit from worker/verifier/repair tracking.
+Use qcloop for independent repeated cases: multiple files, multiple channels, multiple providers, multiple commands, multiple prompts, or multiple package profiles.
 
-## 5. Produce a verdict
+## 6. Report the result
 
-Every `passed` verdict needs evidence refs. Every `failed`, `blocked`, or `exhausted` verdict needs a concrete next action.
-
-## Minimal plan
-
-```json
-{
-  "schema_version": "0.1.0",
-  "id": "lime-gui-smoke-plan",
-  "target_project": "lime",
-  "change_type": "gui-shell-workspace",
-  "risk_level": "high",
-  "required_gates": ["lime.verify-local", "lime.verify-gui-smoke"],
-  "cases": [
-    {
-      "id": "workspace-ready",
-      "name": "Default workspace is ready",
-      "target": "Lime GUI shell",
-      "steps": ["Run npm run verify:gui-smoke"],
-      "expected": ["DevBridge reports ready", "Default workspace can be prepared"],
-      "required_evidence": ["command_log", "gui_smoke_summary"]
-    }
-  ],
-  "evidence_policy": "passed verdicts require inspectable evidence refs"
-}
-```
+A report is only complete when required gates have evidence-backed verdicts and remaining risks are named.
 
 
 
-# Lime Gate Matrix
+# Project Classification
 
-Source: https://limecloud.github.io/agentqc/en/authoring/lime-gate-matrix
+Source: https://limecloud.github.io/agentqc/en/authoring/project-classification
 
-# Lime gate matrix
+# Project classification
 
-This matrix is the default Agent QC mapping for Lime. It follows Lime's repository quality workflow and keeps GUI product readiness separate from code-only checks.
+Agent QC starts with classification. The same repository can match several profiles.
 
-| Change type | Required gates | Notes |
+| Profile | Use when the project owns | Common test focus |
 | --- | --- | --- |
-| `frontend` | `lime.verify-local` | Ordinary TypeScript or React changes without GUI shell risk. |
-| `user-visible-ui` | `lime.verify-local`, UI regression assertion | Prefer existing `*.test.tsx` or stable snapshot-style checks. |
-| `gui-shell-workspace` | `lime.verify-local`, `lime.verify-gui-smoke` | Required for GUI shell, DevBridge, Workspace, and main path changes. |
-| `tauri-command-bridge-mock` | `lime.verify-local`, `lime.test-contracts` | Frontend calls, Rust registration, governance catalog, and mocks must stay aligned. |
-| `rust-module` | targeted Cargo test, then optional broader Cargo test | Start with the affected crate or module. |
-| `config-version-dependency` | `lime.verify-local`, plus `lime.verify-app-version` when version files changed | Update schema, consumers, docs, and lock files together. |
-| `documentation-only` | docs build or link check when available | No product pass claim unless docs are the deliverable. |
-| `large-regression-batch` | matching gates plus `qcloop.batch` | Use qcloop for independent, repeated test cases. |
-| `release-readiness` | `lime.verify-local-full`, `lime.verify-gui-smoke`, focused contracts and review | Expand only to prove release risk, not to run tests endlessly. |
+| `agent-runtime-cli` | agent loop, CLI, task execution, sandbox, tools, resume | unit, sandbox policy, protocol streams, CLI e2e, subprocess cleanup |
+| `agent-sdk-api` | public SDK, generated client, API wrappers | public signatures, fake server integration, generated contract drift |
+| `agent-tool-mcp-gateway` | tool declarations, MCP/ACP bridge, connector runtime | protocol conformance, stdio/http recovery, resource and permission refs |
+| `multi-channel-agent-gateway` | chat/channel adapters, webhooks, auth, media | channel contracts, auth/secrets, live opt-in, media routing, Docker smoke |
+| `agent-ui-tui-desktop` | GUI, TUI, desktop shell, browser-visible flows | rendering, screenshots, terminal fixtures, Playwright, accessibility |
+| `agent-skills-plugins` | skills, plugins, manifests, loaders, marketplace | schema, discovery, package boundary, fixture install, trust policy |
+| `background-agent-scheduler` | cron, queues, workers, retries, long-running agents | deterministic time, leases, checkpointing, races, stress |
+| `agent-distribution-release` | install, package, Docker, cross-platform release | package contents, install smoke, OS matrix, supply-chain scan |
+| `agent-evals-quality` | task quality, model behavior, rubrics, generated outputs | baseline comparison, semantic judge, grounding, safety/policy evals |
 
-## GUI rule
+## Classification rules
 
-For GUI shell or Workspace risk, code checks alone are insufficient. A deliverable verdict needs evidence that the application shell and bridge path are actually usable.
+- Classify by owned risk, not by language.
+- If a project exposes user-visible work, include the UI or runtime profile even if most code is library code.
+- If a test requires credentials or a real provider, mark it `live-provider` and opt in explicitly.
+- If a release artifact is shipped, include `agent-distribution-release` even for docs-heavy projects.
 
-## Command boundary rule
 
-For command, bridge, or mock changes, Agent QC expects evidence that these surfaces are synchronized:
 
-- frontend `safeInvoke(...)` or `invoke(...)`
-- Rust `tauri::generate_handler!`
-- governance command catalog
-- `mockPriorityCommands` and `defaultMocks`
+# Gate Matrix
 
-## qcloop rule
+Source: https://limecloud.github.io/agentqc/en/authoring/gate-matrix
 
-Use qcloop to reduce skipped or forgotten cases, not to bypass required gates. A qcloop pass is one evidence source inside the gate matrix.
+# Gate matrix
+
+The gate matrix maps project profiles to default validation gates. It defines the minimum evidence needed before a report can claim a pass.
+
+| Profile | Minimum gate families | Optional escalation gates |
+| --- | --- | --- |
+| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider` |
+| `agent-sdk-api` | `static`, `unit`, `contract-protocol`, `fake-integration` | `distribution-release`, `live-provider` |
+| `agent-tool-mcp-gateway` | `contract-protocol`, `fake-integration`, `runtime-e2e` | `stress-concurrency`, `live-provider`, `review` |
+| `multi-channel-agent-gateway` | `static`, `unit`, `contract-protocol`, `fake-integration` | `live-provider`, `distribution-release`, `semantic-eval` |
+| `agent-ui-tui-desktop` | `static`, `unit`, `ui-interaction` | `runtime-e2e`, `live-provider`, `review` |
+| `agent-skills-plugins` | `static`, `contract-protocol`, `fake-integration` | `distribution-release`, `review`, `semantic-eval` |
+| `background-agent-scheduler` | `unit`, `fake-integration`, `stress-concurrency` | `runtime-e2e`, `live-provider`, `review` |
+| `agent-distribution-release` | `static`, `distribution-release` | `runtime-e2e`, `live-provider`, `review` |
+| `agent-evals-quality` | `semantic-eval`, `review` | `live-provider`, `stress-concurrency` |
+
+The names above are gate families, not framework commands. A project maps each family to its local command, CI job, qcloop item, or review workflow.
+
+## Gate escalation
+
+Escalate gates when the change touches:
+
+- permission, sandbox, credential, or secret handling;
+- protocol or wire format;
+- persistent state, migration, queue, or scheduler;
+- user-visible UI or terminal rendering;
+- package/install/release metadata;
+- live providers or external network APIs;
+- model prompt, rubric, eval, or judge behavior.
+
+## Evidence minimums
+
+- `static` gates need command logs, CI URLs, or SARIF-style reports.
+- `contract-protocol` gates need schema/contract reports, transcript refs, or failing ids.
+- `runtime-e2e` gates need CLI/runtime transcripts, state snapshots, or process-cleanup proof.
+- `ui-interaction` gates need stable assertions plus screenshots, traces, videos, or accessibility output.
+- `live-provider` gates need redacted request/response refs, credential scope, and budget/cost notes.
+- `distribution-release` gates need package manifests, install output, Docker smoke, or OS matrix proof.
+- `semantic-eval` gates need rubric, model/judge outputs, baseline delta, and waiver threshold.
 
 
 
@@ -286,59 +279,47 @@ Source: https://limecloud.github.io/agentqc/en/authoring/qcloop-integration
 
 # qcloop integration
 
-qcloop is the preferred execution loop for repeated, independent Lime QC cases. Agent QC defines how to prepare the cases and judge results.
+qcloop is a batch execution loop for repeated independent QC cases. Agent QC defines how to prepare items and how verifier output maps to evidence-backed verdicts.
 
 ## When to use qcloop
 
 Use qcloop when:
 
-- there are multiple similar cases;
-- each item can be checked independently;
-- an independent verifier can judge pass/fail;
-- failures should repair or rerun within a bounded loop;
-- you need item-level history and evidence.
+- many cases share one worker/verifier template;
+- each item can be judged independently;
+- missed items are a real risk;
+- repair/retry should be bounded;
+- attempts, verifier rounds, and feedback need to be auditable.
 
-Do not use qcloop for a single open-ended investigation or for cases that require hidden shared state across items.
+Do not use qcloop for one open-ended investigation, for hidden shared-state tests, or to bypass a required CI/project gate.
 
-## Item shape
-
-A qcloop `item_value` SHOULD be JSON for non-trivial Lime tests:
+## Generic item shape
 
 ```json
 {
-  "id": "contract-command-catalog",
-  "name": "Command catalog stays aligned",
-  "target": "Lime command boundary",
-  "steps": ["Run npm run test:contracts", "Inspect failing command ids if any"],
-  "expected": ["Contract tests pass", "No command exists in only one side"],
-  "risk": "bridge drift",
-  "required_evidence": ["command_log", "contract_summary"]
+  "id": "tool-permission-deny-write-outside-workspace",
+  "project_profile": "agent-runtime-cli",
+  "target": "sandbox permission boundary",
+  "steps": ["Run the deny-write fixture", "Capture tool result and exit status"],
+  "expected": ["Write is blocked", "Error is surfaced without leaking secrets"],
+  "required_evidence": ["command_log", "tool_transcript"],
+  "risk": "permission bypass"
 }
 ```
 
-## Worker prompt template
+## Verifier output
 
-The worker prompt must include `{{item}}`, execute the requested test, and summarize evidence without inventing success.
+Verifier output SHOULD be strict JSON:
 
-```text
-You are testing Lime according to Agent QC. Parse this item JSON: {{item}}
-Run only the steps requested by the item. Collect command output, file refs, screenshots, or GUI smoke summaries as evidence.
-Return a concise result with: status, commands run, key output lines, evidence refs, and any blocker. Do not claim pass unless the evidence proves the expected behavior.
-```
-
-## Verifier prompt template
-
-The verifier must output strict JSON. It should judge evidence, not confidence.
-
-```text
-Review the worker output for this Agent QC item.
-Item: {{item}}
-Worker output: {{output}}
-
-Return strict JSON only:
-{"pass": true|false, "feedback": "specific reason", "evidence_refs": ["ref..."], "remaining_risk": "..."}
-
-Pass only if the output includes evidence for every expected behavior. Fail if evidence is missing, ambiguous, or only asserted by the agent.
+```json
+{
+  "pass": false,
+  "status": "failed",
+  "severity": "high",
+  "feedback": "The transcript shows the write succeeded outside the workspace.",
+  "evidence_refs": ["qcloop://jobs/job-123/items/deny-write/attempts/1"],
+  "remaining_risk": "Sandbox policy may not be enforced for this path."
+}
 ```
 
 ## Mapping qcloop states
@@ -348,76 +329,50 @@ Pass only if the output includes evidence for every expected behavior. Fail if e
 | `success` | Item has a passing verifier verdict. |
 | `failed` | Worker or repair execution failed. |
 | `exhausted` | Budget or `max_qc_rounds` reached without proof. |
-| `pending` / `running` | Plan is not ready for final report. |
-
-The final report must list exhausted items separately from failed items.
+| `pending` / `running` | Plan is incomplete. |
 
 
 
-# Evidence Driven Verdicts
+# Evidence-driven Verdicts
 
 Source: https://limecloud.github.io/agentqc/en/authoring/evidence-driven-verdicts
 
 # Evidence-driven verdicts
 
-Agent QC treats a verdict as a claim about observed evidence. An agent sentence like "I checked it" is not a verdict.
+A verdict is a claim about observed evidence. The model's final prose is not enough.
 
-## Required fields
+## Verdict statuses
 
-A `qc_verdict` includes:
+| Status | Meaning |
+| --- | --- |
+| `passed` | Evidence proves all required expectations. |
+| `failed` | Evidence disproves an expectation or a gate exits non-zero. |
+| `blocked` | Environment, credentials, dependency, or missing fixture prevents judgment. |
+| `exhausted` | Attempts or budget were consumed without proof. |
+| `waived` | A responsible actor accepted a known gap with a reason and expiry. |
+| `needs-review` | Evidence exists but semantic or safety review is still required. |
 
-- `pass`: boolean for qcloop compatibility;
-- `status`: `passed`, `failed`, `blocked`, `exhausted`, or `needs-review`;
-- `severity`: `none`, `low`, `medium`, `high`, or `critical`;
-- `feedback`: specific explanation;
-- `evidence_refs`: inspectable refs;
-- `remaining_risk`: what is still not proven.
+## Good evidence
 
-## Pass rule
+Good evidence is inspectable and scoped:
 
-A pass requires:
+- command log or CI job URL;
+- JUnit/HTML/coverage report;
+- protocol transcript or mock server request log;
+- Playwright trace, screenshot, or video;
+- qcloop attempt and qc round refs;
+- package manifest, tarball listing, Docker smoke output;
+- model output plus rubric and judge verdict;
+- human review note with reviewer and scope.
 
-1. every expected behavior is covered;
-2. evidence refs are present;
-3. no required gate is still running, blocked, or exhausted;
-4. failure logs are either absent or explained.
+## Bad evidence
 
-## Fail rule
+Bad evidence is unverifiable:
 
-A fail should identify the smallest actionable issue. Examples:
-
-- a command exited non-zero;
-- GUI smoke did not reach DevBridge readiness;
-- verifier saw no evidence for an expected behavior;
-- Playwright observed the wrong user-visible state.
-
-## Blocked vs exhausted
-
-Use `blocked` when the environment prevents judgment, such as qcloop not running or credentials missing.
-
-Use `exhausted` when the loop ran but did not reach a pass within rounds or token budget.
-
-## Evidence examples
-
-```json
-[
-  {
-    "kind": "command_log",
-    "ref": "runs/2026-05-10/verify-local.log",
-    "summary": "npm run verify:local exited 0."
-  },
-  {
-    "kind": "qcloop_qc_round",
-    "ref": "qcloop://jobs/abc/items/workspace-ready/qc/1",
-    "summary": "Verifier passed; evidence included GUI smoke output."
-  },
-  {
-    "kind": "playwright_screenshot",
-    "ref": "runs/2026-05-10/workspace-ready.png",
-    "summary": "Default workspace rendered with ready state."
-  }
-]
-```
+- "looks good";
+- "the tests passed" without a command or CI ref;
+- hidden local state with no path or transcript;
+- live provider claim with no redacted request/response or budget note.
 
 
 
@@ -427,191 +382,350 @@ Source: https://limecloud.github.io/agentqc/en/authoring/acceptance-scenarios
 
 # Acceptance scenarios
 
-Agent QC scenarios validate behavior and evidence, not file presence.
+Agent QC validates behavior and evidence, not repository shape alone.
 
-## 1. Ordinary frontend change
+## 1. Runtime CLI permission boundary
 
-1. Classify change as `frontend`.
-2. Run `npm run verify:local`.
-3. Record command output evidence.
-4. Report pass only if the command passes and no higher-risk boundary was touched.
+A runtime blocks an unsafe tool action, returns a controlled error, and records the decision in a transcript or log.
 
-Passing condition: local validation evidence supports the change and no GUI or bridge gate is required.
+Passing condition: the denied action is visible and no unauthorized side effect occurs.
 
-## 2. User-visible UI change
+## 2. Tool or MCP transport recovery
 
-1. Classify change as `user-visible-ui`.
-2. Run `npm run verify:local`.
-3. Add or run a stable UI assertion when an existing test surface exists.
-4. Record evidence for user-visible expected state.
+A stdio/http tool server disconnects, reconnects, or returns an error.
 
-Passing condition: UI behavior is asserted, not just typechecked.
+Passing condition: the runtime surfaces failure/recovery without corrupting tool state.
 
-## 3. GUI shell or Workspace change
+## 3. Channel gateway auth and media
 
-1. Classify change as `gui-shell-workspace`.
-2. Run `npm run verify:local`.
-3. Run `npm run verify:gui-smoke`.
-4. Record DevBridge and workspace readiness evidence.
+A channel adapter receives a webhook or message with media and auth context.
 
-Passing condition: GUI main path is proven usable.
+Passing condition: the gateway verifies identity, applies secret policy, stores media safely, and emits a traceable response.
 
-## 4. Tauri command / Bridge / mock change
+## 4. UI/TUI streaming turn
 
-1. Classify change as `tauri-command-bridge-mock`.
-2. Check command surfaces as a group.
-3. Run `npm run test:contracts` and `npm run verify:local`.
-4. Record failing command ids when contracts fail.
+A user sends a prompt, status appears before final text, tool progress stays separate from answer text, and interruption remains available.
 
-Passing condition: frontend calls, Rust registration, catalog, and mocks stay synchronized.
+Passing condition: UI projection does not invent runtime success.
 
-## 5. qcloop batch regression
+## 5. Background scheduler recovery
 
-1. Convert each behavior into one independent `qc_case`.
-2. Create a qcloop job with strict verifier JSON.
-3. Start the job and poll until no item is pending or running.
-4. Summarize `success`, `failed`, and `exhausted` separately.
+A scheduled agent job is interrupted or restarted.
 
-Passing condition: every required item has verifier-backed evidence.
+Passing condition: leases/checkpoints prevent duplicate or lost work and evidence shows final ownership.
 
-## 6. Manual or LLM judge review
+## 6. Distribution install smoke
 
-1. Define a rubric before review.
-2. Provide the reviewer with outputs and evidence refs.
-3. Record verdict, reviewer identity or judge configuration, and remaining risk.
+A released package or Docker image installs in a clean environment.
 
-Passing condition: review decision is explicit and traceable.
+Passing condition: version, help command, minimal runtime start, and package contents match expectations.
+
+## 7. Semantic eval regression
+
+A prompt suite is run against current and baseline behavior.
+
+Passing condition: rubric assertions improve or stay within accepted threshold, with judge outputs preserved.
 
 
 
-# Glossary
+# Codex Runtime CLI Example
 
-Source: https://limecloud.github.io/agentqc/en/reference/glossary
+Source: https://limecloud.github.io/agentqc/en/examples/codex-runtime-cli
 
-# Glossary
+# Codex runtime CLI example
 
-| Term | Meaning |
-| --- | --- |
-| Gate | A required validation boundary for a change type. |
-| Evidence | Inspectable record that supports or disproves a verdict. |
-| Verdict | A pass/fail/blocked/exhausted judgment over evidence. |
-| qcloop | Batch execution tool for worker/verifier/repair loops. |
-| Attempt | qcloop worker or repair execution for one item. |
-| QC round | qcloop verifier execution for one item. |
-| Exhausted | A loop used all allowed rounds or budget without proving a pass. |
-| GUI smoke | Minimal test that proves Lime GUI shell, bridge, and workspace readiness. |
-| Contract test | Test that catches drift between frontend command calls, Rust handlers, catalogs, and mocks. |
-| Remaining risk | What the current evidence does not prove. |
+Profiles:
 
+- `agent-runtime-cli`
+- `agent-tool-mcp-gateway`
+- `agent-sdk-api`
+- `agent-distribution-release`
 
+Typical gates:
 
-# Lime Quality Source Index
-
-Source: https://limecloud.github.io/agentqc/en/reference/lime-quality-source-index
-
-# Lime quality source index
-
-Agent QC v0.1.0 is grounded in these local sources.
-
-| Source | Use |
-| --- | --- |
-| `/Users/coso/Documents/dev/ai/aiclientproxy/lime/AGENTS.md` | Repository rules, Chinese output, GUI product stance, no accidental git operations. |
-| `/Users/coso/Documents/dev/ai/aiclientproxy/lime/docs/aiprompts/quality-workflow.md` | Lime gate matrix and deliverability definition. |
-| `/Users/coso/Documents/dev/ai/aiclientproxy/lime/docs/aiprompts/playwright-e2e.md` | GUI interaction testing and Playwright continuation rules. |
-| `/Users/coso/Documents/dev/ai/aiclientproxy/lime/docs/aiprompts/commands.md` | Tauri command and bridge synchronization boundary. |
-| `/Users/coso/Documents/dev/ai/limecloud/qcloop/llms-full.txt` | qcloop API, worker/verifier/repair loop, item statuses, and AI usage rules. |
-| `https://agentskills.io/specification.md` | Directory/Markdown/frontmatter/progressive disclosure style inspiration. |
-| `https://agentskills.io/skill-creation/evaluating-skills.md` | Eval-driven iteration, with/without baseline, assertions, and grading workspace pattern. |
-
-When a future Lime rule changes, update this index and the gate matrix together.
-
-
-
-# Agent Standards Ecosystem
-
-Source: https://limecloud.github.io/agentqc/en/reference/agent-ecosystem
-
-# Agent standards ecosystem
-
-Agent QC is currently a Lime-focused candidate standard. It links testing plans and verdicts to adjacent agent standards without owning their responsibilities.
-
-| Standard | Role | Relationship to Agent QC |
-| --- | --- | --- |
-| Agent Knowledge | Source-grounded knowledge packs. | Supplies trusted test context and requirements. |
-| Agent UI | User-visible interaction surfaces. | Supplies behavior-level GUI acceptance expectations. |
-| Agent Runtime | Execution facts, controls, tasks, and recovery. | Supplies run/task state for long testing work. |
-| Agent Evidence | Evidence, verification, review, replay, and export. | Owns durable evidence records that QC verdicts reference. |
-| Agent Policy | Permissions, approvals, risk, retention, and waivers. | Defines whether risky test actions may run. |
-| Agent Artifact | Durable deliverables and handoff packages. | Stores generated reports, screenshots, logs, or exported evidence bundles. |
-| Agent Tool | Tool declarations, calls, progress, and results. | Supplies tool invocation facts for test execution. |
-| Agent Context | Context selection, budgets, injection, and missing facts. | Explains what context was available to worker or verifier agents. |
-| Agent QC | Lime testing plans, gates, cases, verdicts, and reports. | Owns the pass/fail quality-control contract for Lime testing. |
-
-No standard should become the whole stack. Agent QC verdicts should preserve refs to runtime, evidence, artifact, tool, policy, and qcloop records.
-
-
-
-# Lime GUI Change Example
-
-Source: https://limecloud.github.io/agentqc/en/examples/lime-gui-change
-
-# Lime GUI change example
-
-Use this shape when a change touches GUI shell, DevBridge, Workspace, or the main product path.
+- static: `cargo fmt`, `cargo clippy`, dependency policy.
+- unit/runtime: targeted crate tests and `cargo nextest run --no-fail-fast`.
+- contract/protocol: MCP client/server fixtures, SSE fixtures, API bridge tests.
+- runtime-e2e: CLI exec/apply-patch/resume/sandbox suites.
+- distribution-release: Bazel matrix, SDK build/test, package staging.
 
 ```json
 {
-  "schema_version": "0.1.0",
-  "id": "lime-gui-workspace-readiness",
-  "target_project": "lime",
-  "change_type": "gui-shell-workspace",
+  "schema_version": "0.2.0",
+  "id": "codex-runtime-sandbox-qc",
+  "target_project": "codex",
+  "project_profiles": [
+    "agent-runtime-cli",
+    "agent-tool-mcp-gateway",
+    "agent-sdk-api",
+    "agent-distribution-release"
+  ],
   "risk_level": "high",
-  "required_gates": ["lime.verify-local", "lime.verify-gui-smoke"],
+  "risk_domains": [
+    "sandbox",
+    "tool-execution",
+    "protocol"
+  ],
+  "required_gates": [
+    "static",
+    "unit",
+    "contract-protocol",
+    "runtime-e2e"
+  ],
   "cases": [
     {
-      "id": "gui-smoke-default-workspace",
-      "name": "Default workspace reaches ready state",
-      "target": "Lime desktop GUI",
-      "steps": ["Run npm run verify:gui-smoke"],
-      "expected": ["DevBridge health check passes", "Default workspace is prepared"],
-      "risk": "GUI shell can compile but product path cannot open",
-      "required_evidence": ["command_log", "gui_smoke_summary"]
+      "id": "deny-unsafe-tool-action",
+      "name": "Deny unsafe tool action",
+      "project_profile": "agent-runtime-cli",
+      "target": "sandbox policy",
+      "steps": [
+        "Run the sandbox deny fixture",
+        "Capture CLI transcript and exit status"
+      ],
+      "expected": [
+        "Unsafe action is denied",
+        "Transcript includes controlled error"
+      ],
+      "risk": "permission bypass",
+      "required_gates": [
+        "unit",
+        "runtime-e2e"
+      ],
+      "required_evidence": [
+        "command_log",
+        "cli_transcript"
+      ],
+      "status": "planned"
     }
   ],
-  "evidence_policy": "Every passed gate requires command or GUI smoke evidence."
+  "evidence_policy": "Every pass must link to command, fixture, transcript, or CI evidence."
 }
 ```
 
 
 
-# Lime Command Bridge Change Example
+# OpenClaw Channel Gateway Example
 
-Source: https://limecloud.github.io/agentqc/en/examples/lime-command-bridge-change
+Source: https://limecloud.github.io/agentqc/en/examples/openclaw-channel-gateway
 
-# Lime command bridge change example
+# OpenClaw channel gateway example
 
-Use this shape when a change touches `safeInvoke`, Rust command registration, governance command catalog, DevBridge dispatcher, or browser mocks.
+Profiles:
+
+- `multi-channel-agent-gateway`
+- `agent-tool-mcp-gateway`
+- `agent-skills-plugins`
+- `agent-distribution-release`
+
+Typical gates:
+
+- static: lint, typecheck, import boundaries, generated baselines.
+- unit/contract: channel contracts, secret refs, provider surfaces, media policies.
+- fake-integration: webhook/gateway adapters with fake provider responses.
+- live-provider: opt-in model/channel/provider lanes.
+- distribution-release: Docker and install smoke.
 
 ```json
 {
-  "schema_version": "0.1.0",
-  "id": "lime-command-boundary-check",
-  "target_project": "lime",
-  "change_type": "tauri-command-bridge-mock",
+  "schema_version": "0.2.0",
+  "id": "openclaw-channel-contract-qc",
+  "target_project": "openclaw",
+  "project_profiles": [
+    "multi-channel-agent-gateway",
+    "agent-tool-mcp-gateway",
+    "agent-skills-plugins",
+    "agent-distribution-release"
+  ],
   "risk_level": "high",
-  "required_gates": ["lime.verify-local", "lime.test-contracts"],
+  "risk_domains": [
+    "channel-auth",
+    "secrets",
+    "media-routing"
+  ],
+  "required_gates": [
+    "static",
+    "contract-protocol",
+    "fake-integration",
+    "distribution-release"
+  ],
   "cases": [
     {
-      "id": "contracts-command-surface",
-      "name": "Command surfaces remain synchronized",
-      "target": "Tauri command boundary",
-      "steps": ["Run npm run test:contracts", "Inspect any command ids reported only on one side"],
-      "expected": ["Contract tests pass", "No current command is missing frontend, Rust, catalog, or mock coverage"],
-      "risk": "Bridge drift creates runtime-only failures",
-      "required_evidence": ["command_log", "contract_summary"]
+      "id": "telegram-secret-ref-isolation",
+      "name": "Telegram secret ref isolation",
+      "project_profile": "multi-channel-agent-gateway",
+      "target": "channel secret runtime",
+      "steps": [
+        "Run channel contract tests",
+        "Inspect redacted secret ref transcript"
+      ],
+      "expected": [
+        "Secrets are referenced, not leaked",
+        "Inactive channels cannot use active credentials"
+      ],
+      "risk": "credential leakage",
+      "required_gates": [
+        "contract-protocol",
+        "fake-integration"
+      ],
+      "required_evidence": [
+        "test_report",
+        "redacted_transcript"
+      ],
+      "status": "planned"
     }
   ],
-  "evidence_policy": "Contract pass needs command output, not prose."
+  "evidence_policy": "Live provider gates must be explicitly opted in and redacted."
+}
+```
+
+
+
+# Hermes Background Agent Example
+
+Source: https://limecloud.github.io/agentqc/en/examples/hermes-background-agent
+
+# Hermes background agent example
+
+Profiles:
+
+- `background-agent-scheduler`
+- `multi-channel-agent-gateway`
+- `agent-ui-tui-desktop`
+- `agent-distribution-release`
+
+Typical gates:
+
+- Python unit tests through a canonical runner that normalizes env.
+- pytest markers to exclude integration by default.
+- stress-concurrency tests for leases, queues, checkpoints, subprocesses.
+- TUI Vitest tests for terminal behavior.
+- Docker smoke and install tests for release paths.
+
+```json
+{
+  "schema_version": "0.2.0",
+  "id": "hermes-cron-recovery-qc",
+  "target_project": "hermes-agent",
+  "project_profiles": [
+    "background-agent-scheduler",
+    "multi-channel-agent-gateway",
+    "agent-ui-tui-desktop",
+    "agent-distribution-release"
+  ],
+  "risk_level": "high",
+  "risk_domains": [
+    "cron",
+    "checkpoint",
+    "credential-isolation"
+  ],
+  "required_gates": [
+    "unit",
+    "stress-concurrency",
+    "fake-integration"
+  ],
+  "cases": [
+    {
+      "id": "cron-restart-does-not-duplicate-work",
+      "name": "Cron restart does not duplicate work",
+      "project_profile": "background-agent-scheduler",
+      "target": "cron scheduler recovery",
+      "steps": [
+        "Run scheduler restart test",
+        "Inspect checkpoint and evidence store"
+      ],
+      "expected": [
+        "No duplicate work item",
+        "Recovered run owns final state"
+      ],
+      "risk": "duplicate or lost background work",
+      "required_gates": [
+        "unit",
+        "stress-concurrency"
+      ],
+      "required_evidence": [
+        "pytest_report",
+        "checkpoint_log"
+      ],
+      "status": "planned"
+    }
+  ],
+  "evidence_policy": "Credential env vars must be blanked or scoped in test evidence."
+}
+```
+
+
+
+# Lime Desktop GUI Example
+
+Source: https://limecloud.github.io/agentqc/en/examples/lime-desktop-gui
+
+# Lime desktop GUI example
+
+Lime is an example profile, not the standard boundary.
+
+Profiles:
+
+- `agent-ui-tui-desktop`
+- `agent-runtime-cli`
+- `agent-tool-mcp-gateway`
+- `agent-skills-plugins`
+
+Typical gates:
+
+- local validation for static/type/unit coverage;
+- command contracts for frontend/Rust/mock/catalog surfaces;
+- GUI smoke for shell, bridge, and workspace readiness;
+- Playwright for user-visible product flows.
+
+```json
+{
+  "schema_version": "0.2.0",
+  "id": "lime-gui-workspace-readiness",
+  "target_project": "lime",
+  "project_profiles": [
+    "agent-ui-tui-desktop",
+    "agent-tool-mcp-gateway",
+    "agent-runtime-cli",
+    "agent-skills-plugins"
+  ],
+  "risk_level": "high",
+  "risk_domains": [
+    "desktop-shell",
+    "bridge",
+    "workspace"
+  ],
+  "required_gates": [
+    "static",
+    "contract-protocol",
+    "ui-interaction"
+  ],
+  "cases": [
+    {
+      "id": "workspace-ready",
+      "name": "Workspace becomes ready in desktop GUI",
+      "project_profile": "agent-ui-tui-desktop",
+      "target": "Lime desktop GUI",
+      "steps": [
+        "Run GUI smoke",
+        "Inspect bridge readiness and workspace state"
+      ],
+      "expected": [
+        "Bridge is ready",
+        "Default workspace is prepared"
+      ],
+      "risk": "UI reports readiness without runtime support",
+      "required_gates": [
+        "contract-protocol",
+        "ui-interaction"
+      ],
+      "required_evidence": [
+        "command_log",
+        "gui_smoke_summary"
+      ],
+      "status": "planned"
+    }
+  ],
+  "evidence_policy": "GUI pass requires smoke or interaction evidence, not only static checks."
 }
 ```
 
@@ -623,21 +737,21 @@ Source: https://limecloud.github.io/agentqc/en/examples/qcloop-batch
 
 # qcloop batch example
 
-Agent QC maps repeated test cases to qcloop items.
+Agent QC maps repeated independent cases to qcloop items.
 
 ## Job request
 
 ```json
 {
-  "name": "lime-agentqc-gui-regression",
-  "prompt_template": "You are testing Lime according to Agent QC. Parse this item JSON: {{item}}. Run the requested steps, collect evidence refs, and report status, commands, key output, blockers, and evidence refs. Do not claim pass without evidence.",
-  "verifier_prompt_template": "Review this Agent QC item. Item: {{item}} Worker output: {{output}} Return strict JSON only: {"pass": true|false, "feedback": "specific reason", "evidence_refs": ["ref..."], "remaining_risk": "..."}. Pass only when every expected behavior has evidence.",
+  "name": "agentqc-runtime-permission-regression",
+  "prompt_template": "You are testing an Agent project according to Agent QC. Parse this item JSON: {{item}}. Run only the requested steps. Collect evidence refs. Report status, commands, key output, blockers, and evidence refs. Do not claim pass without evidence.",
+  "verifier_prompt_template": "Review this Agent QC item. Item: {{item}} Worker output: {{output}} Return strict JSON only: {\"pass\": true|false, \"status\": \"passed|failed|blocked|exhausted|needs-review\", \"severity\": \"none|low|medium|high|critical\", \"feedback\": \"specific reason\", \"evidence_refs\": [\"ref...\"], \"remaining_risk\": \"...\"}. Pass only when every expected behavior has evidence.",
   "max_qc_rounds": 2,
   "token_budget_per_item": 0,
   "execution_mode": "standard",
   "executor_provider": "codex",
   "items": [
-    "{"id":"gui-smoke-default-workspace","name":"Default workspace reaches ready state","target":"Lime desktop GUI","steps":["Run npm run verify:gui-smoke"],"expected":["DevBridge health check passes","Default workspace is prepared"],"required_evidence":["command_log","gui_smoke_summary"]}"
+    "{\"id\":\"deny-unsafe-tool-action\",\"name\":\"Deny unsafe tool action\",\"project_profile\":\"agent-runtime-cli\",\"target\":\"sandbox policy\",\"steps\":[\"Run the sandbox deny fixture\",\"Capture CLI transcript and exit status\"],\"expected\":[\"Unsafe action is denied\",\"Transcript includes controlled error\"],\"risk\":\"permission bypass\",\"required_gates\":[\"unit\",\"runtime-e2e\"],\"required_evidence\":[\"command_log\",\"cli_transcript\"],\"status\":\"planned\"}"
   ]
 }
 ```
@@ -646,9 +760,174 @@ Agent QC maps repeated test cases to qcloop items.
 
 ```json
 {
-  "pass": true,
-  "feedback": "GUI smoke evidence shows DevBridge ready and default workspace prepared.",
-  "evidence_refs": ["qcloop://jobs/job-123/items/gui-smoke-default-workspace/attempts/1"],
-  "remaining_risk": "No full manual exploratory GUI review was performed."
+  "pass": false,
+  "status": "failed",
+  "severity": "high",
+  "feedback": "The transcript shows the unsafe write succeeded outside the workspace.",
+  "evidence_refs": [
+    "qcloop://jobs/job-123/items/deny-unsafe-tool-action/attempts/1"
+  ],
+  "remaining_risk": "Sandbox policy may not be enforced for this path."
 }
 ```
+
+
+
+# Agent Project Patterns
+
+Source: https://limecloud.github.io/agentqc/en/reference/agent-project-patterns
+
+# Agent project patterns
+
+These patterns come from local repository inspection and public docs. They are examples, not normative requirements.
+
+## Codex-style runtime CLI
+
+Local source: `/Users/coso/Documents/dev/rust/codex`.
+
+Observed testing shape:
+
+- Rust workspace uses `cargo nextest run --no-fail-fast` for routine local runs.
+- CI includes `cargo fmt`, `cargo clippy`, `cargo test`, `cargo nextest`, `cargo-deny`, `cargo shear`, Bazel test matrices, and SDK jobs.
+- Tests cover sandboxing, apply-patch behavior, MCP server/client behavior, protocol events, CLI execution, app server, streamable HTTP recovery, and SDK public APIs.
+- Fixtures include fake model servers, SSE fixtures, test stdio/http servers, and expected patch outputs.
+
+Agent QC profile mapping: `agent-runtime-cli`, `agent-tool-mcp-gateway`, `agent-sdk-api`, `agent-distribution-release`.
+
+## OpenClaw-style multi-channel gateway
+
+Local source: `/Users/coso/Documents/dev/js/openclaw` and public OpenClaw docs.
+
+Observed testing shape:
+
+- Many Vitest lanes: unit, gateway, channels, contracts, e2e, live, Docker, install smoke, performance, startup, platform-specific lanes.
+- CI preflight computes changed scopes and routes jobs instead of running one fixed command.
+- Tests emphasize channel contracts, secrets, provider surfaces, media handling, plugin boundaries, Docker/install smoke, and live opt-in providers.
+- Release workflows include npm, Docker, plugin, install-smoke, and platform-specific checks.
+
+Agent QC profile mapping: `multi-channel-agent-gateway`, `agent-tool-mcp-gateway`, `agent-skills-plugins`, `agent-distribution-release`, `agent-evals-quality`.
+
+## ClaudeCode-style TUI/runtime snapshot
+
+Local source: `/Users/coso/Documents/dev/js/claudecode`.
+
+Observed testing shape:
+
+- The local snapshot is incomplete: no `package.json` or GitHub workflows were available.
+- Source surfaces still show TUI/runtime risks: shell interaction, remote session permission requests, tool-use messages, SDK adapters, and injected query dependencies.
+- Agent QC should treat this as interface-surface evidence only, not as a conclusion about the upstream project's test strategy.
+
+Agent QC profile mapping: `agent-runtime-cli`, `agent-ui-tui-desktop`, `agent-sdk-api`, `agent-tool-mcp-gateway`.
+
+## Hermes-style background agent
+
+Local source: `/Users/coso/Documents/dev/python/hermes-agent` and public Hermes docs.
+
+Observed testing shape:
+
+- Python uses pytest with markers, xdist, ignored integration/e2e paths, and a canonical `scripts/run_tests.sh` that normalizes env, workers, timezone, locale, hash seed, and credentials.
+- Tests include cron, gateway, plugins, memory providers, stress/concurrency, checkpointing, evidence store, subprocess e2e, and TUI Vitest tests.
+- CI includes pytest, separate e2e, ruff/ty lint, uv lock checks, OSV scanner, Docker build and smoke, docs-site checks, and skills index jobs.
+
+Agent QC profile mapping: `background-agent-scheduler`, `multi-channel-agent-gateway`, `agent-ui-tui-desktop`, `agent-distribution-release`, `agent-skills-plugins`.
+
+## Lime-style desktop GUI agent
+
+Local source: `/Users/coso/Documents/dev/ai/aiclientproxy/lime`.
+
+Observed testing shape:
+
+- Lime treats GUI product readiness as distinct from type/lint/unit pass.
+- Required gates include `verify:local`, `test:contracts`, `verify:gui-smoke`, and Playwright continuation when user-visible behavior changes.
+- Command changes must synchronize frontend calls, Rust handlers, governance catalog, DevBridge, and mocks.
+
+Agent QC profile mapping: `agent-ui-tui-desktop`, `agent-runtime-cli`, `agent-tool-mcp-gateway`, `agent-skills-plugins`.
+
+## Cross-case lessons
+
+1. Use project profiles before gates.
+2. Keep fake/local integration separate from live providers.
+3. Treat install/package/Docker smoke as first-class release gates.
+4. Preserve protocol transcripts and UI traces as evidence.
+5. Use qcloop for repeated cases, not as a substitute for framework-native gates.
+6. Normalize environment for agent tests: credentials, time, locale, working directory, concurrency, and sandbox.
+
+
+
+# Source Index
+
+Source: https://limecloud.github.io/agentqc/en/reference/source-index
+
+# Source index
+
+Agent QC v0.2.0 is derived from local project inspection plus public documentation. Local repositories are case studies, not normative dependencies.
+
+## Local repositories
+
+| Source | Use |
+| --- | --- |
+| `/Users/coso/Documents/dev/rust/codex` | Runtime CLI, Rust, Bazel, SDK, MCP, sandbox, protocol, and release patterns. |
+| `/Users/coso/Documents/dev/js/openclaw` | Multi-channel gateway, Vitest lanes, live providers, Docker/install smoke, plugin and secret tests. |
+| `/Users/coso/Documents/dev/js/claudecode` | Partial local source snapshot; useful for shell/spec and permission-tool surfaces, not enough for CI conclusions. |
+| `/Users/coso/Documents/dev/python/hermes-agent` | Python agent, pytest, cron, gateway, stress, TUI, Docker, lockfile, and supply-chain patterns. |
+| `/Users/coso/Documents/dev/ai/aiclientproxy/lime` | Desktop GUI, Tauri bridge, command contracts, GUI smoke, Playwright continuation. |
+
+## External docs and research inputs
+
+| Source | Use |
+| --- | --- |
+| `https://agentskills.io/specification.md` | Markdown/frontmatter/progressive disclosure style for Agent-facing standards. |
+| `https://agentskills.io/skill-creation/evaluating-skills.md` | Eval-driven iteration and assertion-grading pattern. |
+| `https://docs.openclaw.ai/help/testing` | Public OpenClaw testing workflow reference. |
+| `https://docs.openclaw.ai/ci` | Public OpenClaw CI and release proof patterns. |
+| `https://vitest.dev/guide/cli.html` | Vitest CLI, coverage, reporter, project, and browser-mode conventions. |
+| `https://docs.pytest.org/en/stable/example/markers.html` | pytest marker selection and suite routing conventions. |
+| `https://playwright.dev/docs/test-configuration` | Playwright retries, reporters, projects, web server, trace/screenshot/video evidence. |
+| `https://modelcontextprotocol.io/specification/2025-11-25/server/tools` | MCP tool declaration and protocol boundary reference. |
+| `https://github.com/openai/codex/actions` | Public Codex workflow signals. |
+| `https://github.com/NousResearch/hermes-agent` | Public Hermes repository and project context. |
+
+
+
+# Agent Standards Ecosystem
+
+Source: https://limecloud.github.io/agentqc/en/reference/agent-ecosystem
+
+# Agent standards ecosystem
+
+Agent QC owns the quality-control contract for Agent projects. It links to adjacent standards through refs instead of owning their facts.
+
+| Standard | Role | Relationship to Agent QC |
+| --- | --- | --- |
+| Agent Knowledge | Source-grounded knowledge packs. | Supplies trusted requirements, docs, and domain facts for tests. |
+| Agent UI | User-visible interaction surfaces. | Supplies UI/TUI/desktop acceptance expectations. |
+| Agent Runtime | Execution facts, controls, tasks, tools, and recovery. | Supplies run/task/session state for runtime gates. |
+| Agent Evidence | Evidence, verification, review, replay, and export. | Owns durable evidence records referenced by QC verdicts. |
+| Agent Policy | Permissions, approvals, risk, retention, waivers. | Defines whether high-risk test actions may run or be waived. |
+| Agent Artifact | Durable deliverables and handoff packages. | Stores reports, screenshots, traces, logs, and package manifests. |
+| Agent Tool | Tool declarations, calls, progress, results, permissions. | Supplies tool invocation facts for tool and MCP gates. |
+| Agent Context | Context selection, budgets, injection, missing facts. | Explains what context worker/verifier/judge agents received. |
+| Agent QC | Plans, profiles, gates, evidence, verdicts, and reports. | Owns whether testing evidence proves a project quality claim. |
+
+
+
+# Glossary
+
+Source: https://limecloud.github.io/agentqc/en/reference/glossary
+
+# Glossary
+
+| Term | Meaning |
+| --- | --- |
+| Project profile | Agent project shape that determines likely risks and gates. |
+| Gate | Required validation boundary for a profile or change risk. |
+| Evidence | Inspectable record that supports or disproves a verdict. |
+| Verdict | Evidence-backed passed/failed/blocked/exhausted/waived/needs-review judgment. |
+| qcloop | Batch execution loop for worker/verifier/repair tasks. |
+| Attempt | qcloop worker or repair execution for one item. |
+| QC round | qcloop verifier execution for one item. |
+| Exhausted | Attempts or budget ended without proof. |
+| Waiver | Explicit accepted gap with reason, owner, and expiry. |
+| Live provider | Real external model, API, channel, or network dependency. |
+| Semantic eval | Test that judges model/task output against a rubric or baseline. |
+| Remaining risk | What current evidence still does not prove. |

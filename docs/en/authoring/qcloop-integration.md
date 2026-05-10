@@ -5,59 +5,47 @@ description: Map Agent QC plans into qcloop jobs and verifier prompts.
 
 # qcloop integration
 
-qcloop is the preferred execution loop for repeated, independent Lime QC cases. Agent QC defines how to prepare the cases and judge results.
+qcloop is a batch execution loop for repeated independent QC cases. Agent QC defines how to prepare items and how verifier output maps to evidence-backed verdicts.
 
 ## When to use qcloop
 
 Use qcloop when:
 
-- there are multiple similar cases;
-- each item can be checked independently;
-- an independent verifier can judge pass/fail;
-- failures should repair or rerun within a bounded loop;
-- you need item-level history and evidence.
+- many cases share one worker/verifier template;
+- each item can be judged independently;
+- missed items are a real risk;
+- repair/retry should be bounded;
+- attempts, verifier rounds, and feedback need to be auditable.
 
-Do not use qcloop for a single open-ended investigation or for cases that require hidden shared state across items.
+Do not use qcloop for one open-ended investigation, for hidden shared-state tests, or to bypass a required CI/project gate.
 
-## Item shape
-
-A qcloop `item_value` SHOULD be JSON for non-trivial Lime tests:
+## Generic item shape
 
 ```json
 {
-  "id": "contract-command-catalog",
-  "name": "Command catalog stays aligned",
-  "target": "Lime command boundary",
-  "steps": ["Run npm run test:contracts", "Inspect failing command ids if any"],
-  "expected": ["Contract tests pass", "No command exists in only one side"],
-  "risk": "bridge drift",
-  "required_evidence": ["command_log", "contract_summary"]
+  "id": "tool-permission-deny-write-outside-workspace",
+  "project_profile": "agent-runtime-cli",
+  "target": "sandbox permission boundary",
+  "steps": ["Run the deny-write fixture", "Capture tool result and exit status"],
+  "expected": ["Write is blocked", "Error is surfaced without leaking secrets"],
+  "required_evidence": ["command_log", "tool_transcript"],
+  "risk": "permission bypass"
 }
 ```
 
-## Worker prompt template
+## Verifier output
 
-The worker prompt must include `{{item}}`, execute the requested test, and summarize evidence without inventing success.
+Verifier output SHOULD be strict JSON:
 
-```text
-You are testing Lime according to Agent QC. Parse this item JSON: {{item}}
-Run only the steps requested by the item. Collect command output, file refs, screenshots, or GUI smoke summaries as evidence.
-Return a concise result with: status, commands run, key output lines, evidence refs, and any blocker. Do not claim pass unless the evidence proves the expected behavior.
-```
-
-## Verifier prompt template
-
-The verifier must output strict JSON. It should judge evidence, not confidence.
-
-```text
-Review the worker output for this Agent QC item.
-Item: {{item}}
-Worker output: {{output}}
-
-Return strict JSON only:
-{"pass": true|false, "feedback": "specific reason", "evidence_refs": ["ref..."], "remaining_risk": "..."}
-
-Pass only if the output includes evidence for every expected behavior. Fail if evidence is missing, ambiguous, or only asserted by the agent.
+```json
+{
+  "pass": false,
+  "status": "failed",
+  "severity": "high",
+  "feedback": "The transcript shows the write succeeded outside the workspace.",
+  "evidence_refs": ["qcloop://jobs/job-123/items/deny-write/attempts/1"],
+  "remaining_risk": "Sandbox policy may not be enforced for this path."
+}
 ```
 
 ## Mapping qcloop states
@@ -67,6 +55,4 @@ Pass only if the output includes evidence for every expected behavior. Fail if e
 | `success` | Item has a passing verifier verdict. |
 | `failed` | Worker or repair execution failed. |
 | `exhausted` | Budget or `max_qc_rounds` reached without proof. |
-| `pending` / `running` | Plan is not ready for final report. |
-
-The final report must list exhausted items separately from failed items.
+| `pending` / `running` | Plan is incomplete. |

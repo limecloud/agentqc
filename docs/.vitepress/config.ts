@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 const base = process.env.VITEPRESS_BASE || '/'
-const versions = ['0.3.0', '0.2.0', '0.1.0']
+const versions = ['0.4.0', '0.3.0', '0.2.0', '0.1.0']
 
 const enVersionItems = versions.flatMap((version) => [
   { text: `v${version} overview`, link: `/en/versions/v${version}/overview` },
@@ -18,6 +18,7 @@ const zhVersionItems = versions.flatMap((version) => [
 const enNav = [
   { text: 'Guide', link: '/en/what-is-agent-qc' },
   { text: 'Specification', link: '/en/specification' },
+  { text: 'Best Practices', link: '/en/authoring/best-practices' },
   { text: 'Examples', link: '/en/examples/codex-runtime-cli' },
   { text: 'Surfaces', link: '/en/authoring/interaction-surface-testing' },
   { text: 'Ecosystem', link: '/en/reference/agent-ecosystem' },
@@ -27,6 +28,7 @@ const enNav = [
 const zhNav = [
   { text: '指南', link: '/zh/what-is-agent-qc' },
   { text: '规范', link: '/zh/specification' },
+  { text: '最佳实践', link: '/zh/authoring/best-practices' },
   { text: '示例', link: '/zh/examples/codex-runtime-cli' },
   { text: '交互表面', link: '/zh/authoring/interaction-surface-testing' },
   { text: '生态', link: '/zh/reference/agent-ecosystem' },
@@ -41,6 +43,7 @@ const enSidebar = [
   ] },
   { text: 'For QC authors', items: [
     { text: 'Quickstart', link: '/en/authoring/quickstart' },
+    { text: 'Best practices', link: '/en/authoring/best-practices' },
     { text: 'Project classification', link: '/en/authoring/project-classification' },
     { text: 'Gate matrix', link: '/en/authoring/gate-matrix' },
     { text: 'Interaction surface testing', link: '/en/authoring/interaction-surface-testing' },
@@ -48,9 +51,14 @@ const enSidebar = [
     { text: 'Evidence-driven verdicts', link: '/en/authoring/evidence-driven-verdicts' },
     { text: 'Acceptance scenarios', link: '/en/authoring/acceptance-scenarios' }
   ] },
+  { text: 'Contracts', items: [
+    { text: 'Evidence contract', link: '/en/contracts/evidence-contract' },
+    { text: 'Performance and reliability metrics', link: '/en/contracts/performance-and-reliability-metrics' }
+  ] },
   { text: 'Reference', items: [
     { text: 'Glossary', link: '/en/reference/glossary' },
     { text: 'Agent project patterns', link: '/en/reference/agent-project-patterns' },
+    { text: 'Flow and taxonomy', link: '/en/reference/flow-and-taxonomy' },
     { text: 'Star project testing systems', link: '/en/reference/star-project-testing-systems' },
     { text: 'Source index', link: '/en/reference/source-index' },
     { text: 'Agent standards ecosystem', link: '/en/reference/agent-ecosystem' }
@@ -74,6 +82,7 @@ const zhSidebar = [
   ] },
   { text: 'QC 作者', items: [
     { text: '快速开始', link: '/zh/authoring/quickstart' },
+    { text: '最佳实践', link: '/zh/authoring/best-practices' },
     { text: '项目分类', link: '/zh/authoring/project-classification' },
     { text: '门禁矩阵', link: '/zh/authoring/gate-matrix' },
     { text: '交互表面测试', link: '/zh/authoring/interaction-surface-testing' },
@@ -81,9 +90,14 @@ const zhSidebar = [
     { text: '证据驱动判定', link: '/zh/authoring/evidence-driven-verdicts' },
     { text: '验收场景', link: '/zh/authoring/acceptance-scenarios' }
   ] },
+  { text: '契约', items: [
+    { text: '证据契约', link: '/zh/contracts/evidence-contract' },
+    { text: '性能与可靠性指标', link: '/zh/contracts/performance-and-reliability-metrics' }
+  ] },
   { text: '参考', items: [
     { text: '术语表', link: '/zh/reference/glossary' },
     { text: 'Agent 项目测试模式', link: '/zh/reference/agent-project-patterns' },
+    { text: '流程与分类', link: '/zh/reference/flow-and-taxonomy' },
     { text: '明星项目测试体系', link: '/zh/reference/star-project-testing-systems' },
     { text: '来源索引', link: '/zh/reference/source-index' },
     { text: 'Agent 标准生态', link: '/zh/reference/agent-ecosystem' }

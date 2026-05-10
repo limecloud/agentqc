@@ -26,7 +26,7 @@ Profiles:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "id": "hermes-scheduler-tui-browser-qc",
   "target_project": "hermes-agent",
   "project_profiles": [

@@ -26,7 +26,7 @@ Public QC plan JSON:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "id": "openclaw-channel-webui-qalab-qc",
   "target_project": "openclaw",
   "project_profiles": [

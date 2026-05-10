@@ -14,6 +14,32 @@ description: Codex、Claude Code 本地快照、OpenClaw、Hermes Agent 和 Lime
 - 明确写出限制。Claude Code 本地快照有有价值的 interface code，但没有本地 `package.json` 或 workflow metadata，所以本页不声称该快照的上游 CI 行为。
 - 只要项目有 UI，就必须同时要求 surface proof 与 runtime proof。
 
+
+
+## Agent UI 和 Agent Skills 对本页的启发
+
+本页现在把 Agent UI 作为 surface testing 的主要参考，而不只是把 Lime 当示例。可复用经验是：
+
+- UI/TUI/WebUI/desktop 状态必须是 runtime-backed projections，而不是独立真相。
+- Final answer text 必须与 reasoning、tool progress、approvals、artifacts、evidence、diagnostics、team events 分离。
+- 缺失 runtime facts 时必须渲染为 `unknown`、`unavailable`、`stale` 或 `blocked`，不能猜测成功。
+- approval、interrupt、queue、steer、artifact edit、evidence export、review、replay 等 controlled writes 必须走 owning API。
+- Old sessions 和 long-running work 需要 progressive hydration 和 surface-specific evidence。
+- first status、first text、bridge readiness、queue wait、trace size、cleanup time 等指标也是 QC 证据的一部分。
+
+Agent Skills 贡献的是写作风格：短入口、frontmatter、字段表、最小示例、渐进披露、eval loop、assertion grading 和 transcripts。Agent QC 用这种风格来写质量计划，而不是 skill package。
+
+## Framework documentation lessons
+
+官方框架文档只作为 evidence shape 示例，不是强制工具选择：
+
+| Framework | Reusable QC lesson |
+| --- | --- |
+| Playwright | Projects/devices、`webServer`、retries、reporters、trace/screenshot/video policies、test isolation 是可移植 browser-evidence 概念。 |
+| Vitest | `run`、projects/workspaces、JSON/JUnit reporters、coverage、snapshots、browser mode 可以把 JS 项目映射到 deterministic 和 browser lanes。 |
+| pytest | markers 和 `-m` selection、skip/xfail、parametrization、xdist、JUnit-style reports 帮助 Python 项目分离 deterministic、integration、e2e、live suites。 |
+| cargo nextest/Bazel | 快速 Rust workspace runs、no-fail-fast、release binary builds、generated schema checks 展示 runtime 项目如何分层 local 与 release evidence。 |
+
 ## 跨项目 surface map
 
 | Project | Runtime CLI / stream | TUI | WebUI | Desktop GUI | Browser automation | Channel/mobile | Eval/report UI | Release/distribution |

@@ -24,7 +24,7 @@ Profiles:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "id": "lime-desktop-gui-bridge-qc",
   "target_project": "lime",
   "project_profiles": [

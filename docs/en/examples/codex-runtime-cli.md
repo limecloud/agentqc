@@ -26,7 +26,7 @@ Public QC plan JSON:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "id": "codex-runtime-tui-protocol-qc",
   "target_project": "codex",
   "project_profiles": [

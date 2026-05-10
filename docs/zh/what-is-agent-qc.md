@@ -1,41 +1,54 @@
 ---
-title: 什么是 Agent QC
-description: Agent 项目质量控制概念入口。
+title: 什么是 Agent QC？
+description: Agent 项目质量控制的概念入口。
 ---
 
-# 什么是 Agent QC
+# 什么是 Agent QC？
 
-Agent QC 是一个通用标准，用来证明 Agent 项目真的可用。
+Agent QC 是一个可移植标准，用来证明 Agent 项目真的可用。
 
-Agent 软件有一些普通应用测试容易漏掉的失败模式：tool call 可能与 declaration 漂移，permission gate 可能被绕过，model stream 可能产生格式错误的事件，后台任务可能卡住，live provider 可能悄悄改变行为，UI 也可能把未成功的 runtime fact 展示成成功。
+Agent 软件有很多普通应用测试容易漏掉的失败模式：tool calls 与声明漂移、permission gates 被绕过、model streams 产生 malformed events、background tasks 卡住、live providers 静默改变行为、UI surfaces 把 runtime 未确认的状态显示成成功。
 
-Agent QC 为这些风险提供统一词汇：
+Agent QC 为这些风险提供共同语言：
 
-1. 先分类 Agent 项目类型；
-2. 选择匹配类型和风险的门禁；
-3. 编写行为级 case；
-4. 收集可检查证据；
-5. 用显式 verdict 判定 pass/fail；
-6. 报告剩余风险和 waiver。
+1. 分类 Agent project profile；
+2. 识别 touched interaction surfaces；
+3. 按 profile、surface 和 risk 选择 gates；
+4. 编写 behavior-level cases；
+5. 收集 inspectable evidence；
+6. 用明确 verdicts 判断 pass/fail；
+7. 报告 remaining risk、blockers、exhausted attempts、reviews 和 waivers。
 
-## Lime 是一个 profile，不是标准本身
+## Lime 是 profile，不是标准本体
 
-Lime 仍然是重要案例，因为它是 GUI 桌面 Agent 产品。但 Agent QC v0.3.0 的范围更广：类似 Codex 的 runtime CLI、类似 OpenClaw 的 multi-channel gateway、类似 Hermes 的 background agent、SDK、tool server、skill、plugin 和 release package 都需要 QC。
+Lime 仍然是重要案例，因为它是 GUI desktop Agent product。但 Agent QC 覆盖更广：Codex-like runtime CLIs、Claude Code-like TUI runtimes、OpenClaw-like multi-channel gateways、Hermes-like background/browser agents、SDKs、tool servers、skills、plugins、release packages 和 eval suites 都需要 QC。
 
-## 为什么 Agent 项目需要先分类
+## 为什么 Agent 项目需要分类
 
-Rust runtime agent、Telegram gateway、VitePress 标准站点需要的门禁并不相同。因此 Agent QC 先分类，再选择门禁。
+Rust runtime agent 与 Telegram gateway、TUI、browser automation harness 或 VitePress standards site 需要的 gates 不一样。因此 Agent QC 先分类，再选择 gates。
 
 示例：
 
-- Codex 风格 runtime：sandbox、apply-patch、MCP、protocol、CLI e2e、cross-platform release。
-- Claude Code 风格 TUI runtime：Ink rendering、remote permission、WebSocket/control stream、SDK adapter、plugin/skill reload visibility。
-- OpenClaw 风格 gateway：channel contract、secrets、provider live lane、Docker/install smoke、plugin boundary。
-- Hermes 风格 background agent：pytest、cron、gateway、concurrency stress、Docker smoke、credential isolation。
-- Lime 风格 desktop GUI：local validation、command contract、DevBridge readiness、GUI smoke、Playwright product flow。
+- Codex-style runtime：sandbox、apply-patch、MCP、app-server protocol、CLI e2e、TUI snapshots、cross-platform release。
+- Claude Code-style TUI runtime：Ink rendering、remote permissions、WebSocket/control streams、SDK adapters、plugin/skill reload visibility。
+- OpenClaw-style gateway：channel contracts、secrets、provider live lanes、QA Lab reports、WebUI/browser evidence、Docker/install smoke。
+- Hermes-style background agent：pytest markers、cron、gateway、browser safety、concurrency stress、Docker smoke、credential isolation。
+- Lime-style desktop GUI：local validation、command contracts、DevBridge readiness、GUI smoke、Playwright product flow。
+
+## Runtime-backed surfaces
+
+Agent QC 采用 Agent UI 的关键规则：可见 surface 是 projection，不是真相拥有者。
+
+一个 surface pass 应连接：
+
+```text
+entrypoint -> user action -> visible frame -> runtime/protocol fact -> evidence ref -> cleanup
+```
+
+只有 screenshot 没有 runtime backing，只是 visual smoke。只有 runtime log 没有 visible frame，也不是 surface test。
 
 ## 什么算证据
 
-证据可以是 test report、command log、CI URL、qcloop attempt、verifier round、Playwright trace、screenshot、model/tool transcript、package manifest、Docker smoke output 或 human review record。
+证据可以是 test report、command log、CI URL、qcloop attempt、verifier round、Playwright trace、screenshot、terminal snapshot、model/tool transcript、protocol transcript、browser console/network log、package manifest、Docker smoke output、eval rubric、judge output 或 human review record。
 
-模型最后一句“我检查过了”本身永远不够。
+模型最终文字本身永远不够。

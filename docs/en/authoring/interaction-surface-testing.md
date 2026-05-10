@@ -246,3 +246,22 @@ A surface gate may be waived only when the report states:
 - why the release/change can still proceed.
 
 A waiver cannot turn a screenshot-only test into a runtime-backed surface pass. It only documents accepted residual risk.
+
+## Agent UI mapping checklist
+
+Agent UI contributes a reusable projection checklist. For every Agent QC `ui-interaction` case, ask which Agent UI surface the project is proving and which runtime fact backs it.
+
+| Agent UI surface | QC assertion |
+| --- | --- |
+| Composer | submit/queue/steer/interrupt controls call the owning runtime API and show pending/failure state. |
+| Message parts | final answer text is separate from reasoning, tool progress, diagnostics, artifact refs, and evidence refs. |
+| Runtime status | first status, blocked, retrying, failed, cancelled, and done states come from runtime events. |
+| Tool UI | tool start, safe args summary, progress, output ref, and error all preserve tool call id. |
+| Human-in-the-loop | approval/input request includes id, scope, consequence, response, and runtime confirmation. |
+| Task capsule | queued/background/subagent/team work has stable task/agent ids and visible ownership. |
+| Artifact workspace | artifact preview/edit/export uses artifact facts, not copied assistant prose. |
+| Timeline/evidence | trace, replay, verification, review, and audit refs are durable and inspectable. |
+| Session/tabs | old-session hydration shows shell and recent state without guessing missing details. |
+| Team workbench | coordinator, worker, remote, background, handoff, and review states are not flattened into one assistant. |
+
+This checklist is not a visual design requirement. It is a fact-ownership requirement.

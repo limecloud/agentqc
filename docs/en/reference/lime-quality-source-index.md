@@ -5,7 +5,7 @@ description: Legacy v0.1.0 Lime case source index.
 
 # Lime quality source index
 
-This page is a legacy v0.1.0 Lime case index. For the generic v0.3.0 source index, see [Source index](./source-index).
+This page is a legacy v0.1.0 Lime case index. For the generic v0.4.0 source index, see [Source index](./source-index).
 
 Agent QC v0.1.0 is grounded in these local sources.
 

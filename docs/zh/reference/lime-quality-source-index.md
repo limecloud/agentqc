@@ -5,7 +5,7 @@ description: v0.1.0 Lime 案例来源索引。
 
 # Lime 质量事实源索引
 
-本页是 v0.1.0 Lime 案例索引。通用 v0.3.0 来源请看[来源索引](./source-index)。
+本页是 v0.1.0 Lime 案例索引。通用 v0.4.0 来源请看[来源索引](./source-index)。
 
 Agent QC v0.1.0 基于以下本地来源：
 

@@ -1,11 +1,11 @@
 ---
 title: 规范
-description: Agent QC v0.3.0 通用草案规范。
+description: Agent QC v0.4.0 通用草案规范。
 ---
 
 # 规范
 
-Agent QC v0.3.0 是面向 Agent 项目的通用草案标准，用于证据驱动的质量控制。
+Agent QC v0.4.0 是面向 Agent 项目的通用草案标准，用于证据驱动的质量控制。
 
 Agent 项目可以是 runtime CLI、SDK、tool server、MCP/ACP gateway、multi-channel bot、GUI/TUI/desktop client、skill/plugin ecosystem、background scheduler、distribution package 或 evaluation suite。Agent QC 不假设一种产品形态；它先分类项目 profile，再选择匹配风险的 gate。
 
@@ -21,6 +21,23 @@ Agent QC 标准化以下内容：
 6. Codex、Claude Code 本地快照、OpenClaw、Hermes Agent、Lime 等项目的案例映射。
 
 Agent QC 不标准化单一编程语言、CI vendor、测试框架、浏览器驱动、模型协议、存储后端或 UI 皮肤。
+
+
+## 文档集合
+
+最新标准按用途拆分：
+
+| 页面 | 用途 |
+| --- | --- |
+| [快速开始](./authoring/quickstart) | 创建 QC plan 的最快路径 |
+| [最佳实践](./authoring/best-practices) | 编写规则和反模式 |
+| [项目分类](./authoring/project-classification) | profile taxonomy 和 mixed-profile rules |
+| [门禁矩阵](./authoring/gate-matrix) | profile/surface/risk 到 gate 的映射 |
+| [交互表面测试](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI 证据 |
+| [证据契约](./contracts/evidence-contract) | 可移植 evidence、verdict、waiver 字段 |
+| [性能与可靠性指标](./contracts/performance-and-reliability-metrics) | timing、flake、cleanup、scheduler、release metrics |
+| [流程与分类](./reference/flow-and-taxonomy) | 完整生命周期和 taxonomy reference |
+| [明星项目测试体系](./reference/star-project-testing-systems) | Codex、Claude Code、OpenClaw、Hermes 和 Lime 案例 |
 
 ## Project profiles
 

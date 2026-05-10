@@ -1,11 +1,11 @@
 ---
 title: Specification
-description: Agent QC v0.3.0 portable draft specification.
+description: Agent QC v0.4.0 portable draft specification.
 ---
 
 # Specification
 
-Agent QC v0.3.0 is a portable draft standard for evidence-driven quality control of Agent projects.
+Agent QC v0.4.0 is a portable draft standard for evidence-driven quality control of Agent projects.
 
 An Agent project can be a runtime CLI, SDK, tool server, MCP/ACP gateway, multi-channel bot, GUI/TUI/desktop client, skills or plugin ecosystem, background scheduler, distribution package, or evaluation suite. Agent QC does not assume one product shape. It starts by classifying the project profile and then selects gates that match its risk.
 
@@ -21,6 +21,23 @@ Agent QC standardizes:
 6. Case-study mapping for projects such as Codex, Claude Code local snapshot, OpenClaw, Hermes Agent, and Lime.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
+
+
+## Document set
+
+The latest standard is split by use:
+
+| Page | Purpose |
+| --- | --- |
+| [Quickstart](./authoring/quickstart) | fastest path to a QC plan |
+| [Best practices](./authoring/best-practices) | authoring rules and anti-patterns |
+| [Project classification](./authoring/project-classification) | profile taxonomy and mixed-profile rules |
+| [Gate matrix](./authoring/gate-matrix) | profile/surface/risk to gate mapping |
+| [Interaction surface testing](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
+| [Evidence contract](./contracts/evidence-contract) | portable evidence, verdict, waiver fields |
+| [Performance and reliability metrics](./contracts/performance-and-reliability-metrics) | timing, flake, cleanup, scheduler, release metrics |
+| [Flow and taxonomy](./reference/flow-and-taxonomy) | complete lifecycle and taxonomy reference |
+| [Star project testing systems](./reference/star-project-testing-systems) | Codex, Claude Code, OpenClaw, Hermes, and Lime case studies |
 
 ## Project profiles
 

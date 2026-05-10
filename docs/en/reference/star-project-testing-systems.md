@@ -14,6 +14,31 @@ This reference explains how several strong Agent projects organize testing. Agen
 - Keep limitations explicit. The Claude Code local snapshot has useful interface code but no local `package.json` or workflow metadata, so this page does not claim upstream CI behavior for that snapshot.
 - When a project has UI, require both surface proof and runtime proof.
 
+
+## Agent UI and Agent Skills lessons applied here
+
+This page now treats Agent UI as a primary reference for surface testing, not just Lime as an example. The reusable lessons are:
+
+- UI/TUI/WebUI/desktop states must be runtime-backed projections, not independent truth.
+- Final answer text must stay separate from reasoning, tool progress, approvals, artifacts, evidence, diagnostics, and team events.
+- Missing runtime facts must render as `unknown`, `unavailable`, `stale`, or `blocked`, not guessed success.
+- Controlled writes such as approval, interrupt, queue, steer, artifact edit, evidence export, review, or replay must go through the owning API.
+- Old sessions and long-running work need progressive hydration and surface-specific evidence.
+- Metrics such as first status, first text, bridge readiness, queue wait, trace size, and cleanup time are part of QC evidence.
+
+Agent Skills contributes the authoring style: short entrypoints, frontmatter, field tables, minimal examples, progressive disclosure, eval loops, assertion grading, and transcripts. Agent QC uses that style for quality plans rather than skill packages.
+
+## Framework documentation lessons
+
+Official framework docs are used as examples of evidence shape, not as mandatory tool choices:
+
+| Framework | Reusable QC lesson |
+| --- | --- |
+| Playwright | Projects/devices, `webServer`, retries, reporters, trace/screenshot/video policies, and test isolation are portable browser-evidence concepts. |
+| Vitest | `run`, projects/workspaces, JSON/JUnit reporters, coverage, snapshots, and browser mode map JS projects into deterministic and browser lanes. |
+| pytest | markers and `-m` selection, skip/xfail, parametrization, xdist, and JUnit-style reports help Python projects separate deterministic, integration, e2e, and live suites. |
+| cargo nextest/Bazel | fast Rust workspace runs, no-fail-fast behavior, release binary builds, and generated schema checks show how runtime projects layer local and release evidence. |
+
 ## Cross-project surface map
 
 | Project | Runtime CLI / stream | TUI | WebUI | Desktop GUI | Browser automation | Channel/mobile | Eval/report UI | Release/distribution |

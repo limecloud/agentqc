@@ -246,3 +246,22 @@ surface gate 只有在报告写清以下信息时才可 waiver：
 - 为什么该 release/change 仍可继续。
 
 waiver 不能把只有截图的测试变成 runtime-backed surface pass。它只记录被接受的剩余风险。
+
+## Agent UI 映射检查表
+
+Agent UI 提供了可复用的 projection 检查表。每个 Agent QC `ui-interaction` case 都要问：项目正在证明哪个 Agent UI surface，以及哪个 runtime fact 支撑它。
+
+| Agent UI surface | QC assertion |
+| --- | --- |
+| Composer | submit/queue/steer/interrupt controls 调用 owning runtime API，并显示 pending/failure state。 |
+| Message parts | final answer text 与 reasoning、tool progress、diagnostics、artifact refs、evidence refs 分离。 |
+| Runtime status | first status、blocked、retrying、failed、cancelled、done states 来自 runtime events。 |
+| Tool UI | tool start、安全 args summary、progress、output ref、error 都保留 tool call id。 |
+| Human-in-the-loop | approval/input request 包含 id、scope、consequence、response 和 runtime confirmation。 |
+| Task capsule | queued/background/subagent/team work 有 stable task/agent ids 和 visible ownership。 |
+| Artifact workspace | artifact preview/edit/export 使用 artifact facts，而不是复制 assistant prose。 |
+| Timeline/evidence | trace、replay、verification、review、audit refs 持久且可检查。 |
+| Session/tabs | old-session hydration 先显示 shell 与 recent state，不猜测缺失详情。 |
+| Team workbench | coordinator、worker、remote、background、handoff、review states 不被压扁成一个 assistant。 |
+
+这张表不是视觉设计要求，而是 fact ownership 要求。

@@ -63,7 +63,7 @@ const checkGateList = (file, label, gates) => {
 
 for (const file of planFiles) {
   const plan = readJson(file)
-  if (plan.schema_version !== '0.3.0') fail(`${file} must use schema_version 0.3.0`)
+  if (plan.schema_version !== '0.4.0') fail(`${file} must use schema_version 0.4.0`)
   if (!Array.isArray(plan.project_profiles) || plan.project_profiles.length === 0) fail(`${file} requires project_profiles`)
   const planProfiles = new Set(plan.project_profiles)
   for (const profile of planProfiles) if (!profiles.has(profile)) fail(`${file} has unknown profile ${profile}`)

@@ -13,12 +13,18 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [What is Agent QC?](https://limecloud.github.io/agentqc/en/what-is-agent-qc)
 - [Specification](https://limecloud.github.io/agentqc/en/specification)
 - [Quickstart](https://limecloud.github.io/agentqc/en/authoring/quickstart)
+- [Best practices](https://limecloud.github.io/agentqc/en/authoring/best-practices)
 - [Project classification](https://limecloud.github.io/agentqc/en/authoring/project-classification)
 - [Gate matrix](https://limecloud.github.io/agentqc/en/authoring/gate-matrix)
 - [Interaction surface testing](https://limecloud.github.io/agentqc/en/authoring/interaction-surface-testing)
 - [qcloop integration](https://limecloud.github.io/agentqc/en/authoring/qcloop-integration)
 - [Evidence-driven verdicts](https://limecloud.github.io/agentqc/en/authoring/evidence-driven-verdicts)
 - [Acceptance scenarios](https://limecloud.github.io/agentqc/en/authoring/acceptance-scenarios)
+
+## Contracts
+
+- [Evidence contract](https://limecloud.github.io/agentqc/en/contracts/evidence-contract)
+- [Performance and reliability metrics](https://limecloud.github.io/agentqc/en/contracts/performance-and-reliability-metrics)
 
 ## Case studies and examples
 
@@ -33,6 +39,7 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 
 - [Glossary](https://limecloud.github.io/agentqc/en/reference/glossary)
 - [Agent project patterns](https://limecloud.github.io/agentqc/en/reference/agent-project-patterns)
+- [Flow and taxonomy](https://limecloud.github.io/agentqc/en/reference/flow-and-taxonomy)
 - [Star project testing systems](https://limecloud.github.io/agentqc/en/reference/star-project-testing-systems)
 - [Source index](https://limecloud.github.io/agentqc/en/reference/source-index)
 - [Agent standards ecosystem](https://limecloud.github.io/agentqc/en/reference/agent-ecosystem)
@@ -49,5 +56,14 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [Hermes QC plan](https://limecloud.github.io/agentqc/examples/hermes-qc-plan.json)
 - [Lime QC plan](https://limecloud.github.io/agentqc/examples/lime-qc-plan.json)
 - [qcloop job request](https://limecloud.github.io/agentqc/examples/qcloop-job-request.json)
+
+## Versions
+
+- [v0.4.0 overview](https://limecloud.github.io/agentqc/en/versions/v0.4.0/overview)
+- [v0.4.0 specification](https://limecloud.github.io/agentqc/en/versions/v0.4.0/specification)
+- [v0.4.0 changelog](https://limecloud.github.io/agentqc/en/versions/v0.4.0/changelog)
+- [v0.3.0 overview](https://limecloud.github.io/agentqc/en/versions/v0.3.0/overview)
+- [v0.3.0 specification](https://limecloud.github.io/agentqc/en/versions/v0.3.0/specification)
+- [v0.3.0 changelog](https://limecloud.github.io/agentqc/en/versions/v0.3.0/changelog)
 
 Chinese documentation is available under `/zh/` with matching page structure.

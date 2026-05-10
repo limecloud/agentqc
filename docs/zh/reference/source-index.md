@@ -1,35 +1,66 @@
 ---
 title: 来源索引
-description: Agent QC v0.3.0 使用的可追踪来源。
+description: Agent QC v0.4.0 使用的可追踪来源。
 ---
 
 # 来源索引
 
-Agent QC v0.3.0 来自本地项目检查和公开文档。这里的本地仓库是案例，不是规范依赖。
+Agent QC v0.4.0 来自本地项目调研和公开文档。本地仓库是案例，不是规范依赖。
 
-## 本地仓库
+最后审阅：2026-05-10。
 
-| 来源 | 用途 |
+## Citation format
+
+在设计说明或 changelog 中使用 source ids：
+
+```text
+[SRC-AGENTUI-BEST-PRACTICES] -> surface pass must link visible projection to runtime facts.
+```
+
+## Local standards repositories
+
+| Source id | Source | Evidence used | Agent QC requirements informed |
+| --- | --- | --- | --- |
+| `SRC-AGENTUI-BEST-PRACTICES` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/best-practices.md` | runtime-owned facts、event classes、stable ids、fallback states、controlled writes、old-session design、latency metrics | Agent QC 要求 surface evidence 把 visible frames 连接到 runtime/protocol facts，避免 UI 自己拥有 verdict。 |
+| `SRC-AGENTUI-ACCEPTANCE` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/authoring/acceptance-scenarios.md` | send/status、tool、HITL、queue/steer、artifact、evidence、old-session、team/parallel/remote/background scenarios | Agent QC acceptance scenarios 从 Lime GUI 扩展到 runtime、TUI、WebUI、team、remote 和 eval flows。 |
+| `SRC-AGENTUI-FLOW` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/reference/flow-and-taxonomy.md` | lifecycle、event envelope、fact owners、scopes、phases、surfaces、controls、team taxonomy | Agent QC flow/taxonomy 采用显式维度和 fact-owner 分离。 |
+| `SRC-AGENTUI-CONTRACTS` | `/Users/coso/Documents/dev/ai/limecloud/agentui/docs/en/contracts/*.md` | backend coordination、runtime event projection、performance metrics | Agent QC 增加 UI/TUI/desktop/browser gates 的 evidence、performance、reliability contracts。 |
+| `SRC-AGENTKNOWLEDGE-SPEC` | `/Users/coso/Documents/dev/ai/limecloud/agentknowledge/docs/en/specification.md` | directory-as-standard、progressive disclosure、source maps、compile/eval evidence、knowledge-as-data boundary | Agent QC 把 Knowledge 作为 requirements/context input，而不是 proof，并保留 source traceability。 |
+
+## Local project case studies
+
+| Source id | Source | Use |
+| --- | --- | --- |
+| `SRC-CODEX-LOCAL` | `/Users/coso/Documents/dev/rust/codex` | Runtime CLI、Rust、Bazel、cargo nextest、SDK、MCP、app-server protocol、sandbox、process cleanup、TUI snapshots、schema fixtures、release patterns。 |
+| `SRC-CLAUDECODE-LOCAL` | `/Users/coso/Documents/dev/js/claudecode` | Ink TUI、remote bridge、WebSocket control、permission flow、SDK stream adapter、commands、task/team surfaces 的本地部分源码快照；不足以推断 CI/release。 |
+| `SRC-OPENCLAW-LOCAL` | `/Users/coso/Documents/dev/js/openclaw` | Multi-channel gateway、Vitest lane routing、UI browser-mode tests、QA Lab、live provider opt-in、Docker/install smoke、plugin/secret/channel contracts、mobile/platform scripts。 |
+| `SRC-HERMES-LOCAL` | `/Users/coso/Documents/dev/python/hermes-agent` | Python pytest、markers、xdist、integration/e2e separation、credential blanking、cron/scheduler、browser safety、gateway/channel tests、TUI Vitest、Docker/uv/OSV。 |
+| `SRC-LIME-LOCAL` | `/Users/coso/Documents/dev/ai/aiclientproxy/lime` | Desktop GUI、Tauri bridge、command contracts、DevBridge health、GUI smoke、Playwright continuation、version consistency、current/compat governance。 |
+
+## External public sources
+
+| Source id | Source | Evidence used | Agent QC requirements informed |
+| --- | --- | --- | --- |
+| `SRC-AGENTSKILLS-SPEC` | `https://agentskills.io/specification` | Markdown/frontmatter style、directory-as-package、progressive disclosure、fields/constraints/examples。 | Agent QC docs 使用简短入口页、表格、示例和深入 reference pages。 |
+| `SRC-AGENTSKILLS-EVAL` | `https://agentskills.io/skill-creation/evaluating-skills` | Eval-driven iteration、clean-context runs、assertion grading、execution transcripts、human feedback。 | qcloop 和 eval gates 需要 attempts、verifier feedback、rubrics 和 evidence refs。 |
+| `SRC-PLAYWRIGHT-CONFIG` | `https://playwright.dev/docs/test-configuration` 与 Context7 `/microsoft/playwright.dev` | projects、webServer、retries、reporters、trace、screenshot、video、test isolation。 | WebUI/browser/desktop gates 需要 trace/screenshot/video policy、browser project/device、console/network 和相关 server startup evidence。 |
+| `SRC-VITEST-DOCS` | `https://vitest.dev/guide/cli.html` 与 Context7 `/vitest-dev/vitest` | CLI run/watch、projects、reporter JSON/JUnit、coverage、browser mode、snapshots。 | JS 项目把 Vitest suites 映射到 deterministic、browser、contract、report evidence lanes。 |
+| `SRC-PYTEST-MARKERS` | `https://docs.pytest.org/en/stable/example/markers.html` 与 Context7 `/pytest-dev/pytest` | markers、`-m` selection、skip/xfail、parametrization、test routing。 | Python 项目用显式 selection 和 evidence 分离 deterministic、integration、e2e、live、slow suites。 |
+| `SRC-MCP-TOOLS` | `https://modelcontextprotocol.io/specification/2025-11-25/server/tools` | tool declaration/protocol boundary。 | Tool/MCP gateway gates 要求 declaration 和 invocation evidence，而不只看 final text。 |
+| `SRC-CODEX-ACTIONS` | `https://github.com/openai/codex/actions` | public workflow signal。 | 只作为外部上下文；测试体系细节以本地仓库调研为准。 |
+| `SRC-HERMES-GITHUB` | `https://github.com/NousResearch/hermes-agent` | public project context。 | 只用于公共项目身份；测试细节来自本地仓库调研。 |
+
+## Requirement traceability
+
+| Requirement area | Primary sources |
 | --- | --- |
-| `/Users/coso/Documents/dev/rust/codex` | runtime CLI、Rust、Bazel、SDK、MCP、sandbox、protocol、release 模式。 |
-| `/Users/coso/Documents/dev/js/openclaw` | multi-channel gateway、Vitest 分层、live provider、Docker/install smoke、plugin 与 secret 测试。 |
-| `/Users/coso/Documents/dev/js/claudecode` | 不完整本地快照；可参考 Ink TUI、remote bridge、SDK stream、command、skill/plugin 与 permission-tool 表面，不足以推断 CI。 |
-| `/Users/coso/Documents/dev/python/hermes-agent` | Python agent、pytest、cron、gateway、stress、TUI、Docker、lockfile、supply-chain 模式。 |
-| `/Users/coso/Documents/dev/ai/aiclientproxy/lime` | desktop GUI、Tauri bridge、command contract、GUI smoke、Playwright 续测。 |
-
-## 外部文档和研究输入
-
-| 来源 | 用途 |
-| --- | --- |
-| `https://agentskills.io/specification` | 面向 Agent 的 Markdown/frontmatter/progressive disclosure 风格。 |
-| `https://agentskills.io/skill-creation/evaluating-skills` | eval-driven iteration 与 assertion grading 模式。 |
-| `https://docs.openclaw.ai/help/testing` | OpenClaw 公开测试工作流参考。 |
-| `https://docs.openclaw.ai/ci` | OpenClaw 公开 CI 与 release proof 模式。 |
-| `https://vitest.dev/guide/cli.html` | Vitest CLI、coverage、reporter、project、browser-mode 约定。 |
-| `https://docs.pytest.org/en/stable/example/markers.html` | pytest marker selection 与 suite routing 约定。 |
-| `https://playwright.dev/docs/test-configuration` | Playwright retries、reporters、projects、web server、trace/screenshot/video 证据。 |
-| OpenClaw local `ui/package.json` 与 `extensions/qa-lab/package.json` | Browser-playwright WebUI testing 与 QA Lab scenario/report runtime。 |
-| Hermes local `ui-tui/package.json` 与 `web/package.json` | TUI Vitest package 与 Vite/React web dashboard 形态。 |
-| `https://modelcontextprotocol.io/specification/2025-11-25/server/tools` | MCP tool declaration 与 protocol boundary 参考。 |
-| `https://github.com/openai/codex/actions` | Codex 公开 workflow 信号。 |
-| `https://github.com/NousResearch/hermes-agent` | Hermes 公开仓库与项目上下文。 |
+| Surface evidence 必须连接 visible frame 与 runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-LIME-LOCAL` |
+| 扩展 acceptance scenarios | `SRC-AGENTUI-ACCEPTANCE`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
+| TUI evidence | `SRC-CODEX-LOCAL`, `SRC-CLAUDECODE-LOCAL`, `SRC-HERMES-LOCAL` |
+| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| Python suite routing | `SRC-PYTEST-MARKERS`, `SRC-HERMES-LOCAL` |
+| Live provider separation | `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
+| Scheduler/background gates | `SRC-HERMES-LOCAL`, `SRC-AGENTUI-ACCEPTANCE` |
+| Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL`, `SRC-LIME-LOCAL` |
+| Progressive documentation style | `SRC-AGENTSKILLS-SPEC`, `SRC-AGENTKNOWLEDGE-SPEC`, `SRC-AGENTUI-BEST-PRACTICES` |
+| qcloop/eval evidence loop | `SRC-AGENTSKILLS-EVAL`, `SRC-OPENCLAW-LOCAL` |

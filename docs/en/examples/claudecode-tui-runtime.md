@@ -27,7 +27,7 @@ Public QC plan JSON:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "id": "claudecode-tui-permission-qc",
   "target_project": "claudecode-local-snapshot",
   "project_profiles": [

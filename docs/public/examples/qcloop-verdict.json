@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "status": "passed",
+  "severity": "none",
+  "feedback": "GUI smoke evidence shows DevBridge ready and default workspace prepared.",
+  "evidence_refs": [
+    "qcloop://jobs/job-123/items/gui-smoke-default-workspace/attempts/1"
+  ],
+  "remaining_risk": "No full manual exploratory GUI review was performed."
+}

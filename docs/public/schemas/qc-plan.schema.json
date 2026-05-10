@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentqc/schemas/qc-plan.schema.json",
+  "title": "Agent QC Plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "target_project",
+    "change_type",
+    "risk_level",
+    "required_gates",
+    "cases",
+    "evidence_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_project": {
+      "const": "lime"
+    },
+    "change_type": {
+      "type": "string",
+      "pattern": "^(frontend|user-visible-ui|gui-shell-workspace|tauri-command-bridge-mock|rust-module|config-version-dependency|documentation-only|large-regression-batch|release-readiness|custom:[a-z0-9-]+)$"
+    },
+    "risk_level": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "required_gates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "$ref": "qc-case.schema.json"
+      },
+      "minItems": 1
+    },
+    "evidence_policy": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": true
+}

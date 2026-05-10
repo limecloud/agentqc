@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentqc/schemas/qc-case.schema.json",
+  "title": "Agent QC Case",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "target",
+    "steps",
+    "expected",
+    "required_evidence"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "expected": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "risk": {
+      "type": "string"
+    },
+    "required_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "running",
+        "passed",
+        "failed",
+        "blocked",
+        "exhausted",
+        "skipped",
+        "needs-review"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

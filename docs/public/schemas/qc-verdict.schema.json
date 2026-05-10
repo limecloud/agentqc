@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentqc/schemas/qc-verdict.schema.json",
+  "title": "Agent QC Verdict",
+  "type": "object",
+  "required": [
+    "pass",
+    "feedback",
+    "evidence_refs"
+  ],
+  "properties": {
+    "pass": {
+      "type": "boolean"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked",
+        "exhausted",
+        "needs-review"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "feedback": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "remaining_risk": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

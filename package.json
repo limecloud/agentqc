@@ -1,0 +1,50 @@
+{
+  "name": "agentqc-standard",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Lime-focused Agent QC standard for evidence-driven testing plans, gates, qcloop batches, and verdicts.",
+  "homepage": "https://limecloud.github.io/agentqc/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/limecloud/agentqc.git"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "agent",
+    "qc",
+    "testing",
+    "lime",
+    "llm",
+    "standard"
+  ],
+  "engines": {
+    "node": ">=18.20.0"
+  },
+  "files": [
+    "llm.txt",
+    "llm-full.txt",
+    "llms.txt",
+    "llms-full.txt",
+    "docs/public/llm.txt",
+    "docs/public/llm-full.txt",
+    "docs/public/llms.txt",
+    "docs/public/llms-full.txt",
+    "docs/public/examples/",
+    "docs/public/schemas/",
+    "docs/en/",
+    "docs/zh/",
+    "README.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md"
+  ],
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "check:schemas": "node scripts/validate-examples.mjs",
+    "check:links": "npm run build"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

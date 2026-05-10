@@ -1,0 +1,47 @@
+# Agent QC
+
+> Agent QC is a Lime-focused standard for evidence-driven testing plans, quality gates, qcloop batches, verdicts, and reports. Use it when an agent needs to test Lime and must prove results with inspectable evidence rather than self-assessment.
+
+Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when a single prompt needs the current core documentation in one markdown file.
+
+## Full context
+
+- [llms-full.txt](https://limecloud.github.io/agentqc/llms-full.txt): Concatenated current English documentation with source URLs.
+
+## Primary docs
+
+- [What is Agent QC?](https://limecloud.github.io/agentqc/en/what-is-agent-qc): Conceptual entry point and scope.
+- [Specification](https://limecloud.github.io/agentqc/en/specification): Latest Lime-focused Agent QC specification.
+- [Quickstart](https://limecloud.github.io/agentqc/en/authoring/quickstart): Create a QC plan for a Lime change.
+- [Lime gate matrix](https://limecloud.github.io/agentqc/en/authoring/lime-gate-matrix): Minimum gates by Lime change type.
+- [qcloop integration](https://limecloud.github.io/agentqc/en/authoring/qcloop-integration): Map QC cases into qcloop jobs and verifier prompts.
+- [Evidence-driven verdicts](https://limecloud.github.io/agentqc/en/authoring/evidence-driven-verdicts): How pass/fail/blocked/exhausted are decided.
+- [Acceptance scenarios](https://limecloud.github.io/agentqc/en/authoring/acceptance-scenarios): Behavior-level validation scenarios.
+
+## Reference
+
+- [Glossary](https://limecloud.github.io/agentqc/en/reference/glossary): Terms used by Agent QC.
+- [Lime quality source index](https://limecloud.github.io/agentqc/en/reference/lime-quality-source-index): Local and external sources behind the standard.
+- [Agent standards ecosystem](https://limecloud.github.io/agentqc/en/reference/agent-ecosystem): Boundary with adjacent Agent standards.
+
+## Examples
+
+- [Lime GUI change](https://limecloud.github.io/agentqc/en/examples/lime-gui-change): GUI shell or Workspace QC plan.
+- [Lime command bridge change](https://limecloud.github.io/agentqc/en/examples/lime-command-bridge-change): Tauri command, Bridge, catalog, and mock QC plan.
+- [qcloop batch](https://limecloud.github.io/agentqc/en/examples/qcloop-batch): qcloop request and verifier output.
+
+## Schemas
+
+- [QC plan schema](https://limecloud.github.io/agentqc/schemas/qc-plan.schema.json)
+- [QC case schema](https://limecloud.github.io/agentqc/schemas/qc-case.schema.json)
+- [QC verdict schema](https://limecloud.github.io/agentqc/schemas/qc-verdict.schema.json)
+
+## Public examples
+
+- [Lime QC plan](https://limecloud.github.io/agentqc/examples/lime-qc-plan.json)
+- [qcloop job request](https://limecloud.github.io/agentqc/examples/qcloop-job-request.json)
+- [qcloop verdict](https://limecloud.github.io/agentqc/examples/qcloop-verdict.json)
+
+## Language mirrors
+
+Chinese documentation is available under `/zh/` with matching page structure.

@@ -8,7 +8,26 @@
     "version": "2026-05-frozen",
     "source": "docs/test/agent-qc-scenarios.manifest.json plus frozen task fixtures",
     "selection_policy": "10-20 high-signal Lime tasks covering runtime, GUI, tool approval, browser runtime, knowledge, and release gates.",
-    "frozen_at": "2026-05-17"
+    "frozen_at": "2026-05-17",
+    "harbor": {
+      "local_path": "benchmarks/lime-agent-runtime",
+      "registry_ref": "lime-internal-agent-runtime-tasks@2026-05-frozen",
+      "frozen_hash": "sha256:example-frozen-task-pack-hash",
+      "metrics_ref": "benchmarks/lime-agent-runtime/metrics/compare.py"
+    },
+    "task_selection": {
+      "count": 12,
+      "strata": [
+        "runtime-permission",
+        "gui-readiness",
+        "browser-adapter",
+        "knowledge-retrieval",
+        "replay-regression"
+      ],
+      "exclusions": [
+        "live-provider-account-state"
+      ]
+    }
   },
   "hypothesis": {
     "change_id": "runtime-tool-error-feedback-v2",
@@ -24,7 +43,15 @@
       "model_profile": "configured-local-provider",
       "prompt_profile": "current-agent-runtime",
       "tool_profile": "current-tool-surface",
-      "context_policy": "current-context-policy"
+      "context_policy": "current-context-policy",
+      "agent_profile": "lime-runtime-agent",
+      "harbor_run": {
+        "command": "harbor run -p benchmarks/lime-agent-runtime -a lime-runtime-agent -m configured-local-provider --name lime-runtime-baseline-current",
+        "agent": "lime-runtime-agent",
+        "model": "configured-local-provider",
+        "env_overrides": {},
+        "job_ref": "jobs/lime-runtime-baseline-current"
+      }
     },
     {
       "id": "candidate-feedback-v2",
@@ -33,7 +60,17 @@
       "model_profile": "configured-local-provider",
       "prompt_profile": "current-agent-runtime",
       "tool_profile": "tool-feedback-v2",
-      "context_policy": "current-context-policy"
+      "context_policy": "current-context-policy",
+      "agent_profile": "lime-runtime-agent",
+      "harbor_run": {
+        "command": "LIME_RUNTIME_TOOL_FEEDBACK_PROFILE=v2 harbor run -p benchmarks/lime-agent-runtime -a lime-runtime-agent -m configured-local-provider --name lime-runtime-candidate-feedback-v2",
+        "agent": "lime-runtime-agent",
+        "model": "configured-local-provider",
+        "env_overrides": {
+          "LIME_RUNTIME_TOOL_FEEDBACK_PROFILE": "v2"
+        },
+        "job_ref": "jobs/lime-runtime-candidate-feedback-v2"
+      }
     }
   ],
   "tasks": [
@@ -57,7 +94,54 @@
         "sandbox policy",
         "trajectory ref",
         "reward details"
-      ]
+      ],
+      "harbor_task": {
+        "task_dir": "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary",
+        "task_toml_ref": "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/task.toml",
+        "environment_ref": "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/environment/Dockerfile",
+        "tests_ref": "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/tests/test.sh",
+        "multi_step": false,
+        "artifacts": [
+          "/logs/agent/trajectory.json",
+          "/logs/artifacts/runtime-transcript.json"
+        ]
+      },
+      "environment": {
+        "os": "linux",
+        "sandbox": "harbor-docker",
+        "timeout_sec": 300,
+        "cpus": 1,
+        "memory_mb": 2048,
+        "allow_internet": false
+      },
+      "allowed_mutations": [
+        "/tmp/lime-benchmark-workspace",
+        "/logs/artifacts"
+      ],
+      "verifier_contract": {
+        "kind": "rewardkit",
+        "isolated_environment": true,
+        "reward_ref": "/logs/verifier/reward.json",
+        "reward_details_ref": "/logs/verifier/reward-details.json",
+        "criterion_refs": [
+          "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/tests/checks.py"
+        ],
+        "oracle_sanity_check_ref": "benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/solution/solve.sh"
+      },
+      "trajectory_contract": {
+        "schema": "ATIF-v1.4-compatible",
+        "ref": "/logs/agent/trajectory.json",
+        "required_fields": [
+          "schema_version",
+          "session_id",
+          "agent",
+          "steps[].step_id",
+          "steps[].tool_calls",
+          "steps[].observation",
+          "steps[].metrics",
+          "final_metrics"
+        ]
+      }
     },
     {
       "id": "claw-chat-ready-streaming",
@@ -80,7 +164,54 @@
         "runtime transcript",
         "console/network summary",
         "trajectory ref"
-      ]
+      ],
+      "harbor_task": {
+        "task_dir": "benchmarks/lime-agent-runtime/claw-chat-ready-streaming",
+        "task_toml_ref": "benchmarks/lime-agent-runtime/claw-chat-ready-streaming/task.toml",
+        "environment_ref": "benchmarks/lime-agent-runtime/claw-chat-ready-streaming/environment/Dockerfile",
+        "tests_ref": "benchmarks/lime-agent-runtime/claw-chat-ready-streaming/tests/test.sh",
+        "multi_step": true,
+        "artifacts": [
+          "/logs/agent/trajectory.json",
+          "/logs/artifacts/runtime-transcript.json"
+        ]
+      },
+      "environment": {
+        "os": "macos-local-harness",
+        "sandbox": "lime-devbridge-local",
+        "timeout_sec": 300,
+        "cpus": 1,
+        "memory_mb": 2048,
+        "allow_internet": false
+      },
+      "allowed_mutations": [
+        "/tmp/lime-benchmark-workspace",
+        "/logs/artifacts"
+      ],
+      "verifier_contract": {
+        "kind": "mixed",
+        "isolated_environment": true,
+        "reward_ref": "/logs/verifier/reward.json",
+        "reward_details_ref": "/logs/verifier/reward-details.json",
+        "criterion_refs": [
+          "benchmarks/lime-agent-runtime/claw-chat-ready-streaming/tests/checks.py"
+        ],
+        "oracle_sanity_check_ref": "benchmarks/lime-agent-runtime/claw-chat-ready-streaming/solution/solve.sh"
+      },
+      "trajectory_contract": {
+        "schema": "ATIF-v1.4-compatible",
+        "ref": "/logs/agent/trajectory.json",
+        "required_fields": [
+          "schema_version",
+          "session_id",
+          "agent",
+          "steps[].step_id",
+          "steps[].tool_calls",
+          "steps[].observation",
+          "steps[].metrics",
+          "final_metrics"
+        ]
+      }
     }
   ],
   "trials": [
@@ -96,7 +227,25 @@
       "evidence_refs": [
         "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-baseline-1",
         "agentqc://lime/tool-approval-sandbox-boundary/baseline"
-      ]
+      ],
+      "attempt": 1,
+      "job_ref": "jobs/lime-runtime-baseline-current",
+      "harbor_trial_ref": "jobs/lime-runtime-baseline-current/trial-tool-approval-baseline-1",
+      "reward_ref": "jobs/lime-runtime-baseline-current/trial-tool-approval-baseline-1/verifier/reward.json",
+      "artifact_manifest_ref": "jobs/lime-runtime-baseline-current/trial-tool-approval-baseline-1/artifacts/manifest.json",
+      "failure_category": "none",
+      "runtime_correlation": {
+        "sessionId": "sess_trial-tool-approval-baseline-1",
+        "threadId": "thread_trial-tool-approval-baseline-1",
+        "turnId": "turn_trial-tool-approval-baseline-1",
+        "taskId": "task_tool-approval-sandbox-boundary",
+        "runId": "run_trial-tool-approval-baseline-1",
+        "traceId": "trace_trial-tool-approval-baseline-1"
+      },
+      "cost": {
+        "tokens": 24000,
+        "cost_usd": 0.42
+      }
     },
     {
       "trial_id": "trial-tool-approval-candidate-1",
@@ -110,7 +259,25 @@
       "evidence_refs": [
         "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-candidate-1",
         "agentqc://lime/tool-approval-sandbox-boundary/candidate"
-      ]
+      ],
+      "attempt": 1,
+      "job_ref": "jobs/lime-runtime-candidate-feedback-v2",
+      "harbor_trial_ref": "jobs/lime-runtime-candidate-feedback-v2/trial-tool-approval-candidate-1",
+      "reward_ref": "jobs/lime-runtime-candidate-feedback-v2/trial-tool-approval-candidate-1/verifier/reward.json",
+      "artifact_manifest_ref": "jobs/lime-runtime-candidate-feedback-v2/trial-tool-approval-candidate-1/artifacts/manifest.json",
+      "failure_category": "none",
+      "runtime_correlation": {
+        "sessionId": "sess_trial-tool-approval-candidate-1",
+        "threadId": "thread_trial-tool-approval-candidate-1",
+        "turnId": "turn_trial-tool-approval-candidate-1",
+        "taskId": "task_tool-approval-sandbox-boundary",
+        "runId": "run_trial-tool-approval-candidate-1",
+        "traceId": "trace_trial-tool-approval-candidate-1"
+      },
+      "cost": {
+        "tokens": 22000,
+        "cost_usd": 0.39
+      }
     }
   ],
   "metrics": {
@@ -121,7 +288,19 @@
       "cost_per_pass",
       "p0_qc_gate_regression_count"
     ],
-    "noise_policy": "If primary delta is within two percentage points or trial count is below three per configuration, run pass@k or repeated trials before accepting the change."
+    "noise_policy": "If primary delta is within two percentage points or trial count is below three per configuration, run pass@k or repeated trials before accepting the change.",
+    "custom_metric_refs": [
+      "benchmarks/lime-agent-runtime/metrics/timeout_failure_mix.py"
+    ],
+    "comparison_ref": ".lime/qc/benchmark/lime-runtime-hill-climb-2026-05/compare.json"
   },
-  "decision_policy": "A candidate can be promoted only when required Agent QC gates still pass, benchmark evidence is complete, and the reward or failure-mode profile improves without higher release risk."
+  "decision_policy": "A candidate can be promoted only when required Agent QC gates still pass, benchmark evidence is complete, and the reward or failure-mode profile improves without higher release risk.",
+  "decision": {
+    "outcome": "promote-with-monitoring",
+    "reason": "Candidate preserves P0 QC evidence and improves recovery latency without reducing reward or evidence completeness.",
+    "remaining_risks": [
+      "Only two illustrated trials are shown in this public example; real Lime promotion requires the full frozen dataset."
+    ],
+    "p0_qc_gate_regression_count": 0
+  }
 }

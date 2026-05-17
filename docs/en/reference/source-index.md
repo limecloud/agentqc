@@ -42,7 +42,7 @@ Use source ids in design notes or changelogs:
 | --- | --- | --- | --- |
 | `SRC-AGENTSKILLS-SPEC` | `https://agentskills.io/specification` | Markdown/frontmatter style, directory-as-package, progressive disclosure, fields/constraints/examples. | Agent QC docs use concise entry pages, tables, examples, and deeper reference pages. |
 | `SRC-AGENTSKILLS-EVAL` | `https://agentskills.io/skill-creation/evaluating-skills` | Eval-driven iteration, clean-context runs, assertion grading, execution transcripts, human feedback. | qcloop and eval gates require attempts, verifier feedback, rubrics, and evidence refs. |
-| `SRC-HARBOR-DOCS` | `https://www.harborframework.com/docs`, `/docs/tasks`, `/docs/run-jobs/run-evals`, `/docs/rewardkit` | dataset/task/trial lifecycle, `/logs/agent/trajectory.json`, reward files, reward-details, artifacts, separate verifier environments. | Benchmark and hill-climbing gates require frozen tasks, trial trajectories, reward details, artifact refs, and verifier isolation. |
+| `SRC-HARBOR-DOCS` | `https://www.harborframework.com/docs`, `/docs/tasks`, `/docs/run-jobs/run-evals`, `/docs/run-jobs/results-and-artifacts`, `/docs/rewardkit`, `/docs/agents/trajectory-format`, `/docs/metrics` | `harbor init --task`, task directories, `task.toml` schema, separate verifier transfer rules, `/logs/verifier/reward.txt|json`, RewardKit criteria/judges, job/trial layout, ATIF trajectories, custom metrics. | Benchmark and hill-climbing gates require frozen tasks, trial trajectories, reward details, artifact refs, verifier isolation, artifact collection status, and dataset-level metrics. |
 | `SRC-CLINE-HILL-CLIMBING` | `https://cline.bot/blog/a-practical-guide-to-hill-climbing` | baseline runs, failure analysis, one-variable A/B changes, repeated runs/pass@k for noise, Harbor execution. | Agent QC adds `benchmark-eval` and the hill-climbing authoring loop for improving Lime without conflating benchmark scores with release gates. |
 | `SRC-YAGE-RUNTIME-BATTLEFIELD` | `https://yage.ai/share/agent-runtime-battlefield-20260516.html` | runtime/harness can materially change benchmark outcomes for the same model; builders should A/B on their own repos. | Agent QC treats runtime/prompt/tool/context profiles as benchmark variables and requires project-local tasks for Lime improvement. |
 | `SRC-PLAYWRIGHT-CONFIG` | `https://playwright.dev/docs/test-configuration` and Context7 `/microsoft/playwright.dev` | projects, webServer, retries, reporters, trace, screenshot, video, test isolation. | WebUI/browser/desktop gates require trace/screenshot/video policy, browser project/device, console/network, and server startup evidence when relevant. |
@@ -59,10 +59,7 @@ Use source ids in design notes or changelogs:
 | Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Expanded acceptance scenarios | `SRC-AGENTUI-ACCEPTANCE`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | TUI evidence | `SRC-CODEX-LOCAL`, `SRC-CLAUDECODE-LOCAL`, `SRC-HERMES-LOCAL` |
-| WebUI/browser evidence | `SRC-HARBOR-DOCS` | `https://www.harborframework.com/docs`, `/docs/tasks`, `/docs/run-jobs/run-evals`, `/docs/rewardkit` | dataset/task/trial lifecycle, `/logs/agent/trajectory.json`, reward files, reward-details, artifacts, separate verifier environments. | Benchmark and hill-climbing gates require frozen tasks, trial trajectories, reward details, artifact refs, and verifier isolation. |
-| `SRC-CLINE-HILL-CLIMBING` | `https://cline.bot/blog/a-practical-guide-to-hill-climbing` | baseline runs, failure analysis, one-variable A/B changes, repeated runs/pass@k for noise, Harbor execution. | Agent QC adds `benchmark-eval` and the hill-climbing authoring loop for improving Lime without conflating benchmark scores with release gates. |
-| `SRC-YAGE-RUNTIME-BATTLEFIELD` | `https://yage.ai/share/agent-runtime-battlefield-20260516.html` | runtime/harness can materially change benchmark outcomes for the same model; builders should A/B on their own repos. | Agent QC treats runtime/prompt/tool/context profiles as benchmark variables and requires project-local tasks for Lime improvement. |
-| `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
+| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-OPENCLAW-LOCAL`, `SRC-AGENTUI-BEST-PRACTICES` |
 | Python suite routing | `SRC-PYTEST-MARKERS`, `SRC-HERMES-LOCAL` |
 | Live provider separation | `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Scheduler/background gates | `SRC-HERMES-LOCAL`, `SRC-AGENTUI-ACCEPTANCE` |
@@ -70,3 +67,4 @@ Use source ids in design notes or changelogs:
 | Progressive documentation style | `SRC-AGENTSKILLS-SPEC`, `SRC-AGENTKNOWLEDGE-SPEC`, `SRC-AGENTUI-BEST-PRACTICES` |
 | qcloop/eval evidence loop | `SRC-AGENTSKILLS-EVAL`, `SRC-OPENCLAW-LOCAL` |
 | Benchmark/hill-climbing loop | `SRC-HARBOR-DOCS`, `SRC-CLINE-HILL-CLIMBING`, `SRC-YAGE-RUNTIME-BATTLEFIELD`, `SRC-PLAYWRIGHT-CONFIG` |
+| Harbor-compatible benchmark pack | `SRC-HARBOR-DOCS`, `SRC-CLINE-HILL-CLIMBING` |

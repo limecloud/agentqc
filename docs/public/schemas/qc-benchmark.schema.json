@@ -61,6 +61,49 @@
         },
         "frozen_at": {
           "type": "string"
+        },
+        "harbor": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "local_path": {
+              "type": "string"
+            },
+            "registry_ref": {
+              "type": "string"
+            },
+            "registry_path": {
+              "type": "string"
+            },
+            "frozen_hash": {
+              "type": "string"
+            },
+            "metrics_ref": {
+              "type": "string"
+            }
+          }
+        },
+        "task_selection": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "strata": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "exclusions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
@@ -118,6 +161,31 @@
           },
           "context_policy": {
             "type": "string"
+          },
+          "agent_profile": {
+            "type": "string"
+          },
+          "harbor_run": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "agent": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "env_overrides": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "job_ref": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -172,6 +240,117 @@
             "minItems": 1,
             "items": {
               "type": "string"
+            }
+          },
+          "harbor_task": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "task_dir": {
+                "type": "string"
+              },
+              "task_toml_ref": {
+                "type": "string"
+              },
+              "environment_ref": {
+                "type": "string"
+              },
+              "tests_ref": {
+                "type": "string"
+              },
+              "solution_ref": {
+                "type": "string"
+              },
+              "multi_step": {
+                "type": "boolean"
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "environment": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "os": {
+                "type": "string"
+              },
+              "sandbox": {
+                "type": "string"
+              },
+              "timeout_sec": {
+                "type": "number"
+              },
+              "cpus": {
+                "type": "number"
+              },
+              "memory_mb": {
+                "type": "integer"
+              },
+              "allow_internet": {
+                "type": "boolean"
+              }
+            }
+          },
+          "allowed_mutations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verifier_contract": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "enum": [
+                  "deterministic",
+                  "rewardkit",
+                  "judge",
+                  "human-review",
+                  "mixed"
+                ]
+              },
+              "isolated_environment": {
+                "type": "boolean"
+              },
+              "reward_ref": {
+                "type": "string"
+              },
+              "reward_details_ref": {
+                "type": "string"
+              },
+              "criterion_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "oracle_sanity_check_ref": {
+                "type": "string"
+              }
+            }
+          },
+          "trajectory_contract": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "schema": {
+                "type": "string"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "required_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -232,6 +411,69 @@
             "items": {
               "type": "string"
             }
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "job_ref": {
+            "type": "string"
+          },
+          "harbor_trial_ref": {
+            "type": "string"
+          },
+          "artifact_manifest_ref": {
+            "type": "string"
+          },
+          "reward_ref": {
+            "type": "string"
+          },
+          "failure_category": {
+            "type": "string"
+          },
+          "seed": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "runtime_correlation": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "threadId": {
+                "type": "string"
+              },
+              "turnId": {
+                "type": "string"
+              },
+              "taskId": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "traceId": {
+                "type": "string"
+              }
+            }
+          },
+          "cost": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cost_usd": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
           }
         }
       }
@@ -255,12 +497,50 @@
         },
         "noise_policy": {
           "type": "string"
+        },
+        "custom_metric_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comparison_ref": {
+          "type": "string"
         }
       }
     },
     "decision_policy": {
       "type": "string",
       "minLength": 1
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "outcome": {
+          "enum": [
+            "promote",
+            "promote-with-monitoring",
+            "hold",
+            "revert",
+            "blocked",
+            "needs-review"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "remaining_risks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "p0_qc_gate_regression_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
     }
   }
 }

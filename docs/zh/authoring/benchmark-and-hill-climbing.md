@@ -47,6 +47,148 @@ QC 可以触发 benchmark，但 benchmark 不能替代 P0 QC gate。一个 candi
 6. **保留或回滚**：reward 改善且 P0 QC 无回归才保留；安全、证据完整性或 release gate 退化立即回滚或标 blocked。
 7. **沉淀新 case**：把新失败模式回写到 QC scenario、verifier 或 replay fixture。
 
+## Harbor 兼容画像
+
+Agent QC 不要求使用 Harbor，但如果 Lime 使用 Harbor，必须把 Harbor 的 task、dataset、job、trial、trajectory、reward 和 artifact 结构映射成稳定的 QC 证据。参考来源：`SRC-HARBOR-DOCS`、`SRC-CLINE-HILL-CLIMBING`、`SRC-YAGE-RUNTIME-BATTLEFIELD`。
+
+### Harbor task 完整度
+
+Harbor task 是一个目录，不是一条 prompt。Agent QC 推荐每个 Lime benchmark task 至少包含：
+
+```text
+benchmarks/lime-agent-runtime/<task-id>/
+├── instruction.md
+├── task.toml
+├── environment/
+│   └── Dockerfile 或 docker-compose.yaml
+├── tests/
+│   ├── test.sh
+│   ├── checks.py
+│   └── quality.toml              # 可选：judge rubric
+├── solution/                     # 可选：oracle sanity check
+│   └── solve.sh
+└── steps/                        # 可选：长链路或多阶段任务
+```
+
+| Harbor 文件或目录 | Agent QC 要求 |
+| --- | --- |
+| `instruction.md` | 冻结用户目标；不能在 candidate 运行中临时改写。 |
+| `task.toml` | 声明 task id、verifier timeout、agent timeout、环境资源、OS、网络、用户和可选 MCP。 |
+| `environment/` | 构建可重复沙箱；Windows task 必须显式声明 `[environment].os = "windows"`。 |
+| `tests/test.sh` | 必须写出 `/logs/verifier/reward.txt` 或 `/logs/verifier/reward.json`。 |
+| `tests/*.py` / `tests/*.toml` | 程序化 criterion 与 judge rubric；需要稳定、可审查、可版本化。 |
+| `solution/` | 可选；用于 oracle sanity check，不能泄露给普通 candidate。 |
+| `steps/` | 可选；用于长链路、多 turn、早停、memory 或逐步构建任务。 |
+
+### `task.toml` 模板
+
+```toml
+schema_version = "1.1"
+# 顶层 artifacts 会被复制到 separate verifier environment。
+artifacts = [
+  "/logs/agent/trajectory.json",
+  "/logs/artifacts/runtime-transcript.json",
+  "/logs/artifacts/approval-sandbox-report.json"
+]
+
+[task]
+name = "lime/tool-approval-sandbox-boundary"
+description = "Verify that Lime runtime denies unsafe tools and recovers with usable feedback."
+authors = [{ name = "Lime QC", email = "qc@example.invalid" }]
+keywords = ["lime", "runtime", "permission", "sandbox"]
+
+[metadata]
+difficulty_explanation = "Small but high-risk runtime permission boundary."
+category = "agent-runtime"
+source_qc_case = "tool-approval-sandbox-boundary"
+
+[verifier]
+timeout_sec = 300.0
+user = "root"
+
+[agent]
+timeout_sec = 300.0
+user = "agent"
+
+[environment]
+os = "linux"
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+allow_internet = false
+```
+
+如果 verifier 需要隔离环境，应使用 `[verifier.environment]`，并显式把要评分的 artifact（例如 `/logs/agent/trajectory.json`）列入 `artifacts`。否则 separate verifier 看不到 agent logs，会出现“高分但无法审计”的假阳性。
+
+### RewardKit 与 verifier 层级
+
+| 层级 | 适用场景 | 最低输出 | 风险控制 |
+| --- | --- | --- | --- |
+| T0 deterministic | 文件、JSON、CLI exit、schema、side effect | `reward.txt` 或 `reward.json` | 最适合作为 P0 blocker。 |
+| T1 RewardKit criteria | 多条件、权重、轨迹检查 | `reward.json` + `reward-details.json` | 每个 criterion 必须可解释；失败要有错误信息。 |
+| T2 judge rubric | 代码质量、可读性、复杂主观判断 | judge TOML、reasoning、score | 固定 judge/model、blind rubric、记录漂移。 |
+| T3 human review | 安全例外、争议 case、发布风险 | reviewer note、decision id | 不能把人工 review 当成自动 benchmark 分数。 |
+
+RewardKit 适合 Lime 的原因是它同时支持程序化 criteria、judge criteria、多 reward 目录、权重、隔离运行和 `reward-details.json`。Agent QC 对 `benchmark-eval` 的要求是：不只保存总分，还要保存每个 criterion 的分数、错误、judge reasoning 和证据引用。
+
+### Harbor job 输出到 Agent QC
+
+Harbor 运行后通常产生 `jobs/<job-name>/`：
+
+```text
+jobs/<job-name>/
+├── config.json
+├── result.json
+├── <trial-name>/
+│   ├── config.json
+│   ├── result.json
+│   ├── agent/
+│   │   ├── recording.cast
+│   │   └── trajectory.json
+│   ├── verifier/
+│   │   ├── reward.txt 或 reward.json
+│   │   ├── reward-details.json
+│   │   ├── test-stdout.txt
+│   │   └── test-stderr.txt
+│   └── artifacts/
+│       ├── manifest.json
+│       └── ...
+└── ...
+```
+
+Agent QC 应保留这些引用：
+
+| Harbor 输出 | Agent QC 字段 |
+| --- | --- |
+| `jobs/<job>/config.json` | baseline/candidate configuration snapshot。 |
+| `jobs/<job>/result.json` | aggregate metrics 与 job status。 |
+| `<trial>/config.json` | trial config、task、agent、model、environment。 |
+| `<trial>/result.json` | trial status、duration、verifier result。 |
+| `<trial>/agent/trajectory.json` | `trajectory_ref`。 |
+| `<trial>/verifier/reward.txt` / `reward.json` | `reward_ref`。 |
+| `<trial>/verifier/reward-details.json` 或 verifier logs | `reward_details_ref`。 |
+| `<trial>/artifacts/manifest.json` | `artifact_manifest_ref`。 |
+
+Harbor 的 artifact collection 是 best-effort；Agent QC 不能因为 Harbor 没让 trial fail 就忽略缺失 artifact。如果 `benchmark-eval` 的 required evidence 没被 collected，QC verdict 必须是 `needs-review` 或 `blocked`。
+
+### ATIF trajectory 要求
+
+Harbor 的 ATIF trajectory 可以用于 debugging、viewer、SFT/RL 和 failure attribution。Agent QC 对 Lime 至少要求：
+
+| ATIF 区域 | Lime 必须保留的事实 |
+| --- | --- |
+| `schema_version` | 例如 `ATIF-v1.4`，用于校验。 |
+| `session_id` | 与 Lime `sessionId` / `threadId` / `runId` 可关联。 |
+| `agent` | agent 名称、版本、model profile。 |
+| `steps[].step_id` | 从 1 开始的有序步骤；缺序会破坏 replay。 |
+| `steps[].tool_calls` | tool call id、function name、arguments 摘要。 |
+| `steps[].observation` | tool/result/error 与 source call id。 |
+| `steps[].metrics` | tokens、cache、cost、耗时。 |
+| `final_metrics` | 总 tokens、总 cost、总 step 数。 |
+
+如果 Harbor agent 不能自动生成 ATIF，Agent Runtime adapter 必须把 Lime runtime events 转换为等价 trajectory。
+
 ## Benchmark task 最小结构
 
 每个 task 至少应定义：
@@ -57,7 +199,7 @@ QC 可以触发 benchmark，但 benchmark 不能替代 P0 QC gate。一个 candi
 | `instruction_ref` | 冻结 instruction 或用户目标。 |
 | `environment` | sandbox、workspace snapshot、OS、资源、timeout。 |
 | `allowed_mutations` | benchmark agent 可写范围；QC worker 仍应只读。 |
-| `verifier` | 程序化检查、Reward Kit、LLM/Agent judge 或人工 review。 |
+| `verifier` | 程序化检查、RewardKit、LLM/Agent judge 或人工 review。 |
 | `reward_paths` | 例如 `/logs/verifier/reward.json` 与 `reward-details.json`。 |
 | `trajectory_ref` | agent tool/action/event 轨迹。 |
 | `required_evidence` | runtime transcript、surface artifact、reward details、artifacts、cleanup。 |
@@ -68,11 +210,12 @@ QC 可以触发 benchmark，但 benchmark 不能替代 P0 QC gate。一个 candi
 | --- | --- | --- |
 | dataset | benchmark dataset | 固定 task 集合和版本。 |
 | task directory | `qc_case` / benchmark task | instruction、environment、tests、artifacts。 |
+| job | `qc_report` / benchmark run group | 一次 baseline 或 candidate 批量运行。 |
 | trial | `qc_run` / benchmark trial | 一次 agent+model+runtime 执行。 |
 | verifier reward | `benchmark-eval` gate verdict input | 评分，不直接等同 release pass。 |
 | `/logs/agent/trajectory.json` | trajectory evidence | 失败分析、工具调用审查、runtime 对账。 |
 | `/logs/verifier/reward-details.json` | reward details evidence | 每个 criterion 的分数、错误和 judge reasoning。 |
-| artifacts | `qc_evidence` refs | 交付物、截图、日志、导出报告。 |
+| `<trial>/artifacts/manifest.json` | artifact evidence | 交付物、截图、日志、导出报告及 collection status。 |
 
 Harbor 不是必选依赖。任何 runner 只要能输出同等 task、trial、reward、trajectory 和 artifact 证据，就可以映射到 Agent QC。
 
@@ -82,10 +225,10 @@ Harbor 不是必选依赖。任何 runner 只要能输出同等 task、trial、r
 
 最低证据：
 
-- dataset id、version、冻结时间和 selection policy；
-- baseline 与 candidate 的配置快照；
+- dataset id、version、冻结时间、selection policy、local path 或 registry ref；
+- baseline 与 candidate 的配置快照，包括 agent、model、runtime、prompt、tool、context、routing；
 - task list、trial count、timeout、seed 或 randomness policy；
-- 每个 trial 的 status、reward、trajectory ref、reward details ref 和 artifacts；
+- 每个 trial 的 status、reward、trajectory ref、reward details ref、artifact manifest ref；
 - aggregate metrics：mean reward、pass rate、timeout rate、evidence completeness；
 - promotion/revert decision 和 remaining risk。
 
@@ -95,7 +238,7 @@ Harbor 不是必选依赖。任何 runner 只要能输出同等 task、trial、r
 - confidence interval 或 bootstrap summary；
 - failure taxonomy 与代表性 trajectory；
 - cost/token/cache metrics；
-- verifier drift check 或 oracle sanity check。
+- verifier drift check、oracle sanity check 或 RewardKit verifier comparison。
 
 ## Lime 推荐起步
 
@@ -108,6 +251,40 @@ Lime 不需要先做公开 benchmark。更高价值的是 internal benchmark：
 5. candidate 只有在 benchmark 改善且 `npm run agent-qc:check` 对应门禁仍通过时才能进入 release path。
 
 目标不是刷分，而是让失败可复现、可归因、可修复。
+
+## Lime benchmark pack
+
+推荐在 Lime 仓库落地这个输出结构：
+
+```text
+.lime/qc/benchmark/<experiment-id>/
+├── experiment.json              # 符合 qc-benchmark.schema.json
+├── baseline/
+│   ├── harbor-job-ref.json
+│   └── agent-qc-report.json
+├── candidate/
+│   ├── harbor-job-ref.json
+│   └── agent-qc-report.json
+├── trials/
+│   └── <task-id>/<config-id>/<attempt>.json
+├── compare.json
+└── failures/
+    ├── taxonomy.json
+    └── representative-trajectories.json
+```
+
+`compare.json` 至少包含：
+
+```json
+{
+  "meanRewardDelta": 0.08,
+  "timeoutRateDelta": -0.02,
+  "evidenceCompletenessDelta": 0,
+  "p0QcGateRegressionCount": 0,
+  "costPerPassDelta": 0.01,
+  "decision": "promote-with-monitoring"
+}
+```
 
 ## Lime 测试示例
 
@@ -129,7 +306,13 @@ npm run agent-qc:report:json -- --output .lime/qc/current-agent-qc-report.json
 
 如果这里失败，先修 QC 证据链，不要进入 benchmark 比分。
 
-### 示例 2：把 tool approval 场景转成 Harbor-style task
+### 示例 2：把 tool approval 场景转成 Harbor task
+
+```bash
+harbor init --task "lime/tool-approval-sandbox-boundary"
+```
+
+然后补齐：
 
 ```text
 benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/
@@ -139,29 +322,8 @@ benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/
 │   └── Dockerfile
 └── tests/
     ├── test.sh
-    └── checks.py
-```
-
-`task.toml`：
-
-```toml
-schema_version = "1.1"
-
-[task]
-name = "lime/tool-approval-sandbox-boundary"
-description = "Verify that Lime runtime denies unsafe tools and recovers with usable feedback."
-
-[environment]
-os = "linux"
-
-[verifier]
-timeout_sec = 300
-
-artifacts = [
-  "/logs/agent/trajectory.json",
-  "/logs/artifacts/runtime-transcript.json",
-  "/logs/artifacts/approval-sandbox-report.json"
-]
+    ├── checks.py
+    └── quality.toml
 ```
 
 `instruction.md`：
@@ -188,7 +350,9 @@ Success requires:
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-uvx --with harbor-rewardkit@0.1 rewardkit /tests
+uvx --with harbor-rewardkit@0.1 rewardkit /tests \
+  --workspace /app \
+  --output /logs/verifier/reward.json
 ```
 
 `tests/checks.py`：
@@ -276,6 +440,9 @@ LIME_RUNTIME_TOOL_FEEDBACK_PROFILE=v2 harbor run \
   -a lime-runtime-agent \
   -m configured-local-provider \
   --name lime-runtime-candidate-feedback-v2
+
+# 查看结果和轨迹
+harbor view jobs
 ```
 
 比较时至少看：
@@ -290,6 +457,67 @@ LIME_RUNTIME_TOOL_FEEDBACK_PROFILE=v2 harbor run \
 
 如果差距小于 2 个百分点，或同一任务有随机性，跑 repeated trials / pass@k 再决策。
 
+### 示例 5：多步任务验证 Lime 长链路
+
+当一个 Lime 问题跨越“启动 -> 发送 -> tool approval -> stream -> artifact -> cleanup”，用 Harbor multi-step task 比单个 instruction 更稳。
+
+```toml
+schema_version = "1.1"
+
+multi_step_reward_strategy = "final"
+
+[task]
+name = "lime/chat-tool-artifact-long-horizon"
+description = "Verify a long Lime runtime flow across readiness, tool approval, streaming, artifact, and cleanup."
+
+[environment]
+workdir = "/app"
+build_timeout_sec = 600.0
+
+[[steps]]
+name = "ready"
+min_reward = 1.0
+
+[[steps]]
+name = "approval-and-stream"
+min_reward = 0.8
+
+[[steps]]
+name = "artifact-and-cleanup"
+```
+
+Agent QC 对多步任务的额外要求：
+
+- 每个 step 有独立 instruction、verifier result 和 failure category；
+- trial-level reward 说明聚合策略；
+- early stop 不能被误报成 pass；
+- final trajectory 能串起所有 step 的 runtime correlation。
+
+### 示例 6：自定义 metric 只做聚合，不做事实修复
+
+如果 Lime 要比较失败分类或成本，可以用 Harbor custom metric 或本地 compare 脚本。无论哪种方式，metric 只能读取 reward/trial facts，不能改写 verifier 结果。
+
+```python
+# my_custom_metric.py
+import argparse
+import json
+from pathlib import Path
+
+
+def main(input_path: Path, output_path: Path) -> None:
+    rewards = [json.loads(line) for line in input_path.read_text().splitlines()]
+    timeout_count = sum(1 for item in rewards if item.get("timeout", 0) > 0)
+    output_path.write_text(json.dumps({"timeout_count": timeout_count}))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input-path", type=Path, required=True)
+    parser.add_argument("-o", "--output-path", type=Path, required=True)
+    args = parser.parse_args()
+    main(args.input_path, args.output_path)
+```
+
 ## 反模式
 
 | 反模式 | 风险 |
@@ -299,3 +527,4 @@ LIME_RUNTIME_TOOL_FEEDBACK_PROFILE=v2 harbor run \
 | 把 verifier 失败修成宽松评分 | 得分上升但产品变差。 |
 | 只看最终答案，不看 trajectory | 隐藏 tool、permission、context 和 cleanup 问题。 |
 | candidate 得分高就跳过 P0 QC | benchmark 不是 release gate 替代品。 |
+| Artifact collection 失败仍然 promote | Harbor 可能不让 trial fail，但 Agent QC 证据链已经不完整。 |

@@ -98,6 +98,7 @@ if (!Array.isArray(verdict.evidence_refs)) fail('qcloop-verdict.json evidence_re
 const benchmark = readJson('docs/public/examples/lime-benchmark-experiment.json')
 if (benchmark.schema_version !== '0.5.0') fail('lime-benchmark-experiment.json must use schema_version 0.5.0')
 if (!benchmark.dataset?.id || !benchmark.dataset?.version) fail('lime benchmark requires dataset id and version')
+if (!benchmark.dataset.harbor?.local_path && !benchmark.dataset.harbor?.registry_ref) fail('lime benchmark requires a Harbor local path or registry ref')
 if (!Array.isArray(benchmark.configurations) || benchmark.configurations.length < 2) fail('lime benchmark requires baseline and candidate configurations')
 if (!Array.isArray(benchmark.tasks) || benchmark.tasks.length === 0) fail('lime benchmark requires tasks')
 if (!Array.isArray(benchmark.trials) || benchmark.trials.length === 0) fail('lime benchmark requires trials')
@@ -105,6 +106,9 @@ for (const task of benchmark.tasks) {
   if (!task.id) fail('lime benchmark task requires id')
   if (task.project_profile && !profiles.has(task.project_profile)) fail(`lime benchmark task has unknown profile ${task.project_profile}`)
   if (task.surface && !surfaces.has(task.surface)) fail(`lime benchmark task has unknown surface ${task.surface}`)
+  if (!task.harbor_task?.task_dir || !task.harbor_task?.task_toml_ref) fail(`${task.id} requires Harbor task refs`)
+  if (!task.verifier_contract?.kind || !task.verifier_contract?.reward_ref) fail(`${task.id} requires verifier contract and reward ref`)
+  if (!task.trajectory_contract?.ref || !task.trajectory_contract?.schema) fail(`${task.id} requires trajectory contract`)
   checkGateList('lime-benchmark-experiment.json', task.id, task.required_gates)
 }
 for (const trial of benchmark.trials) {
@@ -112,7 +116,10 @@ for (const trial of benchmark.trials) {
     if (!trial[key]) fail(`lime benchmark trial is missing ${key}`)
   }
   if (!Array.isArray(trial.evidence_refs) || trial.evidence_refs.length === 0) fail(`${trial.trial_id} requires evidence refs`)
+  if (!trial.harbor_trial_ref || !trial.artifact_manifest_ref) fail(`${trial.trial_id} requires Harbor trial and artifact refs`)
+  if (!trial.runtime_correlation?.sessionId || !trial.runtime_correlation?.runId) fail(`${trial.trial_id} requires runtime correlation`)
 }
+if (!benchmark.decision?.outcome) fail('lime benchmark requires a decision outcome')
 
 if (process.exitCode) process.exit(process.exitCode)
 console.log('Agent QC examples validated')

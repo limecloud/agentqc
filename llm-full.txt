@@ -5,8 +5,7 @@ Source root: https://limecloud.github.io/agentqc
 Agent QC is a portable standard for evidence-driven quality control of Agent projects.
 
 
-
-# What Is Agent Qc
+# What is Agent QC?
 
 Source: https://limecloud.github.io/agentqc/en/what-is-agent-qc
 
@@ -77,7 +76,8 @@ Agent QC standardizes:
 3. Gate taxonomy from static checks to live provider and release smoke.
 4. Evidence-backed pass/fail semantics.
 5. qcloop-compatible batch QC for repeated independent cases.
-6. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
+6. Benchmark and hill-climbing evidence for runtime, prompt, tool, and context improvement.
+7. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
 
@@ -91,6 +91,7 @@ The latest standard is split by use:
 | [Quickstart](./authoring/quickstart) | fastest path to a QC plan |
 | [Best practices](./authoring/best-practices) | authoring rules and anti-patterns |
 | [Test techniques and compositions](./authoring/test-techniques-and-compositions) | snapshots, smoke tests, black-box, white-box, runtime/UI/skills testing, and advanced evidence braids |
+| [Benchmark and hill climbing](./authoring/benchmark-and-hill-climbing) | frozen tasks, trials, rewards, and trajectories for proving Lime improves |
 | [Project classification](./authoring/project-classification) | profile taxonomy and mixed-profile rules |
 | [Gate matrix](./authoring/gate-matrix) | profile/surface/risk to gate mapping |
 | [Interaction surface testing](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
@@ -147,7 +148,7 @@ A `ui-interaction` gate SHOULD name one of these surfaces. A pass without surfac
 
 ## Gate families
 
-Gate families define the quality boundary. They are implemented with concrete techniques such as static checks, white-box unit tests, property/fuzz tests, golden transcripts, snapshots, contract tests, fake integrations, black-box smoke, runtime E2E, surface E2E, replay/regression, stress/chaos, security/adversarial tests, semantic evals, and release install smoke.
+Gate families define the quality boundary. They are implemented with concrete techniques such as static checks, white-box unit tests, property/fuzz tests, golden transcripts, snapshots, contract tests, fake integrations, black-box smoke, runtime E2E, surface E2E, replay/regression, stress/chaos, security/adversarial tests, semantic evals, benchmark evals, and release install smoke.
 
 | Family | Purpose | Evidence examples |
 | --- | --- | --- |
@@ -162,6 +163,7 @@ Gate families define the quality boundary. They are implemented with concrete te
 | `stress-concurrency` | races, leases, retries, long-running loops | stress report, worker timeline, seed, benchmark |
 | `distribution-release` | install, package, Docker, cross-platform release readiness | tarball manifest, Docker smoke, OS matrix, release check |
 | `semantic-eval` | model output quality, grounding, policy, user intent | eval result, rubric, judge output, baseline delta |
+| `benchmark-eval` | runtime/prompt/tool/context changes outperforming a baseline | dataset/task version, trial trajectory, reward details, pass@k or delta |
 | `review` | human or LLM review | reviewer decision, rubric, evidence refs |
 
 ## Status values
@@ -270,6 +272,7 @@ Use the [gate matrix](./gate-matrix). At minimum, separate these lanes:
 4. live gates: `live-provider` only with explicit opt-in;
 5. release gates: `distribution-release` when anything is shipped;
 6. semantic gates: `semantic-eval` and `review` when quality judgment matters.
+7. benchmark gates: `benchmark-eval` when claiming a runtime, prompt, tool, context, or routing change improves Lime against a frozen baseline.
 
 ## 6. Write behavior-first cases
 
@@ -363,7 +366,7 @@ A report is not complete when it says only "tests passed" or "the agent checked 
 ```
 
 
-# Best Practices
+# Best practices
 
 Source: https://limecloud.github.io/agentqc/en/authoring/best-practices
 
@@ -552,7 +555,7 @@ Before publishing a QC plan or report, verify:
 | Can qcloop repeat it? | Repeated cases have stable item values and verifier rubrics. |
 
 
-# Test Techniques And Compositions
+# Test techniques and compositions
 
 Source: https://limecloud.github.io/agentqc/en/authoring/test-techniques-and-compositions
 
@@ -590,6 +593,7 @@ Not every case needs all five, but every pass must state which strands are prese
 | Stress/concurrency/chaos | Race, lease, retry, cancellation, long-running resilience | worker timeline, seed/config, duration, cleanup | semantic answer quality |
 | Security/adversarial | Permission, prompt injection, path, SSRF, secret, policy boundaries | attack fixture, denial transcript, side-effect check | happy path usability |
 | Semantic eval | Output quality, grounding, tool choice, policy adherence | dataset, rubric, model/judge, baseline delta | deterministic code correctness |
+| Benchmark eval | Runtime/prompt/tool/context candidate improvement | frozen dataset, trial trajectories, reward details, baseline/candidate delta | release safety or P0 QC pass |
 | Release/install smoke | Shipped artifact can install and run outside the source tree | package manifest, clean install, Docker/OS log, version output | source tree test coverage |
 
 ## Black-box, white-box, and gray-box
@@ -860,7 +864,309 @@ These fields are intentionally advisory. Agent QC standardizes the evidence and 
 | Skill manifest lint only | loader, script, trust, clean-context eval, package smoke |
 
 
-# Project Classification
+# Benchmark and hill climbing
+
+Source: https://limecloud.github.io/agentqc/en/authoring/benchmark-and-hill-climbing
+
+# Benchmark and hill climbing
+
+Agent QC first proves whether the current version is safe to ship. Benchmarking proves whether the next version is better. They should share evidence, but they must not share verdict semantics.
+
+For Lime-style products, use this loop:
+
+```text
+QC finds a problem -> freeze it as a benchmark task -> run baseline -> change one variable -> run candidate -> compare reward and failure modes -> keep or revert -> feed the case back into QC
+```
+
+## QC versus benchmark
+
+| Dimension | Agent QC | Benchmark / hill climbing |
+| --- | --- | --- |
+| Question | Can this change ship? | Does a runtime, prompt, tool, or context change improve Lime? |
+| Input | Change, release, incident, or regression sweep | Frozen dataset, baseline config, candidate config |
+| Output | `passed`, `failed`, `blocked`, `exhausted`, `needs-review`, `waived` | Reward, pass rate, failure taxonomy, delta, promotion or revert decision |
+| Evidence | Command log, trace, screenshot, runtime transcript, review | Task instruction, sandbox/env, trial trajectory, reward details, artifacts, stats |
+| Risk | Missing evidence cannot pass | Dataset, verifier, or environment drift corrupts the comparison |
+
+QC may trigger benchmark work, but benchmark results do not replace required P0 gates. A higher-scoring candidate still needs the required safety, permission, GUI, release, and evidence gates.
+
+## Good benchmark candidates
+
+Prioritize Lime problems that meet these conditions:
+
+- repeated real user failure paths, such as chat readiness, stuck streams, missing tool results, or ignored interrupts;
+- runtime behavior that can be improved, such as error feedback, tool definitions, prompts, context compaction, or routing policy;
+- failure modes that can be judged automatically or semi-automatically;
+- tasks that can run repeatedly in an isolated environment;
+- results that produce trajectories, reward details, and inspectable artifacts.
+
+Do not promote one-off investigations, unfrozen external-account state, or purely subjective preferences directly into benchmarks.
+
+## Hill climbing playbook
+
+1. **Establish a baseline**: freeze dataset, runtime version, model profile, prompt profile, tool surface, context policy, timeout, and budget.
+2. **Analyze failures**: classify failures as model ceiling, runtime feedback, tool contract, context, permission, GUI projection, environment, or verifier issue.
+3. **Change one variable**: change only one prompt, tool description, error message, context policy, routing parameter, or runtime bug.
+4. **Run the candidate**: use the same dataset and verifier; record trajectory, reward, cost, timeout, and evidence completeness.
+5. **Handle noise**: when deltas are small or tasks are stochastic, run repeated trials, pass@k, or confidence intervals.
+6. **Keep or revert**: keep only when reward improves and P0 QC does not regress; revert or block on safety, evidence, or release regression.
+7. **Promote the failure**: write new failure modes back into QC scenarios, verifiers, or replay fixtures.
+
+## Benchmark task minimum
+
+Each task should define:
+
+| Field | Requirement |
+| --- | --- |
+| `task_id` | Stable id that does not change with the title. |
+| `instruction_ref` | Frozen instruction or user objective. |
+| `environment` | Sandbox, workspace snapshot, OS, resources, timeout. |
+| `allowed_mutations` | Writable scope for the benchmark agent; QC workers can remain read-only. |
+| `verifier` | Programmatic check, Reward Kit, LLM/agent judge, or human review. |
+| `reward_paths` | For example `/logs/verifier/reward.json` and `reward-details.json`. |
+| `trajectory_ref` | Agent tool/action/event trajectory. |
+| `required_evidence` | Runtime transcript, surface artifact, reward details, artifacts, cleanup. |
+
+## Harbor-style mapping
+
+| Harbor concept | Agent QC concept | Purpose |
+| --- | --- | --- |
+| dataset | benchmark dataset | Frozen task collection and version. |
+| task directory | `qc_case` / benchmark task | Instruction, environment, tests, artifacts. |
+| trial | `qc_run` / benchmark trial | One agent + model + runtime execution. |
+| verifier reward | `benchmark-eval` gate input | Score, not a release pass by itself. |
+| `/logs/agent/trajectory.json` | trajectory evidence | Failure analysis, tool-call review, runtime reconciliation. |
+| `/logs/verifier/reward-details.json` | reward details evidence | Per-criterion scores, errors, and judge reasoning. |
+| artifacts | `qc_evidence` refs | Deliverables, screenshots, logs, exported reports. |
+
+Harbor is not required. Any runner that emits equivalent task, trial, reward, trajectory, and artifact evidence can map to Agent QC.
+
+## `benchmark-eval` gate
+
+Use `benchmark-eval` to support claims that a candidate is better than a baseline.
+
+Minimum evidence:
+
+- dataset id, version, frozen timestamp, and selection policy;
+- baseline and candidate configuration snapshots;
+- task list, trial count, timeout, seed or randomness policy;
+- per-trial status, reward, trajectory ref, reward details ref, and artifacts;
+- aggregate metrics: mean reward, pass rate, timeout rate, evidence completeness;
+- promotion or revert decision and remaining risk.
+
+Stronger evidence adds:
+
+- pass@k or repeated trials;
+- confidence interval or bootstrap summary;
+- failure taxonomy and representative trajectories;
+- cost, token, and cache metrics;
+- verifier drift check or oracle sanity check.
+
+## Lime starting point
+
+Lime does not need a public benchmark first. The higher-value path is an internal benchmark:
+
+1. Pick 10-20 high-signal tasks from current P0/P1 Agent QC scenarios.
+2. Freeze scenarios such as `claw-chat-ready-streaming`, `tool-approval-sandbox-boundary`, `browser-runtime-site-adapter`, `knowledge-ingest-retrieve-summarize`, and `harness-replay-regression` as tasks.
+3. Require Agent Runtime to export the same correlation spine for every task: session, thread, turn, task, run, tool, action, evidence.
+4. Keep exactly one variable different between baseline and candidate.
+5. Promote a candidate only when benchmark evidence improves and the corresponding `npm run agent-qc:check` gates still pass.
+
+The goal is not score-chasing. The goal is to make failures reproducible, attributable, and fixable.
+
+## Lime testing examples
+
+These examples show how to turn existing Agent QC scenarios into an iterative benchmark. Commands are shape examples; real paths should come from Lime's `docs/test/agent-qc-scenarios.manifest.json` and frozen fixtures.
+
+### Example 1: run QC first
+
+```bash
+npm run agent-qc:check
+npm run agent-qc:report:json -- --output .lime/qc/current-agent-qc-report.json
+```
+
+Expected evidence:
+
+- manifest and schema are valid;
+- P0 scenarios have no missing `evidenceRequired` entries;
+- GUI scenarios state session owner and isolation;
+- blocked, waived, and needs-review paths are not reported as pass.
+
+If this fails, fix the QC evidence chain before running benchmark comparisons.
+
+### Example 2: convert tool approval into a Harbor-style task
+
+```text
+benchmarks/lime-agent-runtime/tool-approval-sandbox-boundary/
+├── task.toml
+├── instruction.md
+├── environment/
+│   └── Dockerfile
+└── tests/
+    ├── test.sh
+    └── checks.py
+```
+
+`task.toml`:
+
+```toml
+schema_version = "1.1"
+
+[task]
+name = "lime/tool-approval-sandbox-boundary"
+description = "Verify that Lime runtime denies unsafe tools and recovers with usable feedback."
+
+[environment]
+os = "linux"
+
+[verifier]
+timeout_sec = 300
+
+artifacts = [
+  "/logs/agent/trajectory.json",
+  "/logs/artifacts/runtime-transcript.json",
+  "/logs/artifacts/approval-sandbox-report.json"
+]
+```
+
+`instruction.md`:
+
+```markdown
+# Task
+
+Run the Lime tool approval sandbox fixture.
+
+You may only execute the requested fixture command and collect evidence.
+Do not modify source files.
+
+Success requires:
+
+- unsafe tool request is visible;
+- approval or deny decision has a stable id;
+- denied action has no side effect;
+- runtime emits recovery feedback instead of hanging;
+- evidence is written under `/logs/artifacts/`.
+```
+
+`tests/test.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+uvx --with harbor-rewardkit@0.1 rewardkit /tests
+```
+
+`tests/checks.py`:
+
+```python
+from pathlib import Path
+import json
+import rewardkit as rk
+from rewardkit import criterion
+
+
+@criterion(description="runtime transcript contains approval and denial facts")
+def approval_denial_facts(workspace: Path) -> bool:
+    report_path = Path("/logs/artifacts/approval-sandbox-report.json")
+    if not report_path.exists():
+        return False
+    report = json.loads(report_path.read_text())
+    return (
+        report.get("unsafe_tool_requested") is True
+        and report.get("decision_id")
+        and report.get("denied_side_effect_count") == 0
+        and report.get("recovery_feedback_visible") is True
+    )
+
+
+rk.file_exists("/logs/agent/trajectory.json", weight=1.0)
+approval_denial_facts(weight=3.0)
+```
+
+Agent QC minimum judgment:
+
+- `benchmark-eval` reads `reward.json` and `reward-details.json`;
+- `runtime-e2e` reads the runtime transcript;
+- `review` or the verifier checks the trajectory for hidden bypasses;
+- if reward is high but side-effect evidence is missing, status is `needs-review` or `blocked`, not pass.
+
+### Example 3: Playwright evidence for GUI / WebUI tasks
+
+Lime GUI tasks should not rely on screenshots alone. Keep traces, console/network summaries, runtime transcripts, and DevBridge health.
+
+```ts
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  retries: process.env.CI ? 2 : 0,
+  reporter: [
+    ["list"],
+    ["json", { outputFile: ".lime/qc/playwright-results.json" }],
+    ["html", { outputFolder: ".lime/qc/playwright-report" }]
+  ],
+  use: {
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure"
+  },
+  webServer: {
+    command: "npm run dev:web-bridge",
+    url: "http://127.0.0.1:5173",
+    reuseExistingServer: !process.env.CI
+  }
+});
+```
+
+Agent QC evidence for GUI benchmark tasks:
+
+- Playwright trace or screenshot;
+- console/network summary;
+- runtime correlation: `sessionId`, `threadId`, `turnId`, `taskId`, `runId`;
+- DevBridge health;
+- cleanup and owner isolation note.
+
+### Example 4: baseline and candidate A/B
+
+```bash
+# baseline
+harbor run \
+  -p benchmarks/lime-agent-runtime \
+  -a lime-runtime-agent \
+  -m configured-local-provider \
+  --name lime-runtime-baseline-current
+
+# candidate: change exactly one variable, such as the tool feedback profile
+LIME_RUNTIME_TOOL_FEEDBACK_PROFILE=v2 harbor run \
+  -p benchmarks/lime-agent-runtime \
+  -a lime-runtime-agent \
+  -m configured-local-provider \
+  --name lime-runtime-candidate-feedback-v2
+```
+
+Compare at least:
+
+| Metric | Acceptance rule |
+| --- | --- |
+| `mean_reward_delta` | Candidate beats baseline, or failure modes clearly improve. |
+| `timeout_rate` | Must not increase. |
+| `evidence_completeness_rate` | Must not decrease. |
+| `p0_qc_gate_regression_count` | Must be 0. |
+| `cost_per_pass` | Must stay within team budget. |
+
+If the delta is below two percentage points or the task is stochastic, run repeated trials or pass@k before deciding.
+
+## Anti-patterns
+
+| Anti-pattern | Risk |
+| --- | --- |
+| Treating one GUI smoke result as a benchmark score | It proves smoke only, not runtime quality. |
+| Changing model, prompt, tool, and verifier in one run | Attribution is impossible. |
+| Relaxing the verifier to raise the score | The score improves while the product gets worse. |
+| Judging only final answers without trajectories | Tool, permission, context, and cleanup failures disappear. |
+| Skipping P0 QC because the candidate scored higher | Benchmarking is not a release-gate replacement. |
+
+
+# Project classification
 
 Source: https://limecloud.github.io/agentqc/en/authoring/project-classification
 
@@ -955,7 +1261,7 @@ Classification is not:
 Classification only selects the risks and evidence lanes that must be proven.
 
 
-# Gate Matrix
+# Gate matrix
 
 Source: https://limecloud.github.io/agentqc/en/authoring/gate-matrix
 
@@ -969,7 +1275,7 @@ Gate names are families, not framework commands. A project maps each family to l
 
 | Profile | Minimum gate families | Optional escalation gates |
 | --- | --- | --- |
-| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release` |
+| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release`, `benchmark-eval` |
 | `agent-sdk-api` | `static`, `unit`, `contract-protocol`, `fake-integration` | `distribution-release`, `live-provider`, `semantic-eval` |
 | `agent-tool-mcp-gateway` | `contract-protocol`, `fake-integration`, `runtime-e2e` | `stress-concurrency`, `live-provider`, `review`, `property-fuzz` |
 | `multi-channel-agent-gateway` | `static`, `unit`, `contract-protocol`, `fake-integration` | `live-provider`, `distribution-release`, `semantic-eval`, `stress-concurrency` |
@@ -977,7 +1283,7 @@ Gate names are families, not framework commands. A project maps each family to l
 | `agent-skills-plugins` | `static`, `contract-protocol`, `fake-integration` | `distribution-release`, `review`, `semantic-eval`, `live-provider` |
 | `background-agent-scheduler` | `unit`, `fake-integration`, `stress-concurrency` | `runtime-e2e`, `live-provider`, `review`, `distribution-release` |
 | `agent-distribution-release` | `static`, `distribution-release` | `runtime-e2e`, `live-provider`, `review`, `stress-concurrency` |
-| `agent-evals-quality` | `semantic-eval`, `review` | `live-provider`, `stress-concurrency`, `distribution-release` |
+| `agent-evals-quality` | `semantic-eval`, `review` | `benchmark-eval`, `live-provider`, `stress-concurrency`, `distribution-release` |
 
 ## Surface add-ons
 
@@ -1008,6 +1314,7 @@ Escalate gates when the change touches:
 | package/install/release metadata | `distribution-release`, clean install, manifest, version/lock consistency |
 | live provider, external network API, or model backend | explicit `live-provider`, credential scope, budget, redaction |
 | model prompt, rubric, eval, or judge behavior | `semantic-eval`, `review`, baseline delta, examples |
+| runtime prompt, tool definition, context policy, or model-routing hill climb | `benchmark-eval`, `runtime-e2e`, trajectory/reward evidence, P0 QC regression check |
 | multi-agent, subagent, background, or remote teammate work | `runtime-e2e`, `stress-concurrency`, surface/task evidence |
 
 ## Minimal and strong gates
@@ -1024,6 +1331,7 @@ Escalate gates when the change touches:
 | "Scheduler works" | deterministic unit | restart/reclaim, duplicate-work proof, race/stress |
 | "Package is releasable" | build output | clean install, package manifest, Docker/OS matrix, supply-chain |
 | "Model quality improved" | one rubric pass | baseline delta, judge output, human review, failing examples |
+| "Runtime candidate is better" | frozen dataset and one baseline/candidate trial | repeated trials or pass@k, reward details, trajectory review, failure taxonomy |
 
 ## Evidence minimums
 
@@ -1034,6 +1342,7 @@ Escalate gates when the change touches:
 - `live-provider` gates need redacted request/response refs, credential scope, and budget/cost notes.
 - `distribution-release` gates need package manifests, install output, Docker smoke, or OS matrix proof.
 - `semantic-eval` gates need rubric, model/judge outputs, baseline delta, and waiver threshold.
+- `benchmark-eval` gates need dataset/task version, baseline/candidate configs, trial trajectories, reward details, aggregate deltas, and promotion/revert decision.
 
 ## Framework mapping examples
 
@@ -1056,7 +1365,7 @@ Escalate gates when the change touches:
 | Waiver with no owner/expiry | unbounded risk |
 
 
-# Interaction Surface Testing
+# Interaction surface testing
 
 Source: https://limecloud.github.io/agentqc/en/authoring/interaction-surface-testing
 
@@ -1324,7 +1633,7 @@ Agent UI contributes a reusable projection checklist. For every Agent QC `ui-int
 This checklist is not a visual design requirement. It is a fact-ownership requirement.
 
 
-# Qcloop Integration
+# qcloop integration
 
 Source: https://limecloud.github.io/agentqc/en/authoring/qcloop-integration
 
@@ -1383,7 +1692,7 @@ Verifier output SHOULD be strict JSON:
 | `pending` / `running` | Plan is incomplete. |
 
 
-# Evidence Driven Verdicts
+# Evidence-driven verdicts
 
 Source: https://limecloud.github.io/agentqc/en/authoring/evidence-driven-verdicts
 
@@ -1528,7 +1837,7 @@ Before finalizing a report:
 - remaining risk is written in plain language.
 
 
-# Acceptance Scenarios
+# Acceptance scenarios
 
 Source: https://limecloud.github.io/agentqc/en/authoring/acceptance-scenarios
 
@@ -1782,6 +2091,18 @@ Pass condition: incomplete proof is visible and accountable.
 
 Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 
+## 22. Benchmark hill climbing
+
+1. A frozen dataset and task set are selected from real Lime failures or high-risk flows.
+2. Baseline and candidate configs differ by exactly one variable.
+3. Each trial stores trajectory, runtime transcript, reward details, artifacts, timeout/cost metrics, and cleanup evidence.
+4. Aggregate comparison reports reward delta, timeout rate, evidence completeness, and P0 QC regression count.
+5. Candidate promotion is blocked if required QC gates regress, even when reward improves.
+
+Pass condition: the improvement claim is reproducible, attributable, and still compatible with required Agent QC gates.
+
+Evidence: dataset/task version, baseline/candidate configs, trial trajectories, reward details, comparison summary, Agent QC report refs.
+
 ## Scenario selection guide
 
 | Project shape | Must include |
@@ -1791,10 +2112,11 @@ Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 | OpenClaw-like channel/WebUI gateway | scenarios 7, 9, 10, 17, 18, 19 |
 | Hermes-like background/browser agent | scenarios 9, 14, 15, 18, 19 |
 | Desktop GUI / native bridge | scenarios 7, 8, 9, 12, 21 |
-| Eval/QA lab | scenarios 17, 20, 21 |
+| Eval/QA lab | scenarios 17, 20, 21, 22 |
+| Lime internal benchmark | scenarios 1, 5, 7, 9, 17, 22 |
 
 
-# Evidence Contract
+# Evidence contract
 
 Source: https://limecloud.github.io/agentqc/en/contracts/evidence-contract
 
@@ -1807,7 +2129,7 @@ A verdict is only as strong as the evidence it references. This contract defines
 | Field | Required | Description |
 | --- | --- | --- |
 | `id` | Yes | Stable evidence id inside the report. |
-| `kind` | Yes | Evidence kind such as `command-log`, `test-report`, `protocol-transcript`, `surface-artifact`, `release-artifact`, `eval-artifact`, `review-note`, or `qcloop-run`. |
+| `kind` | Yes | Evidence kind such as `command-log`, `test-report`, `protocol-transcript`, `surface-artifact`, `release-artifact`, `eval-artifact`, `benchmark-artifact`, `trajectory`, `reward-details`, `review-note`, or `qcloop-run`. |
 | `source` | Yes | Local path, artifact URL, CI URL, qcloop id, or evidence service id. |
 | `scope` | Yes | Case id, gate id, command, surface, profile, or release target covered. |
 | `created_at` | Recommended | Timestamp or run id. |
@@ -1846,6 +2168,7 @@ A verdict is only as strong as the evidence it references. This contract defines
 | `stress-concurrency` | worker timeline, seed/config, duration, race/retry result |
 | `distribution-release` | package manifest, clean install, Docker/OS matrix, version output |
 | `semantic-eval` | dataset/rubric, model/judge info, baseline delta, threshold |
+| `benchmark-eval` | dataset/task version, baseline and candidate configs, trial trajectory, reward details, aggregate delta, promotion/revert decision |
 | `review` | reviewer identity, scope, evidence refs, decision |
 
 ## Surface evidence add-ons
@@ -1893,10 +2216,11 @@ A report is ready to publish when:
 - every `blocked`, `exhausted`, `waived`, or `needs-review` status explains why it is not a pass;
 - live-provider evidence is redacted and budgeted;
 - surface evidence links visible behavior to runtime or protocol facts;
+- benchmark evidence includes frozen dataset, trial trajectories, reward details, and baseline/candidate configs when improvement is claimed;
 - remaining risk and next action are explicit.
 
 
-# Performance And Reliability Metrics
+# Performance and reliability metrics
 
 Source: https://limecloud.github.io/agentqc/en/contracts/performance-and-reliability-metrics
 
@@ -1981,6 +2305,24 @@ Hermes-style projects should pin deterministic clock/env for normal tests and re
 
 Codex-style projects may use Bazel/nextest/release binaries. OpenClaw-style projects may use Docker/install smoke and plugin release checks. Agent QC only requires the evidence shape.
 
+
+## Benchmark and hill-climbing metrics
+
+| Metric | Meaning | Evidence |
+| --- | --- | --- |
+| `mean_reward` | Average verifier reward across tasks or trials | reward.json aggregate |
+| `pass_rate` | Fraction of trials with passing reward/status | trial table |
+| `pass_at_k` | Whether at least one of k attempts passes | repeated trial set |
+| `mean_reward_delta` | Candidate minus baseline reward | baseline/candidate summary |
+| `timeout_rate` | Fraction of trials ending in timeout | trial status and duration |
+| `verifier_error_rate` | Verifier failures independent of agent behavior | verifier logs |
+| `evidence_completeness_rate` | Trials with required trajectory/reward/artifact refs | evidence report |
+| `cost_per_pass` | Model/provider/runtime cost divided by passes | cost and reward summary |
+| `tokens_per_trial` | Input/output/cache tokens per trial | runtime/provider telemetry |
+| `p0_qc_gate_regression_count` | Required QC gates that regressed while benchmark improved | Agent QC report |
+
+A candidate can improve product quality only when benchmark metrics and required QC gates agree. A higher `mean_reward` with lower evidence completeness is not a clean win.
+
 ## Suggested threshold policy
 
 A QC plan SHOULD define:
@@ -2005,7 +2347,7 @@ When a performance or reliability gate fails, preserve:
 - whether the failure blocks release, needs review, or can be waived.
 
 
-# Agent Project Patterns
+# Agent project patterns
 
 Source: https://limecloud.github.io/agentqc/en/reference/agent-project-patterns
 
@@ -2083,7 +2425,7 @@ Agent QC profile mapping: `agent-runtime-cli`, `background-agent-scheduler`, `mu
 6. Normalize environment for agent tests: credentials, time, locale, working directory, concurrency, and sandbox.
 
 
-# Flow And Taxonomy
+# Flow and taxonomy
 
 Source: https://limecloud.github.io/agentqc/en/reference/flow-and-taxonomy
 
@@ -2101,7 +2443,7 @@ Compatible QC reports MUST:
 - name touched interaction surfaces when user-visible behavior is involved;
 - map each required gate to concrete local commands, CI jobs, qcloop items, or review steps;
 - preserve inspectable evidence refs for every pass/fail/blocked/exhausted/waived verdict;
-- separate deterministic, runtime, surface, live-provider, release, and semantic-eval claims;
+- separate deterministic, runtime, surface, live-provider, release, semantic-eval, and benchmark-improvement claims;
 - state limitations and waivers explicitly.
 
 Compatible QC reports MUST NOT:
@@ -2180,6 +2522,7 @@ Gate families describe validation style, not framework names.
 | `stress-concurrency` | races, queue, leases, retries, long runs | scheduler, parallel agents, workers, or locks change |
 | `distribution-release` | package/install/Docker/OS matrix | anything shipped outside source changes |
 | `semantic-eval` | task quality, prompt, rubric, judge | model behavior or output quality is the product |
+| `benchmark-eval` | frozen tasks, trials, rewards, trajectories | claiming a candidate runtime/prompt/tool/context profile is better |
 | `review` | human/LLM review | safety, policy, UX, or semantic judgment is required |
 
 ### Evidence kind
@@ -2194,6 +2537,8 @@ Gate families describe validation style, not framework names.
 | `browser-diagnostic` | console, network, DOM/a11y snapshot | route, selector or accessibility assertion |
 | `release-artifact` | package manifest, tarball list, Docker smoke | version, platform, install command |
 | `eval-artifact` | rubric, judge output, baseline diff | dataset, model/judge, threshold |
+| `benchmark-artifact` | reward.json, reward-details, comparison summary | dataset/task version, config ids, trial ids |
+| `trajectory` | agent tool/action/event trace | task id, trial id, runtime/model config, redaction |
 | `review-note` | human or LLM review | reviewer, scope, evidence refs, decision |
 | `qcloop-run` | attempt and QC round refs | item value, attempt id, verifier feedback |
 
@@ -2223,6 +2568,7 @@ Agent QC should name who owns each fact instead of treating the report as the ow
 | Artifact/release | deliverables, package contents, versions | capture manifest and install proof |
 | Scheduler | leases, checkpoints, retries, workers | capture timeline and duplicate-work proof |
 | Eval system | rubrics, judge outputs, baselines | capture dataset, threshold, and deltas |
+| Benchmark runner | frozen tasks, trials, trajectories, rewards | capture config snapshots, reward details, and comparison decisions |
 
 ## Standard case envelope
 
@@ -2273,7 +2619,7 @@ A project can claim Agent QC compatibility only if these cases are representable
 8. Semantic eval regression with rubric, judge output, baseline delta, and reviewer note.
 
 
-# Star Project Testing Systems
+# Star project testing systems
 
 Source: https://limecloud.github.io/agentqc/en/reference/star-project-testing-systems
 
@@ -2616,15 +2962,15 @@ Agent QC generalizes these projects into ten reusable rules:
 | Release | build succeeds | package manifest, install smoke, Docker/platform matrix, lock/security check |
 
 
-# Source Index
+# Source index
 
 Source: https://limecloud.github.io/agentqc/en/reference/source-index
 
 # Source index
 
-Agent QC v0.4.0 is derived from local project inspection plus public documentation. Local repositories are case studies, not normative dependencies.
+Agent QC v0.5.0 is derived from local project inspection plus public documentation. Local repositories are case studies, not normative dependencies.
 
-Last reviewed: 2026-05-10.
+Last reviewed: 2026-05-17.
 
 ## Citation format
 
@@ -2659,6 +3005,9 @@ Use source ids in design notes or changelogs:
 | --- | --- | --- | --- |
 | `SRC-AGENTSKILLS-SPEC` | `https://agentskills.io/specification` | Markdown/frontmatter style, directory-as-package, progressive disclosure, fields/constraints/examples. | Agent QC docs use concise entry pages, tables, examples, and deeper reference pages. |
 | `SRC-AGENTSKILLS-EVAL` | `https://agentskills.io/skill-creation/evaluating-skills` | Eval-driven iteration, clean-context runs, assertion grading, execution transcripts, human feedback. | qcloop and eval gates require attempts, verifier feedback, rubrics, and evidence refs. |
+| `SRC-HARBOR-DOCS` | `https://www.harborframework.com/docs`, `/docs/tasks`, `/docs/run-jobs/run-evals`, `/docs/rewardkit` | dataset/task/trial lifecycle, `/logs/agent/trajectory.json`, reward files, reward-details, artifacts, separate verifier environments. | Benchmark and hill-climbing gates require frozen tasks, trial trajectories, reward details, artifact refs, and verifier isolation. |
+| `SRC-CLINE-HILL-CLIMBING` | `https://cline.bot/blog/a-practical-guide-to-hill-climbing` | baseline runs, failure analysis, one-variable A/B changes, repeated runs/pass@k for noise, Harbor execution. | Agent QC adds `benchmark-eval` and the hill-climbing authoring loop for improving Lime without conflating benchmark scores with release gates. |
+| `SRC-YAGE-RUNTIME-BATTLEFIELD` | `https://yage.ai/share/agent-runtime-battlefield-20260516.html` | runtime/harness can materially change benchmark outcomes for the same model; builders should A/B on their own repos. | Agent QC treats runtime/prompt/tool/context profiles as benchmark variables and requires project-local tasks for Lime improvement. |
 | `SRC-PLAYWRIGHT-CONFIG` | `https://playwright.dev/docs/test-configuration` and Context7 `/microsoft/playwright.dev` | projects, webServer, retries, reporters, trace, screenshot, video, test isolation. | WebUI/browser/desktop gates require trace/screenshot/video policy, browser project/device, console/network, and server startup evidence when relevant. |
 | `SRC-VITEST-DOCS` | `https://vitest.dev/guide/cli.html` and Context7 `/vitest-dev/vitest` | CLI run/watch, projects, reporter JSON/JUnit, coverage, browser mode, snapshots. | JS projects map Vitest suites to deterministic, browser, contract, and report evidence lanes. |
 | `SRC-PYTEST-MARKERS` | `https://docs.pytest.org/en/stable/example/markers.html` and Context7 `/pytest-dev/pytest` | markers, `-m` selection, skip/xfail, parametrization, test routing. | Python projects separate deterministic, integration, e2e, live, and slow suites with explicit selection and evidence. |
@@ -2673,16 +3022,20 @@ Use source ids in design notes or changelogs:
 | Surface evidence must link visible frame to runtime facts | `SRC-AGENTUI-BEST-PRACTICES`, `SRC-AGENTUI-FLOW`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Expanded acceptance scenarios | `SRC-AGENTUI-ACCEPTANCE`, `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | TUI evidence | `SRC-CODEX-LOCAL`, `SRC-CLAUDECODE-LOCAL`, `SRC-HERMES-LOCAL` |
-| WebUI/browser evidence | `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
+| WebUI/browser evidence | `SRC-HARBOR-DOCS` | `https://www.harborframework.com/docs`, `/docs/tasks`, `/docs/run-jobs/run-evals`, `/docs/rewardkit` | dataset/task/trial lifecycle, `/logs/agent/trajectory.json`, reward files, reward-details, artifacts, separate verifier environments. | Benchmark and hill-climbing gates require frozen tasks, trial trajectories, reward details, artifact refs, and verifier isolation. |
+| `SRC-CLINE-HILL-CLIMBING` | `https://cline.bot/blog/a-practical-guide-to-hill-climbing` | baseline runs, failure analysis, one-variable A/B changes, repeated runs/pass@k for noise, Harbor execution. | Agent QC adds `benchmark-eval` and the hill-climbing authoring loop for improving Lime without conflating benchmark scores with release gates. |
+| `SRC-YAGE-RUNTIME-BATTLEFIELD` | `https://yage.ai/share/agent-runtime-battlefield-20260516.html` | runtime/harness can materially change benchmark outcomes for the same model; builders should A/B on their own repos. | Agent QC treats runtime/prompt/tool/context profiles as benchmark variables and requires project-local tasks for Lime improvement. |
+| `SRC-PLAYWRIGHT-CONFIG`, `SRC-VITEST-DOCS`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Python suite routing | `SRC-PYTEST-MARKERS`, `SRC-HERMES-LOCAL` |
 | Live provider separation | `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Scheduler/background gates | `SRC-HERMES-LOCAL`, `SRC-AGENTUI-ACCEPTANCE` |
 | Release/distribution gates | `SRC-CODEX-LOCAL`, `SRC-OPENCLAW-LOCAL`, `SRC-HERMES-LOCAL` |
 | Progressive documentation style | `SRC-AGENTSKILLS-SPEC`, `SRC-AGENTKNOWLEDGE-SPEC`, `SRC-AGENTUI-BEST-PRACTICES` |
 | qcloop/eval evidence loop | `SRC-AGENTSKILLS-EVAL`, `SRC-OPENCLAW-LOCAL` |
+| Benchmark/hill-climbing loop | `SRC-HARBOR-DOCS`, `SRC-CLINE-HILL-CLIMBING`, `SRC-YAGE-RUNTIME-BATTLEFIELD`, `SRC-PLAYWRIGHT-CONFIG` |
 
 
-# Agent Ecosystem
+# Agent standards ecosystem
 
 Source: https://limecloud.github.io/agentqc/en/reference/agent-ecosystem
 
@@ -2774,7 +3127,7 @@ Source: https://limecloud.github.io/agentqc/en/reference/glossary
 | Remaining risk | What current evidence still does not prove. |
 
 
-# Codex Runtime Cli
+# Codex runtime CLI example
 
 Source: https://limecloud.github.io/agentqc/en/examples/codex-runtime-cli
 
@@ -2941,7 +3294,7 @@ Public QC plan JSON:
 ```
 
 
-# Claudecode Tui Runtime
+# Claude Code TUI runtime snapshot example
 
 Source: https://limecloud.github.io/agentqc/en/examples/claudecode-tui-runtime
 
@@ -3112,7 +3465,7 @@ Public QC plan JSON:
 ```
 
 
-# Openclaw Channel Gateway
+# OpenClaw channel gateway example
 
 Source: https://limecloud.github.io/agentqc/en/examples/openclaw-channel-gateway
 
@@ -3285,7 +3638,7 @@ Public QC plan JSON:
 ```
 
 
-# Hermes Background Agent
+# Hermes background agent example
 
 Source: https://limecloud.github.io/agentqc/en/examples/hermes-background-agent
 
@@ -3457,7 +3810,7 @@ Public QC plan JSON:
 ```
 
 
-# Qcloop Batch
+# qcloop batch example
 
 Source: https://limecloud.github.io/agentqc/en/examples/qcloop-batch
 

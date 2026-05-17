@@ -22,7 +22,7 @@ The standard applies to any Agent project where "the agent says it works" is not
 - A testing-technique taxonomy covering snapshots, smoke tests, black-box, white-box, gray-box, replay, chaos, and release install proof.
 - Interaction surface rules for CLI streams, TUI, WebUI, desktop GUI, browser automation, channel UI, and eval UI.
 - Best practices adapted from Agent UI runtime-backed projection and Agent Skills progressive disclosure.
-- Portable evidence and performance/reliability contracts.
+- Portable evidence, performance/reliability, benchmark, and hill-climbing contracts.
 - Core objects: `qc_plan`, `qc_case`, `qc_gate`, `qc_run`, `qc_verdict`, `qc_evidence`, and `qc_report`.
 - Evidence-driven verdict rules for pass, fail, blocked, exhausted, waived, and needs-review.
 - qcloop integration for repeated independent QC cases.
@@ -51,6 +51,7 @@ A real project usually combines several profiles.
 - [Quickstart](docs/en/authoring/quickstart.md)
 - [Best practices](docs/en/authoring/best-practices.md)
 - [Test techniques and compositions](docs/en/authoring/test-techniques-and-compositions.md)
+- [Benchmark and hill climbing](docs/en/authoring/benchmark-and-hill-climbing.md)
 - [Project classification](docs/en/authoring/project-classification.md)
 - [Gate matrix](docs/en/authoring/gate-matrix.md)
 - [Interaction surface testing](docs/en/authoring/interaction-surface-testing.md)

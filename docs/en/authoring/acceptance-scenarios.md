@@ -253,6 +253,18 @@ Pass condition: incomplete proof is visible and accountable.
 
 Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 
+## 22. Benchmark hill climbing
+
+1. A frozen dataset and task set are selected from real Lime failures or high-risk flows.
+2. Baseline and candidate configs differ by exactly one variable.
+3. Each trial stores trajectory, runtime transcript, reward details, artifacts, timeout/cost metrics, and cleanup evidence.
+4. Aggregate comparison reports reward delta, timeout rate, evidence completeness, and P0 QC regression count.
+5. Candidate promotion is blocked if required QC gates regress, even when reward improves.
+
+Pass condition: the improvement claim is reproducible, attributable, and still compatible with required Agent QC gates.
+
+Evidence: dataset/task version, baseline/candidate configs, trial trajectories, reward details, comparison summary, Agent QC report refs.
+
 ## Scenario selection guide
 
 | Project shape | Must include |
@@ -262,4 +274,5 @@ Evidence: waiver object, blocker note, replacement evidence, follow-up link.
 | OpenClaw-like channel/WebUI gateway | scenarios 7, 9, 10, 17, 18, 19 |
 | Hermes-like background/browser agent | scenarios 9, 14, 15, 18, 19 |
 | Desktop GUI / native bridge | scenarios 7, 8, 9, 12, 21 |
-| Eval/QA lab | scenarios 17, 20, 21 |
+| Eval/QA lab | scenarios 17, 20, 21, 22 |
+| Lime internal benchmark | scenarios 1, 5, 7, 9, 17, 22 |

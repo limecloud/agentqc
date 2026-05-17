@@ -15,6 +15,7 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [Quickstart](https://limecloud.github.io/agentqc/en/authoring/quickstart)
 - [Best practices](https://limecloud.github.io/agentqc/en/authoring/best-practices)
 - [Test techniques and compositions](https://limecloud.github.io/agentqc/en/authoring/test-techniques-and-compositions)
+- [Benchmark and hill climbing](https://limecloud.github.io/agentqc/en/authoring/benchmark-and-hill-climbing)
 - [Project classification](https://limecloud.github.io/agentqc/en/authoring/project-classification)
 - [Gate matrix](https://limecloud.github.io/agentqc/en/authoring/gate-matrix)
 - [Interaction surface testing](https://limecloud.github.io/agentqc/en/authoring/interaction-surface-testing)
@@ -49,11 +50,13 @@ Use this file as the concise navigation index for LLMs. Use `llms-full.txt` when
 - [QC plan schema](https://limecloud.github.io/agentqc/schemas/qc-plan.schema.json)
 - [QC case schema](https://limecloud.github.io/agentqc/schemas/qc-case.schema.json)
 - [QC verdict schema](https://limecloud.github.io/agentqc/schemas/qc-verdict.schema.json)
+- [QC benchmark schema](https://limecloud.github.io/agentqc/schemas/qc-benchmark.schema.json)
 - [Generic Agent QC plan](https://limecloud.github.io/agentqc/examples/agent-qc-plan.json)
 - [Codex QC plan](https://limecloud.github.io/agentqc/examples/codex-qc-plan.json)
 - [Claude Code QC plan](https://limecloud.github.io/agentqc/examples/claudecode-qc-plan.json)
 - [OpenClaw QC plan](https://limecloud.github.io/agentqc/examples/openclaw-qc-plan.json)
 - [Hermes QC plan](https://limecloud.github.io/agentqc/examples/hermes-qc-plan.json)
+- [Lime benchmark experiment](https://limecloud.github.io/agentqc/examples/lime-benchmark-experiment.json)
 - [qcloop job request](https://limecloud.github.io/agentqc/examples/qcloop-job-request.json)
 
 ## Versions

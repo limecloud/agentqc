@@ -84,6 +84,24 @@ Hermes 风格项目应在普通测试中固定 deterministic clock/env，并把 
 
 Codex 风格项目可能使用 Bazel/nextest/release binaries。OpenClaw 风格项目可能使用 Docker/install smoke 和 plugin release checks。Agent QC 只要求证据形状。
 
+
+## Benchmark 与 hill-climbing 指标
+
+| Metric | 含义 | 证据 |
+| --- | --- | --- |
+| `mean_reward` | task 或 trial 的平均 verifier reward | reward.json aggregate |
+| `pass_rate` | trial 中通过的比例 | trial table |
+| `pass_at_k` | k 次尝试中至少一次通过 | repeated trial set |
+| `mean_reward_delta` | candidate reward 减 baseline reward | baseline/candidate summary |
+| `timeout_rate` | 超时 trial 占比 | trial status 与 duration |
+| `verifier_error_rate` | 与 agent 行为无关的 verifier 故障率 | verifier logs |
+| `evidence_completeness_rate` | 包含必需 trajectory/reward/artifact refs 的 trial 占比 | evidence report |
+| `cost_per_pass` | model/provider/runtime 成本除以 pass 数 | cost 与 reward summary |
+| `tokens_per_trial` | 每个 trial 的 input/output/cache tokens | runtime/provider telemetry |
+| `p0_qc_gate_regression_count` | benchmark 变好但必需 QC gate 回退的数量 | Agent QC report |
+
+只有 benchmark 指标和必需 QC gates 同时支持时，candidate 才能算让产品质量变好。`mean_reward` 更高但 evidence completeness 更低，不是干净胜利。
+
 ## 建议阈值策略
 
 QC 计划应定义：

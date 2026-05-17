@@ -17,7 +17,7 @@ Compatible QC reports MUST:
 - name touched interaction surfaces when user-visible behavior is involved;
 - map each required gate to concrete local commands, CI jobs, qcloop items, or review steps;
 - preserve inspectable evidence refs for every pass/fail/blocked/exhausted/waived verdict;
-- separate deterministic, runtime, surface, live-provider, release, and semantic-eval claims;
+- separate deterministic, runtime, surface, live-provider, release, semantic-eval, and benchmark-improvement claims;
 - state limitations and waivers explicitly.
 
 Compatible QC reports MUST NOT:
@@ -96,6 +96,7 @@ Gate families describe validation style, not framework names.
 | `stress-concurrency` | races, queue, leases, retries, long runs | scheduler, parallel agents, workers, or locks change |
 | `distribution-release` | package/install/Docker/OS matrix | anything shipped outside source changes |
 | `semantic-eval` | task quality, prompt, rubric, judge | model behavior or output quality is the product |
+| `benchmark-eval` | frozen tasks, trials, rewards, trajectories | claiming a candidate runtime/prompt/tool/context profile is better |
 | `review` | human/LLM review | safety, policy, UX, or semantic judgment is required |
 
 ### Evidence kind
@@ -110,6 +111,8 @@ Gate families describe validation style, not framework names.
 | `browser-diagnostic` | console, network, DOM/a11y snapshot | route, selector or accessibility assertion |
 | `release-artifact` | package manifest, tarball list, Docker smoke | version, platform, install command |
 | `eval-artifact` | rubric, judge output, baseline diff | dataset, model/judge, threshold |
+| `benchmark-artifact` | reward.json, reward-details, comparison summary | dataset/task version, config ids, trial ids |
+| `trajectory` | agent tool/action/event trace | task id, trial id, runtime/model config, redaction |
 | `review-note` | human or LLM review | reviewer, scope, evidence refs, decision |
 | `qcloop-run` | attempt and QC round refs | item value, attempt id, verifier feedback |
 
@@ -139,6 +142,7 @@ Agent QC should name who owns each fact instead of treating the report as the ow
 | Artifact/release | deliverables, package contents, versions | capture manifest and install proof |
 | Scheduler | leases, checkpoints, retries, workers | capture timeline and duplicate-work proof |
 | Eval system | rubrics, judge outputs, baselines | capture dataset, threshold, and deltas |
+| Benchmark runner | frozen tasks, trials, trajectories, rewards | capture config snapshots, reward details, and comparison decisions |
 
 ## Standard case envelope
 

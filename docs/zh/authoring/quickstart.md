@@ -76,6 +76,7 @@ description: 为任意 Agent 项目创建 Agent QC 计划。
 4. live gates：`live-provider` 只能显式 opt-in；
 5. release gates：有任何对外发布物时包含 `distribution-release`；
 6. semantic gates：质量判断相关时包含 `semantic-eval` 和 `review`。
+7. benchmark gates：声明 runtime、prompt、tool、context 或 routing 改动让 Lime 变好时包含 `benchmark-eval`。
 
 ## 6. 编写行为优先的 cases
 

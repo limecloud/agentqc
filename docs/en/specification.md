@@ -18,7 +18,8 @@ Agent QC standardizes:
 3. Gate taxonomy from static checks to live provider and release smoke.
 4. Evidence-backed pass/fail semantics.
 5. qcloop-compatible batch QC for repeated independent cases.
-6. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
+6. Benchmark and hill-climbing evidence for runtime, prompt, tool, and context improvement.
+7. Case-study mapping for representative runtime, TUI, gateway, scheduler, UI, skills, release, and eval projects.
 
 Agent QC does not standardize any single programming language, CI vendor, test framework, browser driver, model protocol, storage backend, or UI skin.
 
@@ -32,6 +33,7 @@ The latest standard is split by use:
 | [Quickstart](./authoring/quickstart) | fastest path to a QC plan |
 | [Best practices](./authoring/best-practices) | authoring rules and anti-patterns |
 | [Test techniques and compositions](./authoring/test-techniques-and-compositions) | snapshots, smoke tests, black-box, white-box, runtime/UI/skills testing, and advanced evidence braids |
+| [Benchmark and hill climbing](./authoring/benchmark-and-hill-climbing) | frozen tasks, trials, rewards, and trajectories for proving Lime improves |
 | [Project classification](./authoring/project-classification) | profile taxonomy and mixed-profile rules |
 | [Gate matrix](./authoring/gate-matrix) | profile/surface/risk to gate mapping |
 | [Interaction surface testing](./authoring/interaction-surface-testing) | CLI/TUI/WebUI/desktop/browser/channel/eval UI evidence |
@@ -88,7 +90,7 @@ A `ui-interaction` gate SHOULD name one of these surfaces. A pass without surfac
 
 ## Gate families
 
-Gate families define the quality boundary. They are implemented with concrete techniques such as static checks, white-box unit tests, property/fuzz tests, golden transcripts, snapshots, contract tests, fake integrations, black-box smoke, runtime E2E, surface E2E, replay/regression, stress/chaos, security/adversarial tests, semantic evals, and release install smoke.
+Gate families define the quality boundary. They are implemented with concrete techniques such as static checks, white-box unit tests, property/fuzz tests, golden transcripts, snapshots, contract tests, fake integrations, black-box smoke, runtime E2E, surface E2E, replay/regression, stress/chaos, security/adversarial tests, semantic evals, benchmark evals, and release install smoke.
 
 | Family | Purpose | Evidence examples |
 | --- | --- | --- |
@@ -103,6 +105,7 @@ Gate families define the quality boundary. They are implemented with concrete te
 | `stress-concurrency` | races, leases, retries, long-running loops | stress report, worker timeline, seed, benchmark |
 | `distribution-release` | install, package, Docker, cross-platform release readiness | tarball manifest, Docker smoke, OS matrix, release check |
 | `semantic-eval` | model output quality, grounding, policy, user intent | eval result, rubric, judge output, baseline delta |
+| `benchmark-eval` | runtime/prompt/tool/context changes outperforming a baseline | dataset/task version, trial trajectory, reward details, pass@k or delta |
 | `review` | human or LLM review | reviewer decision, rubric, evidence refs |
 
 ## Status values

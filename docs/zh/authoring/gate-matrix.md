@@ -13,7 +13,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 
 | Profile | Minimum gate families | Optional escalation gates |
 | --- | --- | --- |
-| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release` |
+| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release`, `benchmark-eval` |
 | `agent-sdk-api` | `static`, `unit`, `contract-protocol`, `fake-integration` | `distribution-release`, `live-provider`, `semantic-eval` |
 | `agent-tool-mcp-gateway` | `contract-protocol`, `fake-integration`, `runtime-e2e` | `stress-concurrency`, `live-provider`, `review`, `property-fuzz` |
 | `multi-channel-agent-gateway` | `static`, `unit`, `contract-protocol`, `fake-integration` | `live-provider`, `distribution-release`, `semantic-eval`, `stress-concurrency` |
@@ -21,7 +21,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 | `agent-skills-plugins` | `static`, `contract-protocol`, `fake-integration` | `distribution-release`, `review`, `semantic-eval`, `live-provider` |
 | `background-agent-scheduler` | `unit`, `fake-integration`, `stress-concurrency` | `runtime-e2e`, `live-provider`, `review`, `distribution-release` |
 | `agent-distribution-release` | `static`, `distribution-release` | `runtime-e2e`, `live-provider`, `review`, `stress-concurrency` |
-| `agent-evals-quality` | `semantic-eval`, `review` | `live-provider`, `stress-concurrency`, `distribution-release` |
+| `agent-evals-quality` | `semantic-eval`, `review` | `benchmark-eval`, `live-provider`, `stress-concurrency`, `distribution-release` |
 
 ## Surface add-ons
 
@@ -52,6 +52,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 | package/install/release metadata | `distribution-release`、clean install、manifest、version/lock consistency |
 | live provider、external network API 或 model backend | 显式 `live-provider`、credential scope、budget、redaction |
 | model prompt、rubric、eval 或 judge behavior | `semantic-eval`、`review`、baseline delta、examples |
+| runtime prompt、tool definition、context policy 或 model-routing hill climb | `benchmark-eval`、`runtime-e2e`、trajectory/reward evidence、P0 QC regression check |
 | multi-agent、subagent、background 或 remote teammate work | `runtime-e2e`、`stress-concurrency`、surface/task evidence |
 
 ## Minimal and strong gates
@@ -68,6 +69,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 | "Scheduler works" | deterministic unit | restart/reclaim、duplicate-work proof、race/stress |
 | "Package is releasable" | build output | clean install、package manifest、Docker/OS matrix、supply-chain |
 | "Model quality improved" | one rubric pass | baseline delta、judge output、human review、failing examples |
+| "Runtime candidate is better" | frozen dataset 与一次 baseline/candidate trial | repeated trials 或 pass@k、reward details、trajectory review、failure taxonomy |
 
 ## Evidence minimums
 
@@ -78,6 +80,7 @@ Gate 名称是 family，不是框架命令。项目需要把每个 family 映射
 - `live-provider` gates 需要 redacted request/response refs、credential scope 和 budget/cost notes。
 - `distribution-release` gates 需要 package manifests、install output、Docker smoke 或 OS matrix proof。
 - `semantic-eval` gates 需要 rubric、model/judge outputs、baseline delta 和 waiver threshold。
+- `benchmark-eval` gates 需要 dataset/task version、baseline/candidate configs、trial trajectories、reward details、aggregate deltas 和 promotion/revert decision。
 
 ## Framework mapping examples
 

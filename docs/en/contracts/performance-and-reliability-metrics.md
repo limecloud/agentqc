@@ -84,6 +84,24 @@ Hermes-style projects should pin deterministic clock/env for normal tests and re
 
 Codex-style projects may use Bazel/nextest/release binaries. OpenClaw-style projects may use Docker/install smoke and plugin release checks. Agent QC only requires the evidence shape.
 
+
+## Benchmark and hill-climbing metrics
+
+| Metric | Meaning | Evidence |
+| --- | --- | --- |
+| `mean_reward` | Average verifier reward across tasks or trials | reward.json aggregate |
+| `pass_rate` | Fraction of trials with passing reward/status | trial table |
+| `pass_at_k` | Whether at least one of k attempts passes | repeated trial set |
+| `mean_reward_delta` | Candidate minus baseline reward | baseline/candidate summary |
+| `timeout_rate` | Fraction of trials ending in timeout | trial status and duration |
+| `verifier_error_rate` | Verifier failures independent of agent behavior | verifier logs |
+| `evidence_completeness_rate` | Trials with required trajectory/reward/artifact refs | evidence report |
+| `cost_per_pass` | Model/provider/runtime cost divided by passes | cost and reward summary |
+| `tokens_per_trial` | Input/output/cache tokens per trial | runtime/provider telemetry |
+| `p0_qc_gate_regression_count` | Required QC gates that regressed while benchmark improved | Agent QC report |
+
+A candidate can improve product quality only when benchmark metrics and required QC gates agree. A higher `mean_reward` with lower evidence completeness is not a clean win.
+
 ## Suggested threshold policy
 
 A QC plan SHOULD define:

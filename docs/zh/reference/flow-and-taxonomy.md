@@ -17,7 +17,7 @@ Agent QC 是 Agent 项目质量的证据协议。兼容的 QC 计划会分类拥
 - 涉及用户可见行为时命名 interaction surfaces；
 - 把每个 required gate 映射到本地命令、CI job、qcloop item 或 review step；
 - 为每个 pass/fail/blocked/exhausted/waived verdict 保留可检查 evidence refs；
-- 分离 deterministic、runtime、surface、live-provider、release 和 semantic-eval 声明；
+- 分离 deterministic、runtime、surface、live-provider、release、semantic-eval 和 benchmark-improvement 声明；
 - 明确写出限制和 waivers。
 
 兼容 QC 报告不能：
@@ -96,6 +96,7 @@ Gate family 描述验证方式，不是框架名称。
 | `stress-concurrency` | races、queue、leases、retries、long runs | scheduler、parallel agents、workers 或 locks 变化 |
 | `distribution-release` | package/install/Docker/OS matrix | 有任何对外发布物变化 |
 | `semantic-eval` | task quality、prompt、rubric、judge | model 行为或输出质量是产品本身 |
+| `benchmark-eval` | frozen tasks、trials、rewards、trajectories | 声明 candidate runtime/prompt/tool/context profile 更好 |
 | `review` | human/LLM review | 需要 safety、policy、UX 或语义判断 |
 
 ### Evidence kind
@@ -110,6 +111,8 @@ Gate family 描述验证方式，不是框架名称。
 | `browser-diagnostic` | console、network、DOM/a11y snapshot | route、selector 或 accessibility assertion |
 | `release-artifact` | package manifest、tarball list、Docker smoke | version、platform、install command |
 | `eval-artifact` | rubric、judge output、baseline diff | dataset、model/judge、threshold |
+| `benchmark-artifact` | reward.json、reward-details、comparison summary | dataset/task version、config ids、trial ids |
+| `trajectory` | agent tool/action/event trace | task id、trial id、runtime/model config、redaction |
 | `review-note` | human 或 LLM review | reviewer、scope、evidence refs、decision |
 | `qcloop-run` | attempt 和 QC round refs | item value、attempt id、verifier feedback |
 
@@ -139,6 +142,7 @@ Agent QC 应说明每个事实由谁拥有，而不是让报告拥有一切。
 | Artifact/release | deliverables、package contents、versions | 采集 manifest 和 install proof |
 | Scheduler | leases、checkpoints、retries、workers | 采集 timeline 和 duplicate-work proof |
 | Eval system | rubrics、judge outputs、baselines | 采集 dataset、threshold 和 deltas |
+| Benchmark runner | frozen tasks、trials、trajectories、rewards | 采集 config snapshots、reward details 和 comparison decisions |
 
 ## 标准 case envelope
 

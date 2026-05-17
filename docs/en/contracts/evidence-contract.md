@@ -12,7 +12,7 @@ A verdict is only as strong as the evidence it references. This contract defines
 | Field | Required | Description |
 | --- | --- | --- |
 | `id` | Yes | Stable evidence id inside the report. |
-| `kind` | Yes | Evidence kind such as `command-log`, `test-report`, `protocol-transcript`, `surface-artifact`, `release-artifact`, `eval-artifact`, `review-note`, or `qcloop-run`. |
+| `kind` | Yes | Evidence kind such as `command-log`, `test-report`, `protocol-transcript`, `surface-artifact`, `release-artifact`, `eval-artifact`, `benchmark-artifact`, `trajectory`, `reward-details`, `review-note`, or `qcloop-run`. |
 | `source` | Yes | Local path, artifact URL, CI URL, qcloop id, or evidence service id. |
 | `scope` | Yes | Case id, gate id, command, surface, profile, or release target covered. |
 | `created_at` | Recommended | Timestamp or run id. |
@@ -51,6 +51,7 @@ A verdict is only as strong as the evidence it references. This contract defines
 | `stress-concurrency` | worker timeline, seed/config, duration, race/retry result |
 | `distribution-release` | package manifest, clean install, Docker/OS matrix, version output |
 | `semantic-eval` | dataset/rubric, model/judge info, baseline delta, threshold |
+| `benchmark-eval` | dataset/task version, baseline and candidate configs, trial trajectory, reward details, aggregate delta, promotion/revert decision |
 | `review` | reviewer identity, scope, evidence refs, decision |
 
 ## Surface evidence add-ons
@@ -98,4 +99,5 @@ A report is ready to publish when:
 - every `blocked`, `exhausted`, `waived`, or `needs-review` status explains why it is not a pass;
 - live-provider evidence is redacted and budgeted;
 - surface evidence links visible behavior to runtime or protocol facts;
+- benchmark evidence includes frozen dataset, trial trajectories, reward details, and baseline/candidate configs when improvement is claimed;
 - remaining risk and next action are explicit.

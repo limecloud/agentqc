@@ -13,7 +13,7 @@ Gate names are families, not framework commands. A project maps each family to l
 
 | Profile | Minimum gate families | Optional escalation gates |
 | --- | --- | --- |
-| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release` |
+| `agent-runtime-cli` | `static`, `unit`, `contract-protocol`, `runtime-e2e` | `property-fuzz`, `stress-concurrency`, `live-provider`, `distribution-release`, `benchmark-eval` |
 | `agent-sdk-api` | `static`, `unit`, `contract-protocol`, `fake-integration` | `distribution-release`, `live-provider`, `semantic-eval` |
 | `agent-tool-mcp-gateway` | `contract-protocol`, `fake-integration`, `runtime-e2e` | `stress-concurrency`, `live-provider`, `review`, `property-fuzz` |
 | `multi-channel-agent-gateway` | `static`, `unit`, `contract-protocol`, `fake-integration` | `live-provider`, `distribution-release`, `semantic-eval`, `stress-concurrency` |
@@ -21,7 +21,7 @@ Gate names are families, not framework commands. A project maps each family to l
 | `agent-skills-plugins` | `static`, `contract-protocol`, `fake-integration` | `distribution-release`, `review`, `semantic-eval`, `live-provider` |
 | `background-agent-scheduler` | `unit`, `fake-integration`, `stress-concurrency` | `runtime-e2e`, `live-provider`, `review`, `distribution-release` |
 | `agent-distribution-release` | `static`, `distribution-release` | `runtime-e2e`, `live-provider`, `review`, `stress-concurrency` |
-| `agent-evals-quality` | `semantic-eval`, `review` | `live-provider`, `stress-concurrency`, `distribution-release` |
+| `agent-evals-quality` | `semantic-eval`, `review` | `benchmark-eval`, `live-provider`, `stress-concurrency`, `distribution-release` |
 
 ## Surface add-ons
 
@@ -52,6 +52,7 @@ Escalate gates when the change touches:
 | package/install/release metadata | `distribution-release`, clean install, manifest, version/lock consistency |
 | live provider, external network API, or model backend | explicit `live-provider`, credential scope, budget, redaction |
 | model prompt, rubric, eval, or judge behavior | `semantic-eval`, `review`, baseline delta, examples |
+| runtime prompt, tool definition, context policy, or model-routing hill climb | `benchmark-eval`, `runtime-e2e`, trajectory/reward evidence, P0 QC regression check |
 | multi-agent, subagent, background, or remote teammate work | `runtime-e2e`, `stress-concurrency`, surface/task evidence |
 
 ## Minimal and strong gates
@@ -68,6 +69,7 @@ Escalate gates when the change touches:
 | "Scheduler works" | deterministic unit | restart/reclaim, duplicate-work proof, race/stress |
 | "Package is releasable" | build output | clean install, package manifest, Docker/OS matrix, supply-chain |
 | "Model quality improved" | one rubric pass | baseline delta, judge output, human review, failing examples |
+| "Runtime candidate is better" | frozen dataset and one baseline/candidate trial | repeated trials or pass@k, reward details, trajectory review, failure taxonomy |
 
 ## Evidence minimums
 
@@ -78,6 +80,7 @@ Escalate gates when the change touches:
 - `live-provider` gates need redacted request/response refs, credential scope, and budget/cost notes.
 - `distribution-release` gates need package manifests, install output, Docker smoke, or OS matrix proof.
 - `semantic-eval` gates need rubric, model/judge outputs, baseline delta, and waiver threshold.
+- `benchmark-eval` gates need dataset/task version, baseline/candidate configs, trial trajectories, reward details, aggregate deltas, and promotion/revert decision.
 
 ## Framework mapping examples
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Added `benchmark-eval` as an optional gate family for proving runtime, prompt, tool, context, or routing candidates improve against a frozen baseline.
+- Added benchmark and hill-climbing authoring guidance with Lime testing examples, Harbor-style task layout, Playwright evidence configuration, A/B commands, and promotion/revert rules.
+- Added `qc-benchmark.schema.json` and a Lime benchmark experiment example with dataset, task, trial, reward, trajectory, and comparison evidence.
+- Expanded evidence, performance, flow taxonomy, source index, schemas, navigation, and LLM entrypoints for benchmark artifacts and trajectories.
+
 ## v0.5.0 - 2026-05-10
 
 - Added a dedicated testing-technique and composition guide covering snapshots, smoke tests, black-box, white-box, gray-box, replay, chaos, security/adversarial checks, semantic eval, and release install smoke.

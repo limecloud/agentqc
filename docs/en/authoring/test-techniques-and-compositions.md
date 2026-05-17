@@ -37,6 +37,7 @@ Not every case needs all five, but every pass must state which strands are prese
 | Stress/concurrency/chaos | Race, lease, retry, cancellation, long-running resilience | worker timeline, seed/config, duration, cleanup | semantic answer quality |
 | Security/adversarial | Permission, prompt injection, path, SSRF, secret, policy boundaries | attack fixture, denial transcript, side-effect check | happy path usability |
 | Semantic eval | Output quality, grounding, tool choice, policy adherence | dataset, rubric, model/judge, baseline delta | deterministic code correctness |
+| Benchmark eval | Runtime/prompt/tool/context candidate improvement | frozen dataset, trial trajectories, reward details, baseline/candidate delta | release safety or P0 QC pass |
 | Release/install smoke | Shipped artifact can install and run outside the source tree | package manifest, clean install, Docker/OS log, version output | source tree test coverage |
 
 ## Black-box, white-box, and gray-box

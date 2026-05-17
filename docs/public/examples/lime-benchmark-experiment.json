@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.5.0",
+  "id": "lime-runtime-hill-climb-2026-05",
+  "target_project": "lime",
+  "purpose": "Compare a single Agent Runtime change against the current Lime baseline, keep it only if the benchmark evidence shows lower failure risk or higher task reward.",
+  "dataset": {
+    "id": "lime-internal-agent-runtime-tasks",
+    "version": "2026-05-frozen",
+    "source": "docs/test/agent-qc-scenarios.manifest.json plus frozen task fixtures",
+    "selection_policy": "10-20 high-signal Lime tasks covering runtime, GUI, tool approval, browser runtime, knowledge, and release gates.",
+    "frozen_at": "2026-05-17"
+  },
+  "hypothesis": {
+    "change_id": "runtime-tool-error-feedback-v2",
+    "one_variable_changed": "tool failure feedback wording and structured recovery hints",
+    "expected_improvement": "Reduce timeout-without-recovery and tool-result-missing failures without changing model or dataset.",
+    "rollback_rule": "Revert if primary reward drops, timeout rate increases, or any P0 QC gate loses required evidence."
+  },
+  "configurations": [
+    {
+      "id": "baseline-current",
+      "role": "baseline",
+      "runtime_version": "lime@1.41.0",
+      "model_profile": "configured-local-provider",
+      "prompt_profile": "current-agent-runtime",
+      "tool_profile": "current-tool-surface",
+      "context_policy": "current-context-policy"
+    },
+    {
+      "id": "candidate-feedback-v2",
+      "role": "candidate",
+      "runtime_version": "lime@1.41.0+tool-feedback-v2",
+      "model_profile": "configured-local-provider",
+      "prompt_profile": "current-agent-runtime",
+      "tool_profile": "tool-feedback-v2",
+      "context_policy": "current-context-policy"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "tool-approval-sandbox-boundary",
+      "project_profile": "agent-runtime-cli",
+      "surface": "cli-stream",
+      "instruction_ref": "docs/test/fixtures/benchmark/tool-approval-sandbox-boundary/instruction.md",
+      "verifier": "programmatic reward plus Agent QC evidence review",
+      "reward_paths": [
+        "/logs/verifier/reward.json",
+        "/logs/verifier/reward-details.json"
+      ],
+      "required_gates": [
+        "runtime-e2e",
+        "benchmark-eval"
+      ],
+      "required_evidence": [
+        "runtime transcript",
+        "approval decision",
+        "sandbox policy",
+        "trajectory ref",
+        "reward details"
+      ]
+    },
+    {
+      "id": "claw-chat-ready-streaming",
+      "project_profile": "agent-ui-tui-desktop",
+      "surface": "desktop-gui",
+      "instruction_ref": "docs/test/fixtures/benchmark/claw-chat-ready-streaming/instruction.md",
+      "verifier": "GUI smoke evidence plus runtime-backed reward",
+      "reward_paths": [
+        "/logs/verifier/reward.json",
+        "/logs/verifier/reward-details.json"
+      ],
+      "required_gates": [
+        "ui-interaction",
+        "runtime-e2e",
+        "benchmark-eval"
+      ],
+      "required_evidence": [
+        "GUI trace",
+        "DevBridge health",
+        "runtime transcript",
+        "console/network summary",
+        "trajectory ref"
+      ]
+    }
+  ],
+  "trials": [
+    {
+      "trial_id": "trial-tool-approval-baseline-1",
+      "task_id": "tool-approval-sandbox-boundary",
+      "configuration_id": "baseline-current",
+      "status": "passed",
+      "reward": 1,
+      "duration_ms": 120000,
+      "trajectory_ref": "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-baseline-1/agent/trajectory.json",
+      "reward_details_ref": "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-baseline-1/verifier/reward-details.json",
+      "evidence_refs": [
+        "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-baseline-1",
+        "agentqc://lime/tool-approval-sandbox-boundary/baseline"
+      ]
+    },
+    {
+      "trial_id": "trial-tool-approval-candidate-1",
+      "task_id": "tool-approval-sandbox-boundary",
+      "configuration_id": "candidate-feedback-v2",
+      "status": "passed",
+      "reward": 1,
+      "duration_ms": 98000,
+      "trajectory_ref": "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-candidate-1/agent/trajectory.json",
+      "reward_details_ref": "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-candidate-1/verifier/reward-details.json",
+      "evidence_refs": [
+        "harbor://jobs/lime-runtime-hill-climb/trials/tool-approval-candidate-1",
+        "agentqc://lime/tool-approval-sandbox-boundary/candidate"
+      ]
+    }
+  ],
+  "metrics": {
+    "primary": "mean_reward_delta",
+    "secondary": [
+      "timeout_rate",
+      "evidence_completeness_rate",
+      "cost_per_pass",
+      "p0_qc_gate_regression_count"
+    ],
+    "noise_policy": "If primary delta is within two percentage points or trial count is below three per configuration, run pass@k or repeated trials before accepting the change."
+  },
+  "decision_policy": "A candidate can be promoted only when required Agent QC gates still pass, benchmark evidence is complete, and the reward or failure-mode profile improves without higher release risk."
+}

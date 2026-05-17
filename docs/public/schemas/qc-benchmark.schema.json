@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentqc/schemas/qc-benchmark.schema.json",
+  "title": "Agent QC Benchmark Experiment",
+  "description": "Portable benchmark experiment shape for hill-climbing agent runtimes after evidence-driven QC.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "id",
+    "target_project",
+    "purpose",
+    "dataset",
+    "configurations",
+    "tasks",
+    "trials",
+    "metrics",
+    "decision_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.5.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "version",
+        "source",
+        "selection_policy"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selection_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frozen_at": {
+          "type": "string"
+        }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "change_id": {
+          "type": "string"
+        },
+        "one_variable_changed": {
+          "type": "string"
+        },
+        "expected_improvement": {
+          "type": "string"
+        },
+        "rollback_rule": {
+          "type": "string"
+        }
+      }
+    },
+    "configurations": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "baseline",
+              "candidate",
+              "control"
+            ]
+          },
+          "runtime_version": {
+            "type": "string"
+          },
+          "model_profile": {
+            "type": "string"
+          },
+          "prompt_profile": {
+            "type": "string"
+          },
+          "tool_profile": {
+            "type": "string"
+          },
+          "context_policy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "instruction_ref",
+          "verifier",
+          "required_gates",
+          "required_evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "project_profile": {
+            "type": "string"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "instruction_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verifier": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reward_paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_gates": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "trials": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "trial_id",
+          "task_id",
+          "configuration_id",
+          "status",
+          "evidence_refs"
+        ],
+        "properties": {
+          "trial_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "configuration_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "exhausted",
+              "needs-review",
+              "skipped"
+            ]
+          },
+          "reward": {
+            "type": "number"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "trajectory_ref": {
+            "type": "string"
+          },
+          "reward_details_ref": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "primary"
+      ],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "noise_policy": {
+          "type": "string"
+        }
+      }
+    },
+    "decision_policy": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

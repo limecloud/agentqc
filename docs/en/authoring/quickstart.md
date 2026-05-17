@@ -76,6 +76,7 @@ Use the [gate matrix](./gate-matrix). At minimum, separate these lanes:
 4. live gates: `live-provider` only with explicit opt-in;
 5. release gates: `distribution-release` when anything is shipped;
 6. semantic gates: `semantic-eval` and `review` when quality judgment matters.
+7. benchmark gates: `benchmark-eval` when claiming a runtime, prompt, tool, context, or routing change improves Lime against a frozen baseline.
 
 ## 6. Write behavior-first cases
 

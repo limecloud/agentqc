@@ -76,6 +76,7 @@
           "stress-concurrency",
           "distribution-release",
           "semantic-eval",
+          "benchmark-eval",
           "review"
         ]
       }
